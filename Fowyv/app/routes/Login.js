@@ -1,8 +1,66 @@
 import React from 'react';
-import {View} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {TextInput} from 'react-native-gesture-handler';
 
 export class Login extends React.Component {
   render() {
-    return <View style="{{flex: 1,backgroundColor: '#6ED4C8'}}" />;
+    return (
+      <View style={loginStyle.View}>
+        <Text style={loginStyle.Header}>FOWYV</Text>
+        <View style={loginStyle.Container}>
+          <Text style={loginStyle.FormHeader}>Email</Text>
+          <TextInput style={loginStyle.TextInput} />
+          <Text style={loginStyle.FormHeader}>Password</Text>
+          <TextInput secureTextEntry={true} style={loginStyle.TextInput} />
+          <TouchableOpacity style={loginStyle.FormButton}>
+            <Text>Login</Text>
+          </TouchableOpacity>
+          <Text style={loginStyle.ForgotPassword}>Forgot your password?</Text>
+        </View>
+        <Text style={loginStyle.NewAccount}>Create an account</Text>
+      </View>
+    );
   }
 }
+
+const loginStyle = StyleSheet.create({
+  View: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'darkorange',
+  },
+  Container: {
+    width: '66.7%',
+    height: '50%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'white',
+  },
+  Header: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  FormHeader: {
+    fontSize: 20,
+  },
+  TextInput: {
+    backgroundColor: 'moccasin',
+    width: '80%',
+    height: 35,
+  },
+  FormButton: {
+    backgroundColor: 'darkorange',
+    borderWidth: 1,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  ForgotPassword: {
+    textDecorationLine: 'underline',
+  },
+  NewAccount: {
+    color: 'white',
+  },
+});

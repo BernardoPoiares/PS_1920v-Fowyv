@@ -23,7 +23,7 @@ function MainStackScreen() {
 export class App extends React.Component {
   componentDidMount() {
     StatusBar.setBarStyle('light-content', true);
-    StatusBar.setBackgroundColor('orange');
+    StatusBar.setBackgroundColor('darkorange');
   }
   render() {
     return (
