@@ -5,7 +5,7 @@ export class Home extends React.Component {
   componentDidMount() {
     this.timeoutHandle = setTimeout(() => {
       this.props.navigation.navigate('Login');
-    }, 3000);
+    }, 2500);
   }
 
   componentWillUnmount() {
@@ -33,7 +33,7 @@ const homeStyle = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'darkorange',
   },
-  Logo: {width: 180, height: 180, resizeMode: 'contain'},
+  Logo: {width: 200, height: 200, resizeMode: 'contain'},
   Name: {
     fontSize: 50,
     fontWeight: 'bold',

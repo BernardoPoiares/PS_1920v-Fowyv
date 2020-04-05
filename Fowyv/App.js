@@ -1,5 +1,6 @@
 import React from 'react';
 import {StatusBar} from 'react-native';
+import SplashScreen from 'react-native-splash-screen';
 
 import 'react-native-gesture-handler';
 import {NavigationContainer} from '@react-navigation/native';
@@ -22,6 +23,7 @@ function MainStackScreen() {
 
 export class App extends React.Component {
   componentDidMount() {
+    SplashScreen.hide();
     StatusBar.setBarStyle('light-content', true);
     StatusBar.setBackgroundColor('darkorange');
   }
