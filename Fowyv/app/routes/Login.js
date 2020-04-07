@@ -3,6 +3,10 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 
 export class Login extends React.Component {
+  onLoginPressed = () => {
+    this.props.navigation.navigate('Root', {screen: 'ListenLobby'});
+  };
+
   render() {
     return (
       <View style={loginStyle.View}>
@@ -12,7 +16,9 @@ export class Login extends React.Component {
           <TextInput style={loginStyle.TextInput} />
           <Text style={loginStyle.FormHeader}>Password</Text>
           <TextInput secureTextEntry={true} style={loginStyle.TextInput} />
-          <TouchableOpacity style={loginStyle.FormButton}>
+          <TouchableOpacity
+            style={loginStyle.FormButton}
+            onPress={this.onLoginPressed}>
             <Text>Login</Text>
           </TouchableOpacity>
           <Text style={loginStyle.ForgotPassword}>Forgot your password?</Text>
