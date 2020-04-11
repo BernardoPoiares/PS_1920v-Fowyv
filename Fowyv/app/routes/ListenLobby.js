@@ -1,18 +1,20 @@
 import React from 'react';
 import {Text, View, StyleSheet} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 export class ListenLobby extends React.Component {
   render() {
     return (
-      <View style={homeStyle.View}>
-        <Text style={homeStyle.Name}>FOWYV</Text>
-        <Text style={homeStyle.Description}>find others with your voice</Text>
+      <View style={listenLobbyStyle.View}>
+        <Icon name="md-play-circle" size={150} color="white" />
+        <Text style={listenLobbyStyle.Name}>Jessica</Text>
+        <Text style={listenLobbyStyle.Age}>23</Text>
       </View>
     );
   }
 }
 
-const homeStyle = StyleSheet.create({
+const listenLobbyStyle = StyleSheet.create({
   View: {
     flex: 1,
     justifyContent: 'center',
@@ -25,5 +27,8 @@ const homeStyle = StyleSheet.create({
     fontWeight: 'bold',
     color: 'white',
   },
-  Description: {fontSize: 20},
+  Age: {
+    fontSize: 20,
+    color: 'white',
+  },
 });
