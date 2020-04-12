@@ -8,45 +8,103 @@ import {
   StatusBar,
 } from 'react-native';
 
-const ComponentLeft = () => {
-  return (
-    <TouchableOpacity style={navbarComponentsStyle.leftTab}>
-      <Text style={baseComponentsStyle.header}>Settings</Text>
-    </TouchableOpacity>
-  );
-};
-
-const ComponentCenter = () => {
-  return (
-    <TouchableOpacity style={activeNavTabStyle.tab}>
-      <Text style={activeNavTabStyle.header}>Listen</Text>
-    </TouchableOpacity>
-  );
-};
-
-const ComponentRight = () => {
-  return (
-    <TouchableOpacity
-      style={navbarComponentsStyle.rightTab}
-      onPress={() => {
-        Alert.alert('Lobby');
-      }}>
-      <Text style={baseComponentsStyle.header}>Lobby</Text>
-    </TouchableOpacity>
-  );
-};
-
 export class NavBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      activeTab: this.props.route,
+    };
+    this.tabStyle = this.tabStyle.bind(this);
+    this.tabPressed = this.tabPressed.bind(this);
+  }
+
   componentDidMount() {
     StatusBar.setBarStyle('light-content', false);
     StatusBar.setBackgroundColor('white');
   }
+
+  tabPressed = route => {
+    return () => {
+      this.props.navigate(route);
+      this.setState({activeTab: route}, () => {
+        console.log(this.state.activeTab);
+      });
+    };
+  };
+
+  tabStyle = (tab, activeStyle, normalStyle) => {
+    return this.state.activeTab === tab ? activeStyle : normalStyle;
+  };
+
+  leftTab = () => {
+    return (
+      <TouchableOpacity
+        style={this.tabStyle(
+          'Settings',
+          activeNavTabStyle.tab,
+          navbarComponentsStyle.leftTab,
+        )}
+        onPress={this.tabPressed('Settings')}>
+        <Text
+          style={this.tabStyle(
+            'Settings',
+            activeNavTabStyle.header,
+            baseComponentsStyle.header,
+          )}>
+          Settings
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  centerTab = () => {
+    return (
+      <TouchableOpacity
+        style={this.tabStyle(
+          'ListenLobby',
+          activeNavTabStyle.tab,
+          navbarComponentsStyle.centerTab,
+        )}
+        onPress={this.tabPressed('ListenLobby')}>
+        <Text
+          style={this.tabStyle(
+            'ListenLobby',
+            activeNavTabStyle.header,
+            baseComponentsStyle.header,
+          )}>
+          Listen
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  rightTab = () => {
+    return (
+      <TouchableOpacity
+        style={this.tabStyle(
+          'MatchLobby',
+          activeNavTabStyle.tab,
+          navbarComponentsStyle.rightTab,
+        )}
+        onPress={this.tabPressed('MatchLobby')}>
+        <Text
+          style={this.tabStyle(
+            'MatchLobby',
+            activeNavTabStyle.header,
+            baseComponentsStyle.header,
+          )}>
+          Lobby
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
   render() {
     return (
       <View style={navBarStyle.navigationBar}>
-        <ComponentLeft />
-        <ComponentCenter />
-        <ComponentRight />
+        <this.leftTab />
+        <this.centerTab />
+        <this.rightTab />
       </View>
     );
   }
@@ -67,7 +125,7 @@ const navbarComponentsStyle = {
     baseComponentsStyle.tab,
     {borderBottomRightRadius: 15},
   ),
-  componentCenter: StyleSheet.compose(
+  centerTab: StyleSheet.compose(
     baseComponentsStyle.tab,
     {
       borderColor: 'white',

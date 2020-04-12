@@ -16,44 +16,73 @@ import {NavBar} from './app/components/NavBar.js';
 const MainStack = createStackNavigator();
 const RootStack = createStackNavigator();
 
-function MainStackScreen() {
-  return (
-    <MainStack.Navigator screenOptions={{headerShown: false}}>
-      <MainStack.Screen name="Home" component={Home} />
-      <MainStack.Screen name="Login" component={Login} />
-    </MainStack.Navigator>
-  );
-}
-
-function RootStackScreen({navigation, route}) {
-  return (
-    <MainStack.Navigator
-      screenOptions={{
-        header: ({scene, previous, navigation}) => {
-          return <NavBar />;
-        },
-        headerMode: 'screen',
-      }}>
-      <MainStack.Screen name="ListenLobby" component={ListenLobby} />
-      <MainStack.Screen name="MatchLobby" component={MatchLobby} />
-      <MainStack.Screen name="Settings" component={Settings} />
-    </MainStack.Navigator>
-  );
-}
-
 export class App extends React.Component {
   componentDidMount() {
     SplashScreen.hide();
     StatusBar.setBarStyle('light-content', true);
     StatusBar.setBackgroundColor('darkorange');
   }
+
+  MainStackScreen() {
+    return (
+      <MainStack.Navigator screenOptions={{headerShown: false}}>
+        <MainStack.Screen name="Home" component={Home} />
+        <MainStack.Screen name="Login" component={Login} />
+      </MainStack.Navigator>
+    );
+  }
+
+  RootStackScreen = ({navigation, route}) => {
+    return (
+      <MainStack.Navigator
+        screenOptions={{
+          header: ({scene, previous, navigation}) => {
+            return (
+              <NavBar
+                route={scene.route.name}
+                navigate={this.rootNavigate(navigation)}
+              />
+            );
+          },
+          headerMode: 'screen',
+        }}>
+        <MainStack.Screen
+          name="ListenLobby"
+          options={{
+            animationEnabled: false,
+          }}
+          component={ListenLobby}
+        />
+        <MainStack.Screen
+          name="MatchLobby"
+          options={{
+            animationEnabled: false,
+          }}
+          component={MatchLobby}
+        />
+        <MainStack.Screen
+          name="Settings"
+          options={{
+            animationEnabled: false,
+          }}
+          component={Settings}
+        />
+      </MainStack.Navigator>
+    );
+  };
+  rootNavigate = navigation => {
+    return route => {
+      navigation.navigate(route);
+    };
+  };
+
   render() {
     return (
       <NavigationContainer>
         {
           <RootStack.Navigator screenOptions={{headerShown: false}}>
-            <RootStack.Screen name="Main" component={MainStackScreen} />
-            <RootStack.Screen name="Root" component={RootStackScreen} />
+            <RootStack.Screen name="Main" component={this.MainStackScreen} />
+            <RootStack.Screen name="Root" component={this.RootStackScreen} />
           </RootStack.Navigator>
         }
       </NavigationContainer>
