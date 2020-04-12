@@ -26,9 +26,6 @@ export class NavBar extends React.Component {
   tabPressed = route => {
     return () => {
       this.props.navigate(route);
-      /*this.setState({activeTab: route}, () => {
-        console.log(this.state.activeTab);
-      });*/
     };
   };
 

@@ -15,25 +15,15 @@ export class Match extends React.Component {
     super(props);
   }
 
-  checkPosition = evt => {
-    const layout = evt.nativeEvent.layout;
-    console.log('height:', layout.height);
-    console.log('width:', layout.width);
-    console.log('x:', layout.x);
-    console.log('y:', layout.y);
-  };
-
   render() {
     return (
       <TouchableOpacity
-        onViewableItemsChanged={this.onViewableItemsChanged}
         style={StyleSheet.compose(
           matchStyle.container,
           {
             height: this.props.size,
           },
-        )}
-        onLayout={this.checkPosition}>
+        )}>
         <Icon name="md-play-circle" size={this.props.iconSize} color="white" />
         <Text>Name</Text>
       </TouchableOpacity>
