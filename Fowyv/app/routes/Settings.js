@@ -61,6 +61,21 @@ export class Settings extends React.Component {
           <View style={settingsStyle.container}>
             <Text style={settingsStyle.containerHeader}>App Settings</Text>
             <View style={appSettingsStyle.container}>
+              <Text style={appSettingsStyle.Header}>Ages range</Text>
+              <MultiSlider
+                values={[
+                  nonCollidingMultiSliderValue[0],
+                  nonCollidingMultiSliderValue[1],
+                ]}
+                sliderLength={280}
+                min={0}
+                max={100}
+                step={1}
+                allowOverlap={false}
+                enableLabel={true}
+                minMarkerOverlapDistance={40}
+              />
+              <Text style={appSettingsStyle.Header}>Distance range</Text>
               <MultiSlider
                 values={[
                   nonCollidingMultiSliderValue[0],
@@ -79,7 +94,13 @@ export class Settings extends React.Component {
                 data={DATA}
                 renderItem={item => (
                   <View>
-                    <Text>item.Language</Text>
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        color: 'white',
+                      }}>
+                      {item.language}
+                    </Text>
                     <CheckBox />
                   </View>
                 )}
