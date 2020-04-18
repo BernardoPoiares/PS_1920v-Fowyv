@@ -1,10 +1,11 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
+import routes from 'res/routes';
 
 export class Login extends React.Component {
   onLoginPressed = () => {
-    this.props.navigation.navigate('Root', {screen: 'ListenLobby'});
+    this.props.navigation.navigate('Main', {screen: routes.listen});
   };
 
   render() {
