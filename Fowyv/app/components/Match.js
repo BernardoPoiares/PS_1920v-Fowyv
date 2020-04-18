@@ -8,8 +8,6 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const {height} = Dimensions.get('window').height;
-
 export class Match extends React.Component {
   constructor(props) {
     super(props);
@@ -23,7 +21,8 @@ export class Match extends React.Component {
           {
             height: this.props.size,
           },
-        )}>
+        )}
+        onPress={this.props.onPress}>
         <Icon name="md-play-circle" size={this.props.iconSize} color="white" />
         <Text>Name</Text>
       </TouchableOpacity>

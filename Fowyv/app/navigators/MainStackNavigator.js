@@ -1,15 +1,16 @@
 import React from 'react';
-
+import {Alert} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ListenLobby} from '../routes/ListenLobby.js';
 import {MatchLobby} from '../routes/MatchLobby.js';
 import {Settings} from '../routes/Settings.js';
+
 import {NavBar} from '../components/NavBar.js';
 
 const MainStack = createStackNavigator();
 
-const rootNavigate = navigation => {
+const stackNavigate = navigation => {
   return route => {
     navigation.navigate(route);
   };
@@ -23,7 +24,7 @@ export const MainStackNavigator = () => {
           return (
             <NavBar
               route={scene.route.name}
-              navigate={rootNavigate(navigation)}
+              navigate={stackNavigate(navigation)}
             />
           );
         },

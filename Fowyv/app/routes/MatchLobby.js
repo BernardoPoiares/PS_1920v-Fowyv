@@ -2,6 +2,7 @@ import React, {useRef} from 'react';
 import {View, Text, StyleSheet, FlatList, Dimensions} from 'react-native';
 import {Match} from '../components/Match.js';
 import Carousel from 'react-native-anchor-carousel';
+import routes from 'res/routes';
 
 const {windowHeight} = Dimensions.get('window').height;
 const DATA = [
@@ -47,6 +48,9 @@ export class MatchLobby extends React.Component {
   constructor(props) {
     super(props);
   }
+  onMatchPressed = () => {
+    this.props.navigation.navigate('ChatStack', {screen: 'Chat'});
+  };
 
   render() {
     return (
@@ -54,7 +58,14 @@ export class MatchLobby extends React.Component {
         <View style={matchLobbyStyle.topMatchesContainer}>
           <Carousel
             data={DATA}
-            renderItem={() => <Match iconSize={130} size={400} />}
+            renderItem={() => (
+              <Match
+                onPress={this.onMatchPressed}
+                navigation={this.props.navigation}
+                iconSize={130}
+                size={400}
+              />
+            )}
             itemWidth={Dimensions.get('window').width / 3}
             containerWidth={Dimensions.get('window').width}
             separatorWidth={15}
@@ -69,7 +80,7 @@ export class MatchLobby extends React.Component {
           <Carousel
             data={DATA}
             renderItem={(item, index, separators) => (
-              <Match iconSize={80} size={200} />
+              <Match onPress={this.onMatchPressed} iconSize={80} size={200} />
             )}
             itemWidth={Dimensions.get('window').width / 3}
             containerWidth={Dimensions.get('window').width}

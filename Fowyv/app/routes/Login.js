@@ -5,7 +5,7 @@ import routes from 'res/routes';
 
 export class Login extends React.Component {
   onLoginPressed = () => {
-    this.props.navigation.navigate('Main', {screen: routes.listen});
+    this.props.navigation.navigate('MainStack', {screen: routes.listen});
   };
 
   render() {
