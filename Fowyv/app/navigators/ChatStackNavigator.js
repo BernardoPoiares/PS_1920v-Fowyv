@@ -1,6 +1,8 @@
 import React from 'react';
-import {Button, Text} from 'react-native';
+import {TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
+
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 import {Chat} from '../routes/Chat.js';
 
@@ -20,17 +22,34 @@ export const ChatStackNavigator = ({navigation: {goBack}}) => {
             return <Text />;
           },
           headerLeft: () => (
-            <Button onPress={onBackPressed} title="Info" color="#fff" />
+            <TouchableOpacity
+              onPress={onBackPressed}
+              style={chatStackStyle.backwardTabButton}>
+              <Icon name="backward" size={30} color="white" />
+            </TouchableOpacity>
           ),
           headerRight: () => (
-            <Button
+            <TouchableOpacity
               onPress={() => alert('This is a button!')}
-              title="Info"
-              color="#fff"
-            />
+              style={chatStackStyle.backwardTabButton}>
+              <Icon name="gear" size={30} color="white" />
+            </TouchableOpacity>
           ),
+          headerStyle: chatStackStyle.header,
         }}
       />
     </ChatStack.Navigator>
   );
 };
+
+const chatStackStyle = StyleSheet.create({
+  backwardTabButton: {
+    margin: 10,
+  },
+  gearTabButton: {
+    margin: 10,
+  },
+  header:{
+    backgroundColor:'darkorange'
+  }
+});

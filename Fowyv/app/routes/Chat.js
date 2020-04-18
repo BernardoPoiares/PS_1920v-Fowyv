@@ -1,33 +1,75 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import {
+  TouchableOpacity,
+  View,
+  TextInput,
+  StyleSheet,
+  Text,
+  ScrollView,
+  StatusBar,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export class Chat extends React.Component {
   render() {
     return (
-      <View style={listenLobbyStyle.View}>
-        <Text style={listenLobbyStyle.Name}>Jessica</Text>
-        <Text style={listenLobbyStyle.Age}>23</Text>
+      <View style={chatStyle.container}>
+        <StatusBar barStyle="light-content" backgroundColor="darkorange" />
+        <View style={chatStyle.chatContainer}>
+          <ScrollView>
+            <Text>asdasd</Text>
+          </ScrollView>
+        </View>
+        <View style={chatStyle.interactionContainer}>
+          <TextInput
+            style={chatStyle.messageInput}
+            multiline
+            numberOfLines={4}
+          />
+          <TouchableOpacity style={chatStyle.microphoneContainer}>
+            <Icon name="microphone" size={15} style={chatStyle.microphone} />
+          </TouchableOpacity>
+        </View>
       </View>
     );
   }
 }
 
-const listenLobbyStyle = StyleSheet.create({
-  View: {
+const chatStyle = StyleSheet.create({
+  container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'darkorange',
   },
-  Logo: {width: 200, height: 200, resizeMode: 'contain'},
-  Name: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
+  chatContainer: {
+    flex: 1,
+    backgroundColor: 'white',
   },
-  Age: {
-    fontSize: 20,
-    color: 'white',
+  interactionContainer: {
+    flexDirection: 'row',
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'darkorange',
+  },
+  messageInput: {
+    width: '70%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    margin: '5%',
+  },
+  microphoneContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: 'white',
+    width: 30,
+    height: 30,
+    marginRight: '5%',
+  },
+  microphone: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'darkorange',
+    padding: 10,
   },
 });
