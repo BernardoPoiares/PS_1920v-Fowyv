@@ -5,15 +5,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  TextInput,
 } from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
 import routes from 'res/routes';
 
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 
+import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export class SetProfile extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {date: '2016-05-15'};
+  }
   onSetAccount = () => {
     this.props.navigation.navigate('MainStack', routes.listen);
   };
@@ -26,7 +31,31 @@ export class SetProfile extends React.Component {
             <Text style={loginStyle.formHeader}>Name</Text>
             <TextInput style={loginStyle.textInput} />
             <Text style={loginStyle.formHeader}>Age</Text>
-            <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+            <DatePicker
+              style={{width: '100%'}}
+              date={this.state.date}
+              mode="date"
+              placeholder="select date"
+              format="YYYY-MM-DD"
+              minDate="2002-05-01"
+              maxDate="2100-06-01"
+              confirmBtnText="Confirm"
+              cancelBtnText="Cancel"
+              customStyles={{
+                dateIcon: {
+                  position: 'absolute',
+                  left: 0,
+                  top: 4,
+                  marginLeft: 0,
+                },
+                dateInput: {
+                  marginLeft: 36,
+                },
+              }}
+              onDateChange={date => {
+                this.setState({date: date});
+              }}
+            />
             <PersonalAudioContainer
               propsStyle={personalAudioStyle}
               iconColor="darkorange"
