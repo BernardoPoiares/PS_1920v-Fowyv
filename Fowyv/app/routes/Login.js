@@ -7,67 +7,71 @@ export class Login extends React.Component {
   onLoginPressed = () => {
     this.props.navigation.navigate('MainStack', {screen: routes.listen});
   };
-
+  onNewAccountPressed = () => {
+    this.props.navigation.navigate(routes.newAccount);
+  };
   render() {
     return (
-      <View style={loginStyle.View}>
-        <Text style={loginStyle.Header}>FOWYV</Text>
-        <View style={loginStyle.Container}>
-          <Text style={loginStyle.FormHeader}>Email</Text>
-          <TextInput style={loginStyle.TextInput} />
-          <Text style={loginStyle.FormHeader}>Password</Text>
-          <TextInput secureTextEntry={true} style={loginStyle.TextInput} />
+      <View style={loginStyle.view}>
+        <Text style={loginStyle.header}>FOWYV</Text>
+        <View style={loginStyle.container}>
+          <Text style={loginStyle.formHeader}>Email</Text>
+          <TextInput style={loginStyle.textInput} />
+          <Text style={loginStyle.formHeader}>Password</Text>
+          <TextInput secureTextEntry={true} style={loginStyle.textInput} />
           <TouchableOpacity
-            style={loginStyle.FormButton}
+            style={loginStyle.formButton}
             onPress={this.onLoginPressed}>
             <Text>Login</Text>
           </TouchableOpacity>
-          <Text style={loginStyle.ForgotPassword}>Forgot your password?</Text>
+          <Text style={loginStyle.forgotPassword}>Forgot your password?</Text>
         </View>
-        <Text style={loginStyle.NewAccount}>Create an account</Text>
+        <TouchableOpacity onPress={this.onNewAccountPressed}>
+          <Text style={loginStyle.newAccount}>Create an account</Text>
+        </TouchableOpacity>
       </View>
     );
   }
 }
 
 const loginStyle = StyleSheet.create({
-  View: {
+  view: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'darkorange',
   },
-  Container: {
+  container: {
     width: '66.7%',
     height: '50%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
   },
-  Header: {
+  header: {
     fontSize: 50,
     fontWeight: 'bold',
     color: 'white',
   },
-  FormHeader: {
+  formHeader: {
     fontSize: 20,
   },
-  TextInput: {
+  textInput: {
     backgroundColor: 'moccasin',
     width: '80%',
     height: 35,
   },
-  FormButton: {
+  formButton: {
     backgroundColor: 'darkorange',
     borderWidth: 1,
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  ForgotPassword: {
+  forgotPassword: {
     textDecorationLine: 'underline',
   },
-  NewAccount: {
+  newAccount: {
     color: 'white',
   },
 });
