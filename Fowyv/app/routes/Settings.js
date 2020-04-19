@@ -11,6 +11,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import CheckBox from '@react-native-community/checkbox';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import routes from 'res/routes';
 
 const nonCollidingMultiSliderValue = [0, 100];
 const DATA = [
@@ -25,6 +26,11 @@ const DATA = [
 ];
 
 export class Settings extends React.Component {
+  onLogoutPressed = () => {
+    this.props.navigation.navigate('AuthenticationStack', {
+      screen: routes.login,
+    });
+  };
   render() {
     return (
       <View style={settingsStyle.view}>
@@ -105,6 +111,14 @@ export class Settings extends React.Component {
                   </View>
                 )}
               />
+              <TouchableOpacity
+                style={appSettingsStyle.Logout}
+                onPress={this.onLogoutPressed}>
+                <Text>Logout</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={appSettingsStyle.DeleteAccount}>
+                <Text>Delete Account</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </ScrollView>
@@ -167,5 +181,19 @@ const appSettingsStyle = StyleSheet.create({
     fontSize: 20,
     color: 'white',
     alignSelf: 'flex-start',
+  },
+  Logout: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    padding: 5,
+    margin: 5,
+  },
+  DeleteAccount: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    padding: 5,
+    margin: 5,
   },
 });
