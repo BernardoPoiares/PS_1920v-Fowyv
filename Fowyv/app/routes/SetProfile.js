@@ -9,6 +9,8 @@ import {
 import {TextInput} from 'react-native-gesture-handler';
 import routes from 'res/routes';
 
+import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
+
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export class SetProfile extends React.Component {
@@ -25,6 +27,10 @@ export class SetProfile extends React.Component {
             <TextInput style={loginStyle.textInput} />
             <Text style={loginStyle.formHeader}>Age</Text>
             <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+            <PersonalAudioContainer
+              propsStyle={personalAudioStyle}
+              iconColor="darkorange"
+            />
             <TouchableOpacity
               style={loginStyle.playContainer}
               onPress={this.onSetAccount}>
@@ -81,11 +87,18 @@ const loginStyle = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'flex-end',
     backgroundColor: 'darkorange',
-    margin: 5,
+    borderWidth: 2,
+    paddingLeft: 10,
+    paddingRight: 10,
+    margin: 10,
   },
   playHeader: {
     color: 'black',
     fontSize: 30,
     marginRight: 5,
   },
+});
+
+const personalAudioStyle = StyleSheet.create({
+  formButton: {backgroundColor: 'darkorange'},
 });
