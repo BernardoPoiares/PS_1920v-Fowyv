@@ -45,6 +45,7 @@ const chatStyle = StyleSheet.create({
     backgroundColor: 'white',
   },
   interactionContainer: {
+    height: 60,
     flexDirection: 'row',
     width: '100%',
     alignItems: 'center',
