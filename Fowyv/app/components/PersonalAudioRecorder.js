@@ -155,6 +155,7 @@ export class PersonalAudioRecorder extends React.Component {
       console.warn("Can't record, no permission granted!");
       return;
     }
+    this.prepareRecordingPath(this.state.audioPath);
 
     if (this.state.stoppedRecording) {
       this.prepareRecordingPath(this.state.audioPath);
