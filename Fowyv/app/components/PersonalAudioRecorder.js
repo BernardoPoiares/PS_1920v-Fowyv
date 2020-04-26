@@ -12,10 +12,9 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Dropdown} from 'react-native-material-dropdown';
-import {AudioRecorder, AudioUtils} from 'react-native-audio';
-import Sound from 'react-native-sound';
-
-let audioPath = AudioUtils.DocumentDirectoryPath + '/test.aac';
+import {AudioUtils} from 'react-native-audio';
+import {AudioRecorder} from './AudioRecorder.js';
+import {AudioPlayer} from '../utils/AudioPlayer.js';
 
 const languages = [
   {
@@ -30,179 +29,51 @@ export class PersonalAudioRecorder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isRecording: false,
-      hasAudio: false,
-      currentTime: 0.0,
-      recording: false,
-      paused: false,
-      stoppedRecording: false,
-      finished: false,
       audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
-      hasPermission: undefined,
+      hasAudio: false,
+      sound: null,
+      isPlaying: false,
     };
   }
-  componentDidMount() {
-    AudioRecorder.requestAuthorization().then(isAuthorised => {
-      this.setState({hasPermission: isAuthorised});
 
-      if (!isAuthorised) {
-        return;
-      }
-      AudioRecorder.onProgress = data => {
-        this.setState({currentTime: Math.floor(data.currentTime)});
-      };
+  onErasePressed = () => {
+    this.setState({hasAudio: false, sound: null});
+  };
 
-      AudioRecorder.onFinished = data => {};
-    });
-  }
+  setSound = sound => {
+    this.setState({hasAudio: true, sound: sound});
+  };
 
-  prepareRecordingPath(audioPath) {
-    AudioRecorder.prepareRecordingAtPath(audioPath, {
-      SampleRate: 22050,
-      Channels: 1,
-      AudioQuality: 'Low',
-      AudioEncoding: 'aac',
-      AudioEncodingBitRate: 32000,
-    })
-      .then(a => {
-        console.log(a);
-      })
-      .catch(c => {
-        console.log(c);
-      });
-  }
-  async _pause() {
-    if (!this.state.recording) {
-      console.warn("Can't pause, not recording!");
-      return;
-    }
+  finishedRecording = async audioPath => {
+    AudioPlayer.createSound(audioPath, this.setSound);
+  };
 
-    try {
-      const filePath = await AudioRecorder.pauseRecording();
-      this.setState({paused: true});
-    } catch (error) {
-      console.error(error);
-    }
-  }
+  hideAudioRecorder = () => {
+    return this.state.hasAudio;
+  };
 
-  async _resume() {
-    if (!this.state.paused) {
-      console.warn("Can't resume, not paused!");
-      return;
-    }
-
-    try {
-      await AudioRecorder.resumeRecording();
-      this.setState({paused: false});
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async stopRecording() {
-    if (!this.state.recording) {
-      console.warn("Can't stop, not recording!");
-      return;
-    }
-
-    this.setState({
-      isRecording: false,
-      stoppedRecording: true,
-      recording: false,
-      paused: false,
-    });
-
-    try {
-      const filePath = await AudioRecorder.stopRecording();
-
-      this._finishRecording(true, filePath);
-      return filePath;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  async playAudio() {
-    if (this.state.recording) {
-      await this._stop();
-    }
-
-    // These timeouts are a hacky workaround for some issues with react-native-sound.
-    // See https://github.com/zmxv/react-native-sound/issues/89.
-    setTimeout(() => {
-      var sound = new Sound(this.state.audioPath, '', error => {
-        if (error) {
-          console.log('failed to load the sound', error);
-        }
-        sound.play(success => {
-          if (success) {
-            console.log('successfully finished playing');
-          } else {
-            console.log('playback failed due to audio decoding errors');
-          }
-        });
-      });
-    });
-  }
-
-  async startRecording() {
-    if (this.state.recording) {
-      console.warn('Already recording!');
-      return;
-    }
-
-    if (!this.state.hasPermission) {
-      console.warn("Can't record, no permission granted!");
-      return;
-    }
-    this.prepareRecordingPath(this.state.audioPath);
-
-    if (this.state.stoppedRecording) {
-      this.prepareRecordingPath(this.state.audioPath);
-    }
-
-    this.setState({isRecording: true, recording: true, paused: false});
-    try {
-      const filePath = await AudioRecorder.startRecording();
-      console.log(filePath);
-    } catch (ex) {
-      console.log(ex);
-    }
-  }
-
-  _finishRecording(didSucceed, filePath, fileSize) {
-    this.setState({
-      hasAudio: didSucceed,
-      isRecording: false,
-      finished: didSucceed,
-    });
-    console.log(
-      `Finished recording of duration ${
-        this.state.currentTime
-      } seconds at path: ${filePath} and size of ${fileSize || 0} bytes`,
-    );
-  }
+  hideAudioPlayer = () => {
+    return !this.state.hasAudio;
+  };
 
   chooseAudioIcon = () => {
-    return this.state.hasAudio
-      ? 'md-play-circle'
-      : this.state.isRecording
-      ? 'stop-circle'
-      : 'md-microphone';
+    return !this.state.isPlaying ? 'md-play-circle' : 'md-pause';
+  };
+
+  audioPlayingEnded = () => {
+    this.setState({isPlaying: false});
   };
 
   onAudioIconPressed = () => {
-    if (this.state.hasAudio) {
-      this.playAudio();
-    } else if (this.state.isRecording) {
-      this.stopRecording();
-    } else {
-      this.startRecording();
+    if (this.state.sound !== null) {
+      if (!this.state.isPlaying) {
+        AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
+      } else {
+        AudioPlayer.pauseAudio(this.state.sound);
+        this.setState({isPlaying: false});
+      }
+      this.setState({isPlaying: !this.state.isPlaying});
     }
-  };
-
-  onErasePressed = () => {
-    this.setState({hasAudio: false});
   };
 
   render() {
@@ -223,15 +94,22 @@ export class PersonalAudioRecorder extends React.Component {
             </Text>
             <View style={personalAudioRecorderStyle.recorderContainer}>
               <View style={personalAudioRecorderStyle.recorderSemiContainer}>
-                <TouchableOpacity
-                  style={personalAudioRecorderStyle.iconContainer}
-                  onPress={this.onAudioIconPressed}>
-                  <Icon
-                    name={this.chooseAudioIcon()}
-                    size={80}
-                    color="darkorange"
-                  />
-                </TouchableOpacity>
+                <AudioRecorder
+                  audioPath={this.state.audioPath}
+                  finishedRecording={this.finishedRecording}
+                  hide={this.hideAudioRecorder()}
+                />
+                {!this.hideAudioPlayer() ? (
+                  <TouchableOpacity
+                    style={{alignSelf: 'center'}}
+                    onPress={this.onAudioIconPressed}>
+                    <Icon
+                      name={this.chooseAudioIcon()}
+                      size={80}
+                      color="darkorange"
+                    />
+                  </TouchableOpacity>
+                ) : null}
                 <TouchableOpacity
                   style={personalAudioRecorderStyle.eraseButton}
                   onPress={this.onErasePressed}>

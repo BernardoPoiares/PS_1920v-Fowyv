@@ -1,12 +1,55 @@
 import React from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
+import {AudioUtils} from 'react-native-audio';
+import {AudioPlayer} from '../utils/AudioPlayer.js';
+
 import Icon from 'react-native-vector-icons/Ionicons';
 
 export class ListenLobby extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
+      hasAudio: false,
+      sound: null,
+      isPlaying: false,
+    };
+  }
+
+  componentDidMount() {
+    AudioPlayer.createSound(this.state.audioPath, this.setSound);
+  }
+
+  setSound = sound => {
+    this.setState({hasAudio: true, sound: sound});
+  };
+
+  chooseAudioIcon = () => {
+    return !this.state.isPlaying ? 'md-play-circle' : 'md-pause';
+  };
+
+  audioPlayingEnded = () => {
+    this.setState({isPlaying: false});
+  };
+
+  onAudioIconPressed = () => {
+    if (this.state.sound !== null) {
+      if (!this.state.isPlaying) {
+        AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
+      } else {
+        AudioPlayer.pauseAudio(this.state.sound);
+        this.setState({isPlaying: false});
+      }
+      this.setState({isPlaying: !this.state.isPlaying});
+    }
+  };
+
   render() {
     return (
       <View style={listenLobbyStyle.View}>
-        <Icon name="md-play-circle" size={150} color="white" />
+        <TouchableOpacity onPress={this.onAudioIconPressed}>
+          <Icon name="md-play-circle" size={150} color="white" />
+        </TouchableOpacity>
         <Text style={listenLobbyStyle.Name}>Jessica</Text>
         <Text style={listenLobbyStyle.Age}>23</Text>
       </View>
