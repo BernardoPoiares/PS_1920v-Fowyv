@@ -5,20 +5,41 @@ import {
   TextInput,
   StyleSheet,
   Text,
-  ScrollView,
+  FlatList,
   StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {AudioRecorder} from '../components/AudioRecorder.js';
+import {AudioMessage} from '../components/AudioMessage.js';
+import uuid from 'react-native-uuid';
+import {AudioUtils} from 'react-native-audio';
+
+const DATA = [];
 
 export class Chat extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
+    };
+  }
+
+  finishedRecording = async audioPath => {
+    DATA.push({audioPath: audioPath});
+    this.setState({
+      audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
+    });
+  };
+
   render() {
     return (
       <View style={chatStyle.container}>
         <StatusBar barStyle="light-content" backgroundColor="darkorange" />
         <View style={chatStyle.chatContainer}>
-          <ScrollView>
-            <Text>asdasd</Text>
-          </ScrollView>
+          <FlatList
+            data={DATA}
+            renderItem={({item}) => <AudioMessage audioPath={item.audioPath} />}
+          />
         </View>
         <View style={chatStyle.interactionContainer}>
           <TextInput
@@ -26,9 +47,15 @@ export class Chat extends React.Component {
             multiline
             numberOfLines={4}
           />
-          <TouchableOpacity style={chatStyle.microphoneContainer}>
-            <Icon name="microphone" size={15} style={chatStyle.microphone} />
-          </TouchableOpacity>
+          <View style={chatStyle.microphoneContainer}>
+            <AudioRecorder
+              audioPath={this.state.audioPath}
+              finishedRecording={this.finishedRecording}
+              iconSize={15}
+              iconColor={'white'}
+              iconStyle={chatStyle.microphone}
+            />
+          </View>
         </View>
       </View>
     );

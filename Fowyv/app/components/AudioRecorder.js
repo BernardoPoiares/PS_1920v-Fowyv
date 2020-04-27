@@ -151,7 +151,14 @@ export class AudioRecorder extends React.Component {
         <TouchableOpacity
           style={{alignSelf: 'center'}}
           onPress={this.onAudioIconPressed}>
-          <Icon name={this.chooseAudioIcon()} size={80} color="darkorange" />
+          <Icon
+            name={this.chooseAudioIcon()}
+            size={this.props.iconSize != null ? this.props.iconSize : 80}
+            color={
+              this.props.iconColor != null ? this.props.iconColor : 'darkorange'
+            }
+            style={this.props.iconStyle}
+          />
         </TouchableOpacity>
       );
     }
