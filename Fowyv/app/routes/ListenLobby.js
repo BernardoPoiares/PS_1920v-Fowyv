@@ -9,7 +9,7 @@ export class ListenLobby extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
+      audioPath: 'testsound.aac',
       hasAudio: false,
       sound: null,
       isPlaying: false,
