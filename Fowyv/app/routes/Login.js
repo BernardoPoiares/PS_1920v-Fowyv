@@ -1,24 +1,66 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import routes from 'res/routes';
 
+import {FieldValidator} from '../utils/FieldValidator';
+
 export class Login extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+    };
+  }
   onLoginPressed = () => {
     this.props.navigation.navigate('MainStack', {screen: routes.listen});
   };
   onNewAccountPressed = () => {
     this.props.navigation.navigate(routes.newAccount);
   };
+
+  onEmailChanged = value => {
+    this.setState({email: value});
+  };
+
+  onPasswordChanged = value => {
+    this.setState({password: value});
+  };
+
+  getEmailError() {
+    const msg = FieldValidator.EmailValidator(this.state.email);
+    if (msg != null) {
+      return this.buildErrorMsg(msg);
+    }
+  }
+
+  getPasswordError() {
+  }
+
+  buildErrorMsg = msg => {
+    return <TextInput style={loginStyle.inputError} value={msg} />;
+  };
+
   render() {
     return (
       <View style={loginStyle.view}>
         <Text style={loginStyle.header}>FOWYV</Text>
         <View style={loginStyle.container}>
           <Text style={loginStyle.formHeader}>Email</Text>
-          <TextInput style={loginStyle.textInput} />
+          <TextInput
+            onChangeText={this.onEmailChanged}
+            style={loginStyle.textInput}
+            value={this.state.email}
+          />
+          {this.getEmailError()}
           <Text style={loginStyle.formHeader}>Password</Text>
           <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+          {this.getPasswordError()}
           <TouchableOpacity
             style={loginStyle.formButton}
             onPress={this.onLoginPressed}>
@@ -73,5 +115,10 @@ const loginStyle = StyleSheet.create({
   },
   newAccount: {
     color: 'white',
+  },
+  inputError: {
+    color: 'red',
+    width: '80%',
+    fontSize: 12,
   },
 });
