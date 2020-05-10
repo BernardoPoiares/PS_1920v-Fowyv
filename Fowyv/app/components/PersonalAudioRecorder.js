@@ -13,7 +13,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Dropdown} from 'react-native-material-dropdown';
 import {AudioUtils} from 'react-native-audio';
-import {AudioRecorder} from './AudioRecorder.js';
+import {AudioRecorder} from '../utils/AudioRecorder.js';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
 const languages = [
@@ -33,6 +33,9 @@ export class PersonalAudioRecorder extends React.Component {
       hasAudio: false,
       sound: null,
       isPlaying: false,
+      recorder: new AudioRecorder(
+        AudioUtils.DocumentDirectoryPath + '/test.aac',
+      ),
     };
   }
 
@@ -60,8 +63,22 @@ export class PersonalAudioRecorder extends React.Component {
     return !this.state.isPlaying ? 'md-play-circle' : 'md-pause';
   };
 
+  chooseAudioRecorderIcon = () => {
+    return this.state.recorder.isRecording ? 'ios-square' : 'md-microphone';
+  };
+
   audioPlayingEnded = () => {
     this.setState({isPlaying: false});
+  };
+
+  onAudioRecorderIconPressed = () => {
+    if (this.state.recorder.isRecording) {
+      this.state.recorder
+        .stopRecording()
+        .then(audioPath => this.finishedRecording(audioPath));
+    } else {
+      this.state.recorder.startRecording();
+    }
   };
 
   onAudioIconPressed = () => {
@@ -75,7 +92,6 @@ export class PersonalAudioRecorder extends React.Component {
       this.setState({isPlaying: !this.state.isPlaying});
     }
   };
-
   render() {
     return (
       <Modal
@@ -94,11 +110,11 @@ export class PersonalAudioRecorder extends React.Component {
             </Text>
             <View style={personalAudioRecorderStyle.recorderContainer}>
               <View style={personalAudioRecorderStyle.recorderSemiContainer}>
-                <AudioRecorder
+                {/*<AudioRecorder
                   audioPath={this.state.audioPath}
                   finishedRecording={this.finishedRecording}
                   hide={this.hideAudioRecorder()}
-                />
+                />*/}
                 {!this.hideAudioPlayer() ? (
                   <TouchableOpacity
                     style={{alignSelf: 'center'}}
@@ -109,7 +125,18 @@ export class PersonalAudioRecorder extends React.Component {
                       color="darkorange"
                     />
                   </TouchableOpacity>
-                ) : null}
+                ) : (
+                  <TouchableOpacity
+                    style={{alignSelf: 'center'}}
+                    onPress={this.onAudioRecorderIconPressed}>
+                    <Icon
+                      name={this.chooseAudioRecorderIcon()}
+                      size={80}
+                      color="darkorange"
+                      style={this.props.iconStyle}
+                    />
+                  </TouchableOpacity>
+                )}
                 <TouchableOpacity
                   style={personalAudioRecorderStyle.eraseButton}
                   onPress={this.onErasePressed}>

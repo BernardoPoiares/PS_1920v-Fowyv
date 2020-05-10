@@ -99,7 +99,7 @@ export class AudioRecorder extends React.Component {
     }
   }
 
-  async startRecording() {
+   async startRecording() {
     if (this.state.recording) {
       console.warn('Already recording!');
       return;
@@ -109,11 +109,11 @@ export class AudioRecorder extends React.Component {
       console.warn("Can't record, no permission granted!");
       return;
     }
-    this.prepareRecordingPath(this.props.audioPath);
+    this.prepareRecordingPath(this.state.audioPath);
 
-    this.setState({isRecording: true, recording: true, paused: false});
     try {
       const filePath = await recorder.startRecording();
+      this.setState({isRecording: true, recording: true, paused: false});
       console.log(filePath);
     } catch (ex) {
       console.log(ex);
