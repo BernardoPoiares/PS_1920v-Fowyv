@@ -5,6 +5,12 @@ import SplashScreen from 'react-native-splash-screen';
 import 'react-native-gesture-handler';
 
 import {RootNavigatonContainer} from './app/navigators/RootNavigatonContainer.js';
+import {Provider} from 'react-redux';
+import {connect} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import persist from './app/redux/store.js';
+
+const persistStore = persist();
 
 export class App extends React.Component {
   componentDidMount() {
@@ -14,8 +20,17 @@ export class App extends React.Component {
   }
 
   render() {
-    return <RootNavigatonContainer />;
+    return (
+      <Provider store={persistStore.store}>
+        <PersistGate loading={null} persistor={persistStore.persistor}>
+          <RootNavigatonContainer />
+        </PersistGate>
+      </Provider>
+    );
   }
 }
 
-export default App;
+export default connect(
+  null,
+  null,
+)(App);
