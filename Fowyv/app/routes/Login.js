@@ -9,6 +9,8 @@ import {
 import routes from 'res/routes';
 
 import {FieldValidator} from '../utils/FieldValidator';
+import {connect} from 'react-redux';
+import {loginUser} from '../redux/actions/auth.actions';
 
 export class Login extends React.Component {
   constructor(props) {
@@ -18,7 +20,8 @@ export class Login extends React.Component {
     };
   }
   onLoginPressed = () => {
-    this.props.navigation.navigate('MainStack', {screen: routes.listen});
+    //this.props.navigation.navigate('MainStack', {screen: routes.listen});
+    this.props.dispatch(loginUser(null));
   };
   onNewAccountPressed = () => {
     this.props.navigation.navigate(routes.newAccount);
@@ -39,8 +42,7 @@ export class Login extends React.Component {
     }
   }
 
-  getPasswordError() {
-  }
+  getPasswordError() {}
 
   buildErrorMsg = msg => {
     return <TextInput style={loginStyle.inputError} value={msg} />;
@@ -75,6 +77,15 @@ export class Login extends React.Component {
     );
   }
 }
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(Login);
 
 const loginStyle = StyleSheet.create({
   view: {

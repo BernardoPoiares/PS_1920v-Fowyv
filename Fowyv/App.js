@@ -12,7 +12,8 @@ import persist from './app/redux/store.js';
 
 const persistStore = persist();
 
-export class App extends React.Component {
+export default class App extends React.Component {
+
   componentDidMount() {
     SplashScreen.hide();
     StatusBar.setBarStyle('light-content', true);
@@ -29,8 +30,3 @@ export class App extends React.Component {
     );
   }
 }
-
-export default connect(
-  null,
-  null,
-)(App);
