@@ -1,0 +1,15 @@
+{
+  "name": "fowyv_backend",
+  "version": "1.0.0",
+  "description": "Server application for Fowyv",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "BernardoPoiares",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "eslint": "^5.0.0"
+  }
+}
