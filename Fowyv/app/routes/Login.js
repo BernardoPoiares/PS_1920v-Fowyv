@@ -12,7 +12,7 @@ import {FieldValidator} from '../utils/FieldValidator';
 import {connect} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.actions';
 
-export class Login extends React.Component {
+class LoginComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -79,13 +79,13 @@ export class Login extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-  dispatch,
+  dispatch
 });
 
-export default connect(
+export const Login = connect(
   null,
   mapDispatchToProps,
-)(Login);
+)(LoginComponent);
 
 const loginStyle = StyleSheet.create({
   view: {

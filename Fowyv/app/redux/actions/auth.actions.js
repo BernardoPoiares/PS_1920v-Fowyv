@@ -4,6 +4,8 @@ export const loginUser = payload => {
   return async dispatch => {
     try {
       const response = await fetchApi('/user/login', 'POST', payload, 200);
-    } catch (ex) {}
+    } catch (ex) {
+        console.log(ex);
+    }
   };
 };

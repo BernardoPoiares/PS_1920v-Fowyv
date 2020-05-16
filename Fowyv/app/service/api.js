@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost.cpm';
+const BASE_URL = 'http://192.168.1.131:3001';
 
 export const api = async (url, method, body = null, headers = {}) => {
   try {
@@ -7,23 +7,25 @@ export const api = async (url, method, body = null, headers = {}) => {
 
     const fetchParams = {method, headers};
 
-    if (method === 'POST' && method === 'PUT' && !reqBody) {
+    /*if (method === 'POST' && method === 'PUT' && !reqBody) {
       throw new Error('Request body required');
     }
 
     if (reqBody) {
       fetchParams.headers['Content-type'] = 'application/json';
       fetchParams.body = 'application/json';
-    }
+    }*/
 
-    const fetchPromise = fetch(endPoint, fetchParams);
-    const timeOutPromise = new Promise((resolve, reject) => {
-      reject();
-    }, 10000);
+    return fetch(endPoint, fetchParams);
+    /*const timeOutPromise = new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject('Request Timeout');
+      }, 50000);
+    });
 
-    const response = await Promise.race(fetchPromise, timeOutPromise);
+    const response = await Promise.race([fetchPromise, timeOutPromise]).then((s)=>console.log(s));*/
 
-    return response;
+    //return response;
   } catch (e) {
     throw new Error(e);
   }
@@ -39,6 +41,11 @@ export const fetchApi = async (
 ) => {
   try {
     const headers = {};
+    const result = {
+      token: null,
+      success: false,
+      responseBody: null,
+    };
     if (token) {
       headers['x-auth'] = token;
     }
@@ -46,11 +53,14 @@ export const fetchApi = async (
     const response = await api(url, method, body, headers);
 
     if (response.status === statusCode) {
-      const responseBody = await response.json();
-      return responseBody;
+      result.success = true;
+      if (response.headers.get('x-auth')) {
+        result.token = response.headers.get('x-auth');
+      }
     }
+    result.responseBody = await response.json();
 
-    throw response;
+    throw result;
   } catch (error) {
     throw error;
   }
