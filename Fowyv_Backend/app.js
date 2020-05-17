@@ -9,3 +9,8 @@ app.listen(3001, ()=>{
 app.post("/user/login",(req,res,next)=>{
     res.json({token:"Hello"})
 })
+
+app.post("/user/logout",(req,res,next)=>{
+    console.log("logout")
+    res.json({token:"Hello"})
+})
