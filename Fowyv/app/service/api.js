@@ -60,7 +60,7 @@ export const fetchApi = async (
     }
     result.responseBody = await response.json();
 
-    throw result;
+    return result;
   } catch (error) {
     throw error;
   }

@@ -10,8 +10,9 @@ import {
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
-import routes from 'res/routes';
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
+import {connect} from 'react-redux';
+import {logoutUser} from '../redux/actions/auth.actions';
 
 const nonCollidingMultiSliderValue = [0, 100];
 const DATA = [
@@ -111,11 +112,9 @@ const AppSettings = ({onLogoutPressed}) => {
   );
 };
 
-export class Settings extends React.Component {
+class SettingsComponent extends React.Component {
   onLogoutPressed = () => {
-    this.props.navigation.navigate('AuthenticationStack', {
-      screen: routes.login,
-    });
+    this.props.dispatch(logoutUser());
   };
   render() {
     return (
@@ -129,6 +128,19 @@ export class Settings extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const Settings = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SettingsComponent);
 
 const settingsStyle = StyleSheet.create({
   view: {

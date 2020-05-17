@@ -6,14 +6,12 @@ import 'react-native-gesture-handler';
 
 import {RootNavigatonContainer} from './app/navigators/RootNavigatonContainer.js';
 import {Provider} from 'react-redux';
-import {connect} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import persist from './app/redux/store.js';
 
 const persistStore = persist();
 
 export default class App extends React.Component {
-
   componentDidMount() {
     SplashScreen.hide();
     StatusBar.setBarStyle('light-content', true);

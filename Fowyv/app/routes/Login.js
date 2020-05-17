@@ -11,6 +11,7 @@ import routes from 'res/routes';
 import {FieldValidator} from '../utils/FieldValidator';
 import {connect} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.actions';
+import {Loader} from '../components/Loader';
 
 class LoginComponent extends React.Component {
   constructor(props) {
@@ -78,12 +79,16 @@ class LoginComponent extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+});
+
 const mapDispatchToProps = dispatch => ({
-  dispatch
+  dispatch,
 });
 
 export const Login = connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(LoginComponent);
 
