@@ -4,11 +4,17 @@ export const loginUser = payload => {
   return async dispatch => {
     try {
       dispatch({type: 'AUTHENTICATE_USER_LOADING'});
-      const response = await fetchApi('/user/login', 'POST', payload, 200);
+      const response = await fetchApi('/api/auth/signin', 'POST', payload, 200);
 
       if (response.success) {
-        dispatch({type: 'AUTHENTICATE_USER_SUCCESS', token: response.token});
-        dispatch({type: 'GET_USER_SUCCESS', payload: response.token});
+        dispatch({
+          type: 'AUTHENTICATE_USER_SUCCESS',
+          token: response.responseBody.token,
+        });
+        dispatch({
+          type: 'GET_USER_SUCCESS',
+          payload: response.responseBody.token,
+        });
       } else {
         throw response;
       }
@@ -28,7 +34,13 @@ export const logoutUser = payload => {
         },
       } = state;
       dispatch({type: 'LOGOUT_USER_LOADING'});
-      const response = await fetchApi('/user/logout', 'POST', null, 200, token);
+      const response = await fetchApi(
+        '/api/auth/signout',
+        'POST',
+        null,
+        200,
+        token,
+      );
       console.log(response);
       if (response.success) {
         dispatch({type: 'LOGOUT_USER_SUCCESS'});
@@ -36,7 +48,6 @@ export const logoutUser = payload => {
         throw response;
       }
     } catch (ex) {
-      
       console.log(ex);
       dispatch({type: 'LOGOUT_USER_FAIL', payload: ex.responseBody});
     }

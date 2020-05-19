@@ -11,18 +11,20 @@ import routes from 'res/routes';
 import {FieldValidator} from '../utils/FieldValidator';
 import {connect} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.actions';
-import {Loader} from '../components/Loader';
 
 class LoginComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       email: '',
+      password: '',
     };
   }
   onLoginPressed = () => {
     //this.props.navigation.navigate('MainStack', {screen: routes.listen});
-    this.props.dispatch(loginUser(null));
+    this.props.dispatch(
+      loginUser({email: this.state.email, password: this.state.password}),
+    );
   };
   onNewAccountPressed = () => {
     this.props.navigation.navigate(routes.newAccount);
@@ -62,7 +64,11 @@ class LoginComponent extends React.Component {
           />
           {this.getEmailError()}
           <Text style={loginStyle.formHeader}>Password</Text>
-          <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+          <TextInput
+            onChangeText={this.onPasswordChanged}
+            secureTextEntry={true}
+            style={loginStyle.textInput}
+          />
           {this.getPasswordError()}
           <TouchableOpacity
             style={loginStyle.formButton}

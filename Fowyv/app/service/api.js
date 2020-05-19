@@ -7,14 +7,14 @@ export const api = async (url, method, body = null, headers = {}) => {
 
     const fetchParams = {method, headers};
 
-    /*if (method === 'POST' && method === 'PUT' && !reqBody) {
+    if (method === 'POST' && method === 'PUT' && !reqBody) {
       throw new Error('Request body required');
     }
 
     if (reqBody) {
       fetchParams.headers['Content-type'] = 'application/json';
-      fetchParams.body = 'application/json';
-    }*/
+      fetchParams.body = reqBody;
+    }
 
     return fetch(endPoint, fetchParams);
     /*const timeOutPromise = new Promise((resolve, reject) => {
@@ -47,18 +47,17 @@ export const fetchApi = async (
       responseBody: null,
     };
     if (token) {
-      headers['x-auth'] = token;
+      headers.Authorization = 'Bearer ' + token;
     }
 
     const response = await api(url, method, body, headers);
 
     if (response.status === statusCode) {
       result.success = true;
-      if (response.headers.get('x-auth')) {
-        result.token = response.headers.get('x-auth');
+      if (response.headers.get('Content-Type')) {
+        result.responseBody = await response.json();
       }
     }
-    result.responseBody = await response.json();
 
     return result;
   } catch (error) {
