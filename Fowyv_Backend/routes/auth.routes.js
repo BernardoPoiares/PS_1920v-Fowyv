@@ -1,5 +1,5 @@
-const { authMiddleware } = require("../middlewares");
-const controller = require("../controllers/auth.controller");
+import { authMiddleware,signUpMiddleware } from "../middlewares";
+import controller from "../controllers/auth.controller";
 
 module.exports = function(app) {
   app.use(function(req, res, next) {
@@ -9,14 +9,14 @@ module.exports = function(app) {
     );
     next();
   });
-/*
+
   app.post(
     "/api/auth/signup",
     [
-        signUpMiddleware.checkDuplicateUsernameOrEmail
+        signUpMiddleware.checkDuplicateEmail
     ],
     controller.signup
-  );*/
+  );
 
   app.post("/api/auth/signin", controller.signin);
 

@@ -2,10 +2,12 @@
 //const ROLES = db.ROLES;
 //const User = db.user;
 
+import controller from "../controllers/auth.controller";
+import  Users  from '../dummy/Users';
 checkDuplicateEmail = (req, res, next) => {
-/*
+
     // Email
-    User.findOne({
+    /*User.findOne({
       email: req.body.email
     }).exec((err, user) => {
       if (err) {
@@ -20,6 +22,8 @@ checkDuplicateEmail = (req, res, next) => {
 
       next();
     });*/
+    if(Users.find(user=>user.email===req.body.email))
+      return res.status(500).send({ message: 'User already registered' });
     next();
 };
 

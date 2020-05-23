@@ -1,13 +1,15 @@
-const config = require("../config/auth.config");
+import config from "../config/auth.config";
 //const db = require("../models");
 //const User = db.user;
 //const Role = db.role;
 
-var jwt = require("jsonwebtoken");
-var bcrypt = require("bcryptjs");
+import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
-/*exports.signup = (req, res) => {
-  const user = new User({
+import Users from '../dummy/Users';
+
+exports.signup = (req, res) => {
+  /*const user = new User({
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   });
@@ -16,9 +18,13 @@ var bcrypt = require("bcryptjs");
     if (err) {
       res.status(500).send({ message: err });
       return;
-    }
+    }*/
+    Users.push({
+      email: req.body.email,
+      password: bcrypt.hashSync(req.body.password, 8)
+    });
 
-    if (req.body.roles) {
+    /*if (req.body.roles) {
       Role.find(
         {
           name: { $in: req.body.roles }
@@ -57,14 +63,21 @@ var bcrypt = require("bcryptjs");
           res.send({ message: "User was registered successfully!" });
         });
       });
-    }
-  });
-};*/
+    }*/
+    var token = jwt.sign({ email: user.email }, config.secret, {
+      expiresIn: 86400 // 24 hours
+    });
+    res.status(200).json({
+      email: user.email,
+      token: token
+    });
+};
 
 exports.signin = (req, res) => {
   /*User.findOne({
     username: req.body.username
   })*/
+  const user=Users.find(user=>user.email===req.body.email)
     const exec=((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -75,11 +88,10 @@ exports.signin = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
       }
 
-      /*var passwordIsValid = bcrypt.compareSync(
+      var passwordIsValid = bcrypt.compareSync(
         req.body.password,
         user.password
-      );*/
-      var passwordIsValid= user.password === req.body.password;
+      );
       if (!passwordIsValid) {
         return res.status(401).send({
           token: null,
@@ -96,11 +108,11 @@ exports.signin = (req, res) => {
       });
     });
     
-    if(req.body.email==='a@a.a')
-    return exec (null,{email:"a@a.a",password:"hello"})
-    return exec (null,null)
+    return exec (null,user)
 };
 
 exports.signout = (req, res) => {
       res.status(200).send();
   };
+
+  

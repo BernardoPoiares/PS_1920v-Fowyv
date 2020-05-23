@@ -15,5 +15,10 @@
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "jsonwebtoken": "^8.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.9.6",
+    "@babel/preset-env": "^7.9.6",
+    "@babel/register": "^7.9.0"
   }
 }

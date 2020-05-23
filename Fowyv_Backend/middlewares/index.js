@@ -1,5 +1,5 @@
-const authMiddleware = require("./authMiddleware");
-const signUpMiddleware = require("./signUpMiddleware");
+import authMiddleware from "./authMiddleware";
+import signUpMiddleware from "./signUpMiddleware";
 
 module.exports = {
     authMiddleware,
