@@ -16,16 +16,16 @@ export const api = async (url, method, body = null, headers = {}) => {
       fetchParams.body = reqBody;
     }
 
-    return fetch(endPoint, fetchParams);
-    /*const timeOutPromise = new Promise((resolve, reject) => {
+    const fetchPromise = fetch(endPoint, fetchParams);
+    const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('Request Timeout');
-      }, 50000);
+      }, 10000);
     });
 
-    const response = await Promise.race([fetchPromise, timeOutPromise]).then((s)=>console.log(s));*/
+    const response = await Promise.race([fetchPromise, timeOutPromise]);
 
-    //return response;
+    return response;
   } catch (e) {
     throw new Error(e);
   }
@@ -51,7 +51,7 @@ export const fetchApi = async (
     }
 
     const response = await api(url, method, body, headers);
-
+    console.log(response);
     if (response.status === statusCode) {
       result.success = true;
       if (response.headers.get('Content-Type')) {
