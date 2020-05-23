@@ -1,17 +1,12 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Dimensions,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
-import routes from 'res/routes';
 import {FieldValidator} from '../utils/FieldValidator';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {createUser} from '../redux/actions/auth.actions';
+import {connect} from 'react-redux';
 
-export class NewAccount extends React.Component {
+class NewAccountComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -22,7 +17,13 @@ export class NewAccount extends React.Component {
   }
 
   onCreateAccountPressed = () => {
-    this.props.navigation.navigate(routes.setProfile);
+    this.props.dispatch(
+      createUser({
+        email: this.state.email,
+        password: this.state.password,
+        confirmPassword: this.state.confirmPassword,
+      }),
+    );
   };
   onBackPressed = () => {
     this.props.navigation.goBack(null);
@@ -108,6 +109,19 @@ export class NewAccount extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const NewAccount = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(NewAccountComponent);
 
 const loginStyle = StyleSheet.create({
   view: {

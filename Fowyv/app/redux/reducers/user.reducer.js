@@ -5,7 +5,7 @@ const getUser = (state = {}, action) => {
     case 'GET_USER_LOADING':
       return {
         isLoading: true,
-        token: null,
+        token: state.token,
         isError: false,
         isSuccess: false,
         errors: null,
@@ -14,7 +14,7 @@ const getUser = (state = {}, action) => {
     case 'GET_USER_SUCCESS':
       return {
         isLoading: false,
-        token: null,
+        token: action.token,
         isError: false,
         isSuccess: true,
         errors: null,
@@ -23,7 +23,7 @@ const getUser = (state = {}, action) => {
     case 'GET_USER_FAIL':
       return {
         isLoading: false,
-        token: null,
+        token: state.token,
         isError: true,
         isSuccess: false,
         errors: action.payload,

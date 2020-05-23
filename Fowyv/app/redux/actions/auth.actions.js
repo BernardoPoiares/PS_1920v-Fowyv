@@ -11,10 +11,6 @@ export const loginUser = payload => {
           type: 'AUTHENTICATE_USER_SUCCESS',
           token: response.responseBody.token,
         });
-        dispatch({
-          type: 'GET_USER_SUCCESS',
-          payload: response.responseBody.token,
-        });
       } else {
         throw response;
       }
@@ -50,6 +46,25 @@ export const logoutUser = payload => {
     } catch (ex) {
       console.log(ex);
       dispatch({type: 'LOGOUT_USER_FAIL', payload: ex.responseBody});
+    }
+  };
+};
+
+export const createUser = payload => {
+  return async dispatch => {
+    try {
+      dispatch({type: 'AUTHENTICATE_USER_LOADING'});
+      const response = await fetchApi('/api/auth/signup', 'POST', payload, 200);
+      if (response.success) {
+        dispatch({
+          type: 'AUTHENTICATE_USER_SUCCESS',
+          token: response.responseBody.token,
+        });
+      } else {
+        throw response;
+      }
+    } catch (ex) {
+      dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };
 };

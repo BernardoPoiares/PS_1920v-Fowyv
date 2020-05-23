@@ -6,7 +6,6 @@ import routes from 'res/routes';
 import {Home} from '../routes/Home.js';
 import {Login} from '../routes/Login.js';
 import {NewAccount} from '../routes/NewAccount.js';
-import {SetProfile} from '../routes/SetProfile.js';
 
 const AuthenticationStack = createStackNavigator();
 
@@ -18,10 +17,6 @@ export const AuthenticationStackNavigator = () => {
       <AuthenticationStack.Screen
         name={routes.newAccount}
         component={NewAccount}
-      />
-      <AuthenticationStack.Screen
-        name={routes.setProfile}
-        component={SetProfile}
       />
     </AuthenticationStack.Navigator>
   );

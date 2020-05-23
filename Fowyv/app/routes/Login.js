@@ -21,7 +21,6 @@ class LoginComponent extends React.Component {
     };
   }
   onLoginPressed = () => {
-    //this.props.navigation.navigate('MainStack', {screen: routes.listen});
     this.props.dispatch(
       loginUser({email: this.state.email, password: this.state.password}),
     );
