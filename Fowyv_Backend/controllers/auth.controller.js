@@ -64,11 +64,11 @@ exports.signup = (req, res) => {
         });
       });
     }*/
-    var token = jwt.sign({ email: user.email }, config.secret, {
+    var token = jwt.sign({ email: req.body.email }, config.secret, {
       expiresIn: 86400 // 24 hours
     });
     res.status(200).json({
-      email: user.email,
+      email: req.body.email,
       token: token
     });
 };

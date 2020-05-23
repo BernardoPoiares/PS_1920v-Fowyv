@@ -1,7 +1,7 @@
-import authMiddleware from "./authMiddleware";
-import signUpMiddleware from "./signUpMiddleware";
+import {authMiddleware} from "./authMiddleware";
+import {signUpMiddleware} from "./signUpMiddleware.js";
 
-module.exports = {
+export{
     authMiddleware,
     signUpMiddleware
 };

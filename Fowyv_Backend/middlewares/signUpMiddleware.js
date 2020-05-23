@@ -2,9 +2,8 @@
 //const ROLES = db.ROLES;
 //const User = db.user;
 
-import controller from "../controllers/auth.controller";
 import  Users  from '../dummy/Users';
-checkDuplicateEmail = (req, res, next) => {
+const checkDuplicateEmail = (req, res, next) => {
 
     // Email
     /*User.findOne({
@@ -27,8 +26,6 @@ checkDuplicateEmail = (req, res, next) => {
     next();
 };
 
-const signUpMiddleware = {
+export const signUpMiddleware = {
   checkDuplicateEmail
 };
-
-module.exports = signUpMiddleware;

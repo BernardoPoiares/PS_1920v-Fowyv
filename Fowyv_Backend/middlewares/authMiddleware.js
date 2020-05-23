@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import config from "../config/auth.config.js";
 
-verifyToken = (req, res, next) => {
+const verifyToken = (req, res, next) => {
   const authorizationValue = req.headers["authorization"];
   let token= authorizationValue !==undefined ? authorizationValue.replace('Bearer ',''):null;
   if (!token) {
@@ -17,7 +17,6 @@ verifyToken = (req, res, next) => {
   });
 };
 
-const authMiddleware = {
+export const authMiddleware = {
   verifyToken,
 };
-module.exports = authMiddleware;
