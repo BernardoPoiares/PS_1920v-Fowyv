@@ -45,7 +45,12 @@ class LoginComponent extends React.Component {
     }
   }
 
-  getPasswordError() {}
+  getPasswordError() {
+    const msg = FieldValidator.PasswordValidator(this.state.password);
+    if (msg != null) {
+      return this.buildErrorMsg(msg);
+    }
+  }
 
   buildErrorMsg = msg => {
     return <TextInput style={loginStyle.inputError} value={msg} />;

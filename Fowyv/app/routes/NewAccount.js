@@ -8,16 +8,63 @@ import {
 } from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import routes from 'res/routes';
-import {NavigationActions} from 'react-navigation';
+import {FieldValidator} from '../utils/FieldValidator';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 
 export class NewAccount extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      email: '',
+      password: '',
+      confirmPassword: '',
+    };
+  }
+
   onCreateAccountPressed = () => {
     this.props.navigation.navigate(routes.setProfile);
   };
   onBackPressed = () => {
     this.props.navigation.goBack(null);
   };
+
+  onEmailChanged = value => {
+    this.setState({email: value});
+  };
+
+  onPasswordChanged = value => {
+    this.setState({password: value});
+  };
+
+  onPasswordConfirmChanged = value => {
+    this.setState({passwordConfirm: value});
+  };
+
+  getEmailError() {
+    const msg = FieldValidator.EmailValidator(this.state.email);
+    if (msg != null) {
+      return this.buildErrorMsg(msg);
+    }
+  }
+
+  getPasswordError() {
+    const msg = FieldValidator.PasswordValidator(this.state.password);
+    if (msg != null) {
+      return this.buildErrorMsg(msg);
+    }
+  }
+
+  getPasswordConfirmError() {
+    const msg = FieldValidator.PasswordValidator(this.state.passwordConfirm);
+    if (msg != null) {
+      return this.buildErrorMsg(msg);
+    }
+  }
+
+  buildErrorMsg = msg => {
+    return <Text style={loginStyle.inputError}>{msg}</Text>;
+  };
+
   render() {
     return (
       <View style={loginStyle.view}>
@@ -25,11 +72,25 @@ export class NewAccount extends React.Component {
         <View style={loginStyle.container}>
           <View style={loginStyle.formContainer}>
             <Text style={loginStyle.formHeader}>Email</Text>
-            <TextInput style={loginStyle.textInput} />
+            <TextInput
+              style={loginStyle.textInput}
+              onChangeText={this.onEmailChanged}
+            />
+            {this.getEmailError()}
             <Text style={loginStyle.formHeader}>Password</Text>
-            <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+            <TextInput
+              secureTextEntry={true}
+              style={loginStyle.textInput}
+              onChangeText={this.onPasswordChanged}
+            />
+            {this.getPasswordError()}
             <Text style={loginStyle.formHeader}>Confirm Password</Text>
-            <TextInput secureTextEntry={true} style={loginStyle.textInput} />
+            <TextInput
+              secureTextEntry={true}
+              style={loginStyle.textInput}
+              onChangeText={this.onPasswordConfirmChanged}
+            />
+            {this.getPasswordConfirmError()}
             <TouchableOpacity
               style={loginStyle.formButton}
               onPress={this.onCreateAccountPressed}>
@@ -56,12 +117,13 @@ const loginStyle = StyleSheet.create({
     backgroundColor: 'darkorange',
   },
   container: {
+    width: '66.7%',
+    minHeight: '40%',
     justifyContent: 'center',
     alignItems: 'center',
   },
   formContainer: {
-    height: 300,
-    width: (Dimensions.get('window').width / 3) * 2,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
@@ -75,7 +137,7 @@ const loginStyle = StyleSheet.create({
   },
   textInput: {
     backgroundColor: 'moccasin',
-    width: '80%',
+    width: '70%',
     height: 35,
   },
   formButton: {
@@ -84,6 +146,7 @@ const loginStyle = StyleSheet.create({
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 15,
   },
   backContainer: {
     flexDirection: 'row',
@@ -96,5 +159,9 @@ const loginStyle = StyleSheet.create({
     color: 'white',
     fontSize: 30,
     marginLeft: 5,
+  },
+  inputError: {
+    fontSize: 12,
+    color: 'red',
   },
 });
