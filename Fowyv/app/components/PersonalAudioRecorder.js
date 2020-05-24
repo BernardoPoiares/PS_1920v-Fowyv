@@ -8,7 +8,6 @@ import {
   Modal,
   Alert,
   StatusBar,
-  TouchableHighlight,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {Dropdown} from 'react-native-material-dropdown';
@@ -36,6 +35,7 @@ export class PersonalAudioRecorder extends React.Component {
       recorder: new AudioRecorder(
         AudioUtils.DocumentDirectoryPath + '/test.aac',
       ),
+      language: null,
     };
   }
 
@@ -92,6 +92,16 @@ export class PersonalAudioRecorder extends React.Component {
       this.setState({isPlaying: !this.state.isPlaying});
     }
   };
+
+  onLanguageChanged = value => {
+    this.setState({language: value});
+  };
+
+  onSavePressed = () => {
+    this.props.audioFileRecorded(this.state.audioPath, this.state.language);
+    this.props.goBack();
+  };
+
   render() {
     return (
       <Modal
@@ -147,6 +157,7 @@ export class PersonalAudioRecorder extends React.Component {
                 label="language"
                 containerStyle={personalAudioRecorderStyle.dropdown}
                 data={languages}
+                onChangeText={this.onLanguageChanged}
               />
             </View>
             <View style={personalAudioRecorderStyle.buttonsContainer}>
@@ -155,7 +166,9 @@ export class PersonalAudioRecorder extends React.Component {
                 onPress={this.props.goBack}>
                 <Text>Back</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={personalAudioRecorderStyle.bottomButton}>
+              <TouchableOpacity
+                style={personalAudioRecorderStyle.bottomButton}
+                onPress={this.onSavePressed}>
                 <Text>Save</Text>
               </TouchableOpacity>
             </View>

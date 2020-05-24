@@ -20,7 +20,7 @@ export const api = async (url, method, body = null, headers = {}) => {
     const timeOutPromise = new Promise((resolve, reject) => {
       setTimeout(() => {
         reject('Request Timeout');
-      }, 10000);
+      }, 100000);
     });
 
     const response = await Promise.race([fetchPromise, timeOutPromise]);

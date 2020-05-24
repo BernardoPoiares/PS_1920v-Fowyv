@@ -19,6 +19,7 @@ export class PersonalAudioContainer extends React.Component {
         <PersonalAudioRecorder
           modalVisible={this.state.modalVisible}
           goBack={this.onRecordPersonalAudioPressed}
+          audioFileRecorded={this.props.onAudioFileRecorded}
         />
         <View style={personalAudioContainerStyle.container}>
           <TouchableOpacity style={personalAudioContainerStyle.iconContainer}>

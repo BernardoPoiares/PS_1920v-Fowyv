@@ -13,15 +13,42 @@ import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import {saveUserDetails} from '../redux/actions/user.action';
+import {connect} from 'react-redux';
 
-export class SetProfile extends React.Component {
+class SetProfileComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {date: '2016-05-15'};
+    this.state = {
+      name: null,
+      date: '2016-05-15',
+      icon: 'play',
+      audioFile: null,
+    };
   }
-  onSetAccount = () => {
-    this.props.navigation.navigate('MainStack', routes.listen);
+
+  onSetProfile = () => {
+    this.props.dispatch(
+      saveUserDetails({
+        userDetails: {
+          name: this.state.name,
+          date: this.state.date,
+          icon: this.state.icon,
+          audioFile: this.state.audioFile,
+        },
+        token: this.props.authenticatedUser.token,
+      }),
+    );
   };
+
+  onNameChanged = value => {
+    this.setState({name: value});
+  };
+
+  onAudioFileRecorded = (audioPath, language) => {
+    this.setState({audioFile: {audioPath: audioPath, language: language}});
+  };
+
   render() {
     return (
       <View style={loginStyle.view}>
@@ -29,7 +56,10 @@ export class SetProfile extends React.Component {
         <View style={loginStyle.container}>
           <View style={loginStyle.formContainer}>
             <Text style={loginStyle.formHeader}>Name</Text>
-            <TextInput style={loginStyle.textInput} />
+            <TextInput
+              style={loginStyle.textInput}
+              onChangeText={this.onNameChanged}
+            />
             <Text style={loginStyle.formHeader}>Age</Text>
             <DatePicker
               style={{width: '100%'}}
@@ -59,12 +89,13 @@ export class SetProfile extends React.Component {
             <PersonalAudioContainer
               propsStyle={personalAudioStyle}
               iconColor="darkorange"
+              onAudioFileRecorded={this.onAudioFileRecorded}
             />
             <TouchableOpacity
               style={loginStyle.playContainer}
-              onPress={this.onSetAccount}>
+              onPress={this.onSetProfile}>
               <Text style={loginStyle.playHeader}>Play</Text>
-              <Icon name="play" size={30} color="black" />
+              <Icon name={this.state.icon} size={30} color="black" />
             </TouchableOpacity>
           </View>
         </View>
@@ -72,6 +103,19 @@ export class SetProfile extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const SetProfile = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(SetProfileComponent);
 
 const loginStyle = StyleSheet.create({
   view: {
