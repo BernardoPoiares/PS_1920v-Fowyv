@@ -26,12 +26,12 @@ const DATA = [
   },
 ];
 
-const AccountSettings = () => {
+const AccountSettings = ({name}) => {
   return (
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>Account Settings</Text>
       <Text style={settingsStyle.fieldHeader}>Name</Text>
-      <TextInput style={settingsStyle.fieldInput}>Jessica</TextInput>
+      <TextInput style={settingsStyle.fieldInput} value={name} />
       <Text style={settingsStyle.fieldHeader}>Age</Text>
       <TextInput style={settingsStyle.fieldInput}>23</TextInput>
     </View>
@@ -119,11 +119,13 @@ class SettingsComponent extends React.Component {
   render() {
     return (
       <View style={settingsStyle.view}>
-        <ScrollView style={settingsStyle.scrollView}>
-          <AccountSettings />
-          <PersonalAudio />
-          <AppSettings onLogoutPressed={this.onLogoutPressed} />
-        </ScrollView>
+        {this.props.getUser.userDetails ? (
+          <ScrollView style={settingsStyle.scrollView}>
+            <AccountSettings name={this.props.getUser.userDetails.name} />
+            <PersonalAudio />
+            <AppSettings onLogoutPressed={this.onLogoutPressed} />
+          </ScrollView>
+        ) : null}
       </View>
     );
   }
@@ -131,6 +133,7 @@ class SettingsComponent extends React.Component {
 
 const mapStateToProps = state => ({
   authenticatedUser: state.authReducer.authenticateUser,
+  getUser: state.userReducer.getUser,
 });
 
 const mapDispatchToProps = dispatch => ({

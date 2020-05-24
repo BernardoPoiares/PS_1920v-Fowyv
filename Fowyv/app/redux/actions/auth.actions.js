@@ -1,5 +1,5 @@
 import {fetchApi} from '../../service/api';
-
+import {getUserDetails} from './user.action';
 export const loginUser = payload => {
   return async dispatch => {
     try {
@@ -7,14 +7,19 @@ export const loginUser = payload => {
       const response = await fetchApi('/api/auth/signin', 'POST', payload, 200);
 
       if (response.success) {
-        dispatch({
-          type: 'AUTHENTICATE_USER_SUCCESS',
-          token: response.responseBody.token,
-        });
+        dispatch(getUserDetails({token: response.responseBody.token})).then(
+          () => {
+            dispatch({
+              type: 'AUTHENTICATE_USER_SUCCESS',
+              token: response.responseBody.token,
+            });
+          },
+        );
       } else {
         throw response;
       }
     } catch (ex) {
+      console.log(ex);
       dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };
