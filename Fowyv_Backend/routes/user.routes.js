@@ -10,6 +10,14 @@ module.exports = (app)=> {
     next();
   });
 
+  app.get(
+    "/api/user/details",
+    [
+        authMiddleware.verifyToken
+    ],
+    controller.getDetails
+  );
+
   app.post(
     "/api/user/details",
     [

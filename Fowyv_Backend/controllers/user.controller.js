@@ -1,6 +1,15 @@
 import UsersDetails from '../dummy/UsersDetails';
 import AudioFiles from '../dummy/AudioFiles';
 
+
+exports.getDetails = (req, res) => {
+    const user=UsersDetails.find(user=>
+        user.email===req.email);
+    if(!user)
+        return res.status(404).send({ message: "User Not found." });
+    return res.status(200).json(user);
+}
+
 exports.saveDetails = (req, res) => {
     let user=UsersDetails.find(user=>user.email===req.email);
     if(!user)
@@ -15,7 +24,8 @@ exports.saveDetails = (req, res) => {
 }
 
 exports.setProfile = (req, res) => {
-    let user=UsersDetails.find(user=>user.email===req.email);
+    let user=UsersDetails.find(
+        user=>user.email===req.email);
     if(!user){
         user={email:req.email,name:null,age:null,icon:null};
         ({audioFile,...user} = req.body);
