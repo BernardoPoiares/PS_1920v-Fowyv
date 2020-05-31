@@ -1,57 +1,55 @@
 import React from 'react';
-import {Text, View, TouchableOpacity, StyleSheet} from 'react-native';
-import {AudioUtils} from 'react-native-audio';
-import {AudioPlayer} from '../utils/AudioPlayer.js';
+import {View, StyleSheet, FlatList, Animated} from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
-import Icon from 'react-native-vector-icons/Ionicons';
+import {ListenUser} from '../components/ListenUser';
+
+const data = [
+  {id: 'a@a.a', name: 'Jessica', age: 23},
+  {id: 'a2@a.a', name: 'Telma', age: 30},
+  {id: 'a3@a.a', name: 'Andreia', age: 21},
+];
 
 export class ListenLobby extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      audioPath: 'testsound.aac',
-      hasAudio: false,
-      sound: null,
-      isPlaying: false,
-    };
   }
 
-  componentDidMount() {
-    AudioPlayer.createSound(this.state.audioPath, this.setSound);
-  }
-
-  setSound = sound => {
-    this.setState({hasAudio: true, sound: sound});
+  LeftActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [0, 100],
+      outputRange: [0, 1],
+      extrapolate: 'clamp',
+    });
+    return (
+      <Animated.View style={{transform: [{scale: scale}]}}>
+        <ListenUser name={data[0].name} age={data[0].age} />
+      </Animated.View>
+    );
   };
 
-  chooseAudioIcon = () => {
-    return !this.state.isPlaying ? 'md-play-circle' : 'md-pause';
+  RightActions = (progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [1, 0],
+      extrapolate: 'clamp',
+    });
+    return (
+      <Animated.View style={{transform: [{scale: scale}]}}>
+        <ListenUser name={data[0].name} age={data[0].age} />
+      </Animated.View>
+    );
   };
-
-  audioPlayingEnded = () => {
-    this.setState({isPlaying: false});
-  };
-
-  onAudioIconPressed = () => {
-    if (this.state.sound !== null) {
-      if (!this.state.isPlaying) {
-        AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
-      } else {
-        AudioPlayer.pauseAudio(this.state.sound);
-        this.setState({isPlaying: false});
-      }
-      this.setState({isPlaying: !this.state.isPlaying});
-    }
-  };
-
   render() {
     return (
       <View style={listenLobbyStyle.View}>
-        <TouchableOpacity onPress={this.onAudioIconPressed}>
-          <Icon name="md-play-circle" size={150} color="white" />
-        </TouchableOpacity>
-        <Text style={listenLobbyStyle.Name}>Jessica</Text>
-        <Text style={listenLobbyStyle.Age}>23</Text>
+        <Swipeable
+          containerStyle={listenLobbyStyle.SwipeableContainer}
+          childrenContainerStyle={listenLobbyStyle.SwipeableItemContainer}
+          renderLeftActions={this.LeftActions}
+          renderRightActions={this.RightActions}>
+          <ListenUser name={data[1].name} age={data[1].age} />
+        </Swipeable>
       </View>
     );
   }
@@ -60,18 +58,14 @@ export class ListenLobby extends React.Component {
 const listenLobbyStyle = StyleSheet.create({
   View: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'darkorange',
   },
-  Logo: {width: 200, height: 200, resizeMode: 'contain'},
-  Name: {
-    fontSize: 50,
-    fontWeight: 'bold',
-    color: 'white',
+  SwipeableContainer: {
+    flex: 1,
+    alignSelf: 'stretch',
   },
-  Age: {
-    fontSize: 20,
-    color: 'white',
+  SwipeableItemContainer: {
+    flex: 1,
   },
 });
