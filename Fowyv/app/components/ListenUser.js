@@ -68,6 +68,8 @@ const listenUserStyle = StyleSheet.create({
     alignItems: 'center',
     width: Math.round(Dimensions.get('window').width),
     backgroundColor: 'darkorange',
+    resizeMode: "cover",
+    borderRadius: 20
   },
   Logo: {width: 200, height: 200, resizeMode: 'contain'},
   Name: {
