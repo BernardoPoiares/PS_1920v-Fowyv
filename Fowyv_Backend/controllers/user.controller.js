@@ -4,19 +4,19 @@ import AudioFiles from '../dummy/AudioFiles';
 
 exports.getDetails = (req, res) => {
     const user=UsersDetails.find(user=>
-        user.email===req.email);
+        user.email == req.email);
     if(!user)
         return res.status(404).send({ message: "User Not found." });
     return res.status(200).json(user);
 }
 
 exports.saveDetails = (req, res) => {
-    let user=UsersDetails.find(user=>user.email===req.email);
+    let user=UsersDetails.find(user=>user.email == req.email);
     if(!user)
         user={email:req.email}
     
     Object.assign(user,req.body);
-    UsersDetails= UsersDetails.map(u=>u.email===req.email? user:u);
+    UsersDetails= UsersDetails.map(u=>u.email ==req.email? user:u);
 
         
     res.status(200).send();
@@ -25,23 +25,23 @@ exports.saveDetails = (req, res) => {
 
 exports.setProfile = (req, res) => {
     let user=UsersDetails.find(
-        user=>user.email===req.email);
+        user=>user.email == req.email);
     if(!user){
         user={email:req.email,name:null,age:null,icon:null};
         ({audioFile,...user} = req.body);
         UsersDetails.push(user);
     }else{
         ({...user} = req.body);
-        UsersDetails[UsersDetails.findIndex(u=>u.email===req.email)]=user;
+        UsersDetails[UsersDetails.findIndex(u=>u.email==req.email)]=user;
     }
-    let audioFile=AudioFiles.find(af=>af.email===req.email);
+    let audioFile=AudioFiles.find(af=>af.email == req.email);
     if(!audioFile){
         audioFile={email:req.email,language:null,path:null};
         ({...audioFile} = req.body.audioFile);
         AudioFiles.push(audioFile);
     }else{
         ({...audioFile} = req.body.audioFile);
-        AudioFiles[AudioFiles.findIndex(af=>af.email===req.email)]=audioFile;
+        AudioFiles[AudioFiles.findIndex(af=>af.email==req.email)]=audioFile;
     }
         
     res.status(200).send();

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Animated, Text, PanResponder} from 'react-native';
+import {View, StyleSheet, Animated, Text, PanResponder, Dimensions} from 'react-native';
 
 import {ListenUser} from '../components/ListenUser';
 
@@ -9,13 +9,17 @@ const data = [
   {id: 'a3@a.a', name: 'Andreia', age: 21},
 ];
 
+const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
 export class ListenLobby extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      currentIndex: 0,
+    };
     this.position = new Animated.ValueXY();
 
     this.rotate = this.position.x.interpolate({
-      inputRange: [-500 / 2, 0, 500 / 2],
+      inputRange: [-WINDOW_WIDTH / 2, 0, WINDOW_WIDTH / 2],
       outputRange: ['-10deg', '0deg', '10deg'],
       extrapolate: 'clamp',
     });
@@ -36,17 +40,17 @@ export class ListenLobby extends React.Component {
         this.position.setValue({x: gestureState.dx, y: gestureState.dy});
       },
       onPanResponderRelease: (evt, gestureState) => {
-        if (gestureState.dx > 120) {
+        if (gestureState.dx > 100) {
           Animated.spring(this.position, {
-            toValue: {x: 500 + 100, y: gestureState.dy},
+            toValue: {x: WINDOW_WIDTH + 100, y: gestureState.dy},
           }).start(() => {
             this.setState({currentIndex: this.state.currentIndex + 1}, () => {
               this.position.setValue({x: 0, y: 0});
             });
           });
-        } else if (gestureState.dx < -120) {
+        } else if (gestureState.dx < -100) {
           Animated.spring(this.position, {
-            toValue: {x: -500 - 100, y: gestureState.dy},
+            toValue: {x: -WINDOW_WIDTH - 100, y: gestureState.dy},
           }).start(() => {
             this.setState({currentIndex: this.state.currentIndex + 1}, () => {
               this.position.setValue({x: 0, y: 0});
@@ -55,37 +59,12 @@ export class ListenLobby extends React.Component {
         } else {
           Animated.spring(this.position, {
             toValue: {x: 0, y: 0},
-            friction: 4,
+            friction: 10,
           }).start();
         }
       },
     });
   }
-  LeftActions = (progress, dragX) => {
-    const scale = dragX.interpolate({
-      inputRange: [0, 100],
-      outputRange: [0, 1],
-      extrapolate: 'clamp',
-    });
-    return (
-      <Animated.View style={{transform: [{scale: scale}]}}>
-        <ListenUser name={data[0].name} age={data[0].age} />
-      </Animated.View>
-    );
-  };
-
-  RightActions = (progress, dragX) => {
-    const scale = dragX.interpolate({
-      inputRange: [-100, 0],
-      outputRange: [1, 0],
-      extrapolate: 'clamp',
-    });
-    return (
-      <Animated.View style={{transform: [{scale: scale}]}}>
-        <ListenUser name={data[0].name} age={data[0].age} />
-      </Animated.View>
-    );
-  };
 
   areMoreUsers = () => {
     return data.length > 0;
@@ -104,16 +83,11 @@ export class ListenLobby extends React.Component {
         {this.areMoreUsers() ? (
           <Animated.View
             {...this.PanResponder.panHandlers}
-            style={[
-              this.rotateAndTranslate,
-              {
-                position: 'absolute',
-                height: 500 - 120,
-                width: 500,
-                backgroundColor: 'red',
-              },
-            ]}>
-            <ListenUser name={data[1].name} age={data[1].age} />
+            style={[this.rotateAndTranslate]}>
+            <ListenUser
+              name={data[this.state.currentIndex].name}
+              age={data[this.state.currentIndex].age}
+            />
           </Animated.View>
         ) : (
           <Text />
