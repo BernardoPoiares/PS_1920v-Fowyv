@@ -1,7 +1,15 @@
 import React from 'react';
-import {View, StyleSheet, Animated, Text, PanResponder, Dimensions} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Animated,
+  Text,
+  PanResponder,
+  Dimensions,
+} from 'react-native';
 
 import {ListenUser} from '../components/ListenUser';
+import {ListenLobbyIcon} from '../components/ListenLobbyIcon';
 
 const data = [
   {id: 'a@a.a', name: 'Jessica', age: 23},
@@ -10,6 +18,8 @@ const data = [
 ];
 
 const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
+const WINDOW_HEIGTH = Math.round(Dimensions.get('window').height);
+
 export class ListenLobby extends React.Component {
   constructor(props) {
     super(props);
@@ -31,6 +41,17 @@ export class ListenLobby extends React.Component {
         ...this.position.getTranslateTransform(),
       ],
     };
+    this.volumeUpOpacity = this.position.x.interpolate({
+      inputRange: [-WINDOW_WIDTH / 5, 0, WINDOW_WIDTH / 5],
+      outputRange: [0, 0, 1],
+      extrapolate: 'clamp',
+    });
+
+    this.volumeMuteOpacity = this.position.x.interpolate({
+      inputRange: [-WINDOW_WIDTH / 5, 0, WINDOW_WIDTH / 5],
+      outputRange: [1, 0, 0],
+      extrapolate: 'clamp',
+    });
   }
 
   componentWillMount() {
@@ -73,22 +94,35 @@ export class ListenLobby extends React.Component {
   render() {
     return (
       <View style={listenLobbyStyle.View}>
-        {/*<Swipeable
-          containerStyle={listenLobbyStyle.SwipeableContainer}
-          childrenContainerStyle={listenLobbyStyle.SwipeableItemContainer}
-          renderLeftActions={this.LeftActions}
-          renderRightActions={this.RightActions}>
-          <ListenUser name={data[1].name} age={data[1].age} />
-        </Swipeable>*/}
         {this.areMoreUsers() ? (
-          <Animated.View
-            {...this.PanResponder.panHandlers}
-            style={[this.rotateAndTranslate]}>
-            <ListenUser
-              name={data[this.state.currentIndex].name}
-              age={data[this.state.currentIndex].age}
+          <View>
+            <ListenLobbyIcon
+              name="volume-mute"
+              containerStyle={StyleSheet.compose(
+                {
+                  opacity: this.volumeMuteOpacity,
+                },
+                listenLobbyStyle.volumeMuteIconContainer,
+              )}
             />
-          </Animated.View>
+            <ListenLobbyIcon
+              name="volume-up"
+              containerStyle={StyleSheet.compose(
+                {
+                  opacity: this.volumeUpOpacity,
+                },
+                listenLobbyStyle.volumeUpIconContainer,
+              )}
+            />
+            <Animated.View
+              {...this.PanResponder.panHandlers}
+              style={[this.rotateAndTranslate]}>
+              <ListenUser
+                name={data[this.state.currentIndex].name}
+                age={data[this.state.currentIndex].age}
+              />
+            </Animated.View>
+          </View>
         ) : (
           <Text />
         )}
@@ -103,11 +137,28 @@ const listenLobbyStyle = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'darkorange',
   },
-  SwipeableContainer: {
-    flex: 1,
-    alignSelf: 'stretch',
+  muteIconContainer: {
+    position: 'absolute',
+    top: WINDOW_HEIGTH / 2,
+    left: 10,
+    zIndex: 1000,
   },
-  SwipeableItemContainer: {
-    flex: 1,
+  icon: {
+    borderWidth: 1,
+    backgroundColor: 'white',
+    color: 'white',
+    padding: 10,
+  },
+  volumeMuteIconContainer: {
+    position: 'absolute',
+    top: WINDOW_HEIGTH / 2,
+    left: 10,
+    zIndex: 1000,
+  },
+  volumeUpIconContainer: {
+    position: 'absolute',
+    top: WINDOW_HEIGTH / 2,
+    right: 10,
+    zIndex: 1000,
   },
 });
