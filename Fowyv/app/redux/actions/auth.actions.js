@@ -1,5 +1,5 @@
 import {fetchApi} from '../../service/api';
-import {getUserDetails} from './user.action';
+import {getUserDetails} from './user.actions';
 export const loginUser = payload => {
   return async dispatch => {
     try {

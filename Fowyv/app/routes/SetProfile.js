@@ -13,7 +13,7 @@ import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {saveUserDetails} from '../redux/actions/user.action';
+import {saveUserDetails} from '../redux/actions/user.actions';
 import {connect} from 'react-redux';
 
 class SetProfileComponent extends React.Component {
