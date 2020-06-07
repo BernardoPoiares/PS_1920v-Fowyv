@@ -7,9 +7,11 @@ import {
   PanResponder,
   Dimensions,
 } from 'react-native';
-
+import {connect} from 'react-redux';
 import {ListenUser} from '../components/ListenUser';
 import {ListenLobbyIcon} from '../components/ListenLobbyIcon';
+import {searchUsers} from '../redux/actions/userFunctionalities.actions.js';
+import {GetAge} from '../utils/DatesUtil';
 
 const data = [
   {id: 'a@a.a', name: 'Jessica', age: 23},
@@ -20,7 +22,7 @@ const data = [
 const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
 const WINDOW_HEIGTH = Math.round(Dimensions.get('window').height);
 
-export class ListenLobby extends React.Component {
+export class ListenLobbyComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -54,7 +56,7 @@ export class ListenLobby extends React.Component {
     });
   }
 
-  componentWillMount() {
+  UNSAFE_componentWillMount() {
     this.PanResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
@@ -85,10 +87,15 @@ export class ListenLobby extends React.Component {
         }
       },
     });
+    this.props.dispatch(
+      searchUsers({token: this.props.authenticatedUser.token}),
+    );
   }
 
   areMoreUsers = () => {
-    return data.length > 0;
+    return (
+      this.props.usersFound != undefined && this.props.usersFound.length > 0
+    );
   };
 
   render() {
@@ -118,8 +125,8 @@ export class ListenLobby extends React.Component {
               {...this.PanResponder.panHandlers}
               style={[this.rotateAndTranslate]}>
               <ListenUser
-                name={data[this.state.currentIndex].name}
-                age={data[this.state.currentIndex].age}
+                name={this.props.usersFound[0].name}
+                age={GetAge(this.props.usersFound[0].age)}
               />
             </Animated.View>
           </View>
@@ -130,6 +137,20 @@ export class ListenLobby extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+  usersFound: state.userFunctionalities.searchUsers.users,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const ListenLobby = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ListenLobbyComponent);
 
 const listenLobbyStyle = StyleSheet.create({
   View: {

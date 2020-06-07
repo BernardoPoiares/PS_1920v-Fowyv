@@ -153,14 +153,16 @@ class SettingsComponent extends React.Component {
 
   onGendersChanged = gender => {
     return () => {
-      const newgenders = this.props.searchSettings.genders.includes(gender)
-        ? this.props.searchSettings.genders.filter(g => g != gender)
-        : this.props.searchSettings.genders.concat(gender);
+      const newgenders = this.props.searchSettings.searchGenders.includes(
+        gender,
+      )
+        ? this.props.searchSettings.searchGenders.filter(g => g != gender)
+        : this.props.searchSettings.searchGenders.concat(gender);
       this.props.dispatch(
         setSearchSettings({
           token: this.props.authenticatedUser.token,
           settings: {
-            genders: newgenders,
+            searchGenders: newgenders,
           },
         }),
       );
@@ -179,7 +181,7 @@ class SettingsComponent extends React.Component {
             <AppSettings
               minSearchAge={this.props.searchSettings.minSearchAge}
               maxSearchAge={this.props.searchSettings.maxSearchAge}
-              genders={this.props.searchSettings.genders}
+              genders={this.props.searchSettings.searchGenders}
               languages={this.props.searchSettings.languages}
               onAgeRangeChanged={this.onAgeRangeChanged}
               onLogoutPressed={this.onLogoutPressed}

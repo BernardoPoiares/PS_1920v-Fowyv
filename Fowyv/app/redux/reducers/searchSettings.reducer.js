@@ -10,7 +10,7 @@ const searchSettings = (state = {}, action) => {
         errors: null,
         minSearchAge: null,
         maxSearchAge: null,
-        genders: null,
+        searchGenders: null,
         languages: null,
       };
     case 'GET_SEARCH_SETTINGS_SUCCESS':
@@ -21,7 +21,7 @@ const searchSettings = (state = {}, action) => {
         errors: null,
         minSearchAge: action.payload.minSearchAge,
         maxSearchAge: action.payload.maxSearchAge,
-        genders: action.payload.genders,
+        searchGenders: action.payload.searchGenders,
         languages: action.payload.languages,
       };
     case 'GET_SEARCH_SETTINGS_FAIL':
@@ -32,7 +32,7 @@ const searchSettings = (state = {}, action) => {
         errors: action.payload,
         minSearchAge: null,
         maxSearchAge: null,
-        genders: null,
+        searchGenders: null,
         languages: null,
       };
     case 'SET_SEARCH_SETTINGS_LOADING':
@@ -43,7 +43,7 @@ const searchSettings = (state = {}, action) => {
         errors: null,
         minSearchAge: state.minSearchAge,
         maxSearchAge: state.maxSearchAge,
-        genders: state.genders,
+        searchGenders: state.searchGenders,
         languages: state.languages,
       };
     case 'SET_SEARCH_SETTINGS_SUCCESS':
@@ -53,7 +53,7 @@ const searchSettings = (state = {}, action) => {
         isSuccess: true,
         minSearchAge: state.minSearchAge,
         maxSearchAge: state.maxSearchAge,
-        genders: state.genders,
+        searchGenders: state.searchGenders,
         languages: state.languages,
         ...action.payload,
       };
@@ -65,7 +65,7 @@ const searchSettings = (state = {}, action) => {
         errors: action.payload,
         minSearchAge: state.minSearchAge,
         maxSearchAge: state.maxSearchAge,
-        genders: state.genders,
+        searchGenders: state.searchGenders,
         languages: state.payload.languages,
       };
     default:

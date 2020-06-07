@@ -16,7 +16,7 @@ export const getSearchSettings = payload => {
         dispatch({
           type: 'GET_SEARCH_SETTINGS_SUCCESS',
           payload: {
-            genders: response.responseBody.searchGenders,
+            searchGenders: response.responseBody.searchGenders,
             maxSearchAge: response.responseBody.maxSearchAge,
             minSearchAge: response.responseBody.minSearchAge,
             languages: response.responseBody.languages,
@@ -53,25 +53,6 @@ export const setSearchSettings = payload => {
       }
     } catch (ex) {
       dispatch({type: 'SET_SEARCH_SETTINGS_FAIL', payload: ex.responseBody});
-    }
-  };
-};
-
-export const createUser = payload => {
-  return async dispatch => {
-    try {
-      dispatch({type: 'AUTHENTICATE_USER_LOADING'});
-      const response = await fetchApi('/api/auth/signup', 'POST', payload, 200);
-      if (response.success) {
-        dispatch({
-          type: 'AUTHENTICATE_USER_SUCCESS',
-          token: response.responseBody.token,
-        });
-      } else {
-        throw response;
-      }
-    } catch (ex) {
-      dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };
 };
