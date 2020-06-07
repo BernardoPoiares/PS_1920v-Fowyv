@@ -13,6 +13,7 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 import {connect} from 'react-redux';
 import {logoutUser} from '../redux/actions/auth.actions';
+import {getSearchSettings} from '../redux/actions/searchSettings.actions';
 
 const nonCollidingMultiSliderValue = [0, 100];
 const DATA = [
@@ -20,11 +21,9 @@ const DATA = [
     language: 'English',
     checked: true,
   },
-  {
-    language: 'Spanish',
-    checked: false,
-  },
 ];
+
+const Genders = [{gender: 'male'}, {gender: 'female'}];
 
 const AccountSettings = ({name}) => {
   return (
@@ -50,30 +49,43 @@ const PersonalAudio = () => {
   );
 };
 
-const AppSettings = ({onLogoutPressed}) => {
+const AppSettings = ({minSearchAge, maxSearchAge, onLogoutPressed}) => {
   return (
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>App Settings</Text>
       <View style={appSettingsStyle.container}>
         <Text style={appSettingsStyle.Header}>Ages range</Text>
         <MultiSlider
-          values={[
-            nonCollidingMultiSliderValue[0],
-            nonCollidingMultiSliderValue[1],
-          ]}
+          values={[minSearchAge, maxSearchAge]}
           sliderLength={280}
-          min={0}
+          min={18}
           max={100}
           step={1}
           allowOverlap={false}
           enableLabel={true}
           minMarkerOverlapDistance={40}
         />
-        <Text style={appSettingsStyle.header}>Languages</Text>
+        <Text style={appSettingsStyle.Header}>Search Genders</Text>
+        <FlatList
+          data={Genders}
+          renderItem={({item}) => (
+            <View style={appSettingsStyle.FlatListContainer}>
+              <Text
+                style={{
+                  fontSize: 20,
+                  color: 'white',
+                }}>
+                {item.gender}
+              </Text>
+              <CheckBox />
+            </View>
+          )}
+        />
+        <Text style={appSettingsStyle.Header}>Languages</Text>
         <FlatList
           data={DATA}
-          renderItem={item => (
-            <View>
+          renderItem={({item}) => (
+            <View style={appSettingsStyle.FlatListContainer}>
               <Text
                 style={{
                   fontSize: 20,
@@ -99,9 +111,16 @@ const AppSettings = ({onLogoutPressed}) => {
 };
 
 class SettingsComponent extends React.Component {
+  UNSAFE_componentWillMount() {
+    this.props.dispatch(
+      getSearchSettings({token: this.props.authenticatedUser.token}),
+    );
+  }
+
   onLogoutPressed = () => {
     this.props.dispatch(logoutUser());
   };
+
   render() {
     return (
       <View style={settingsStyle.view}>
@@ -109,7 +128,11 @@ class SettingsComponent extends React.Component {
           <ScrollView style={settingsStyle.scrollView}>
             <AccountSettings name={this.props.getUser.userDetails.name} />
             <PersonalAudio />
-            <AppSettings onLogoutPressed={this.onLogoutPressed} />
+            <AppSettings
+              minSearchAge={this.props.searchSettings.minSearchAge}
+              maxSearchAge={this.props.searchSettings.maxSearchAge}
+              onLogoutPressed={this.onLogoutPressed}
+            />
           </ScrollView>
         ) : null}
       </View>
@@ -120,6 +143,7 @@ class SettingsComponent extends React.Component {
 const mapStateToProps = state => ({
   authenticatedUser: state.authReducer.authenticateUser,
   getUser: state.userReducer.getUser,
+  searchSettings: state.searchSettingsReducer.searchSettings,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -185,5 +209,8 @@ const appSettingsStyle = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     margin: 5,
+  },
+  FlatListContainer: {
+    flexDirection: 'row',
   },
 });
