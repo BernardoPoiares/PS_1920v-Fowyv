@@ -16,7 +16,8 @@ exports.setSearchSettings = (req, res) => {
         user={email:req.email}
     
     Object.assign(user,req.body);
-    UsersDetails= UsersDetails.map(u=>u.email ==req.email ? user:u);
+
+    UsersSearchSettings[UsersSearchSettings.indexOf(user=>user.email == req.email)] = user;
 
     res.status(200).send();
     
