@@ -69,20 +69,6 @@ const AppSettings = ({onLogoutPressed}) => {
           enableLabel={true}
           minMarkerOverlapDistance={40}
         />
-        <Text style={appSettingsStyle.Header}>Distance range</Text>
-        <MultiSlider
-          values={[
-            nonCollidingMultiSliderValue[0],
-            nonCollidingMultiSliderValue[1],
-          ]}
-          sliderLength={280}
-          min={0}
-          max={100}
-          step={1}
-          allowOverlap={false}
-          enableLabel={true}
-          minMarkerOverlapDistance={40}
-        />
         <Text style={appSettingsStyle.header}>Languages</Text>
         <FlatList
           data={DATA}
