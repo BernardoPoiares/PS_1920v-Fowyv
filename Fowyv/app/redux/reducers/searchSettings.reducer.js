@@ -11,6 +11,7 @@ const searchSettings = (state = {}, action) => {
         minSearchAge: null,
         maxSearchAge: null,
         genders: null,
+        languages: null,
       };
     case 'GET_SEARCH_SETTINGS_SUCCESS':
       return {
@@ -18,9 +19,10 @@ const searchSettings = (state = {}, action) => {
         isError: false,
         isSuccess: true,
         errors: null,
-        minSearchAge: action.payload.minAge,
-        maxSearchAge: action.payload.maxAge,
+        minSearchAge: action.payload.minSearchAge,
+        maxSearchAge: action.payload.maxSearchAge,
         genders: action.payload.genders,
+        languages: action.payload.languages,
       };
     case 'GET_SEARCH_SETTINGS_FAIL':
       return {
@@ -28,9 +30,10 @@ const searchSettings = (state = {}, action) => {
         isError: true,
         isSuccess: false,
         errors: action.payload,
-        minSearchAge: action.minAge,
-        maxSearchAge: action.maxAge,
-        genders: action.genders,
+        minSearchAge: null,
+        maxSearchAge: null,
+        genders: null,
+        languages: null,
       };
     case 'SET_SEARCH_SETTINGS_LOADING':
       return {
@@ -38,18 +41,20 @@ const searchSettings = (state = {}, action) => {
         isError: false,
         isSuccess: false,
         errors: null,
-        minSearchAge: state.minAge,
-        maxSearchAge: state.maxAge,
+        minSearchAge: state.minSearchAge,
+        maxSearchAge: state.maxSearchAge,
         genders: state.genders,
+        languages: state.languages,
       };
     case 'SET_SEARCH_SETTINGS_SUCCESS':
       return {
         isLoading: false,
         isError: false,
         isSuccess: true,
-        minSearchAge: state.minAge,
-        maxSearchAge: state.maxAge,
+        minSearchAge: state.minSearchAge,
+        maxSearchAge: state.maxSearchAge,
         genders: state.genders,
+        languages: state.languages,
         ...action.payload,
       };
     case 'SET_SEARCH_SETTINGS_FAIL':
@@ -58,9 +63,10 @@ const searchSettings = (state = {}, action) => {
         isError: true,
         isSuccess: false,
         errors: action.payload,
-        minSearchAge: action.minAge,
-        maxSearchAge: action.maxAge,
-        genders: action.genders,
+        minSearchAge: state.minSearchAge,
+        maxSearchAge: state.maxSearchAge,
+        genders: state.genders,
+        languages: state.payload.languages,
       };
     default:
       return state;

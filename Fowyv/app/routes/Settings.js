@@ -13,13 +13,14 @@ import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 import {connect} from 'react-redux';
 import {logoutUser} from '../redux/actions/auth.actions';
-import {getSearchSettings} from '../redux/actions/searchSettings.actions';
+import {
+  getSearchSettings,
+  setSearchSettings,
+} from '../redux/actions/searchSettings.actions';
 
-const nonCollidingMultiSliderValue = [0, 100];
 const DATA = [
   {
     language: 'English',
-    checked: true,
   },
 ];
 
@@ -49,7 +50,16 @@ const PersonalAudio = () => {
   );
 };
 
-const AppSettings = ({minSearchAge, maxSearchAge, onLogoutPressed}) => {
+const AppSettings = ({
+  minSearchAge,
+  maxSearchAge,
+  genders,
+  languages,
+  onLogoutPressed,
+  onAgeRangeChanged,
+  onGendersChanged,
+  onLanguagesChanged,
+}) => {
   return (
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>App Settings</Text>
@@ -58,6 +68,8 @@ const AppSettings = ({minSearchAge, maxSearchAge, onLogoutPressed}) => {
         <MultiSlider
           values={[minSearchAge, maxSearchAge]}
           sliderLength={280}
+          valuePrefix={25}
+          onValuesChangeFinish={onAgeRangeChanged}
           min={18}
           max={100}
           step={1}
@@ -77,7 +89,10 @@ const AppSettings = ({minSearchAge, maxSearchAge, onLogoutPressed}) => {
                 }}>
                 {item.gender}
               </Text>
-              <CheckBox />
+              <CheckBox
+                value={genders != null ? genders.includes(item.gender) : false}
+                onValueChange={onGendersChanged(item.gender)}
+              />
             </View>
           )}
         />
@@ -93,7 +108,11 @@ const AppSettings = ({minSearchAge, maxSearchAge, onLogoutPressed}) => {
                 }}>
                 {item.language}
               </Text>
-              <CheckBox />
+              <CheckBox
+                value={
+                  languages != null ? languages.includes(item.language) : false
+                }
+              />
             </View>
           )}
         />
@@ -116,10 +135,39 @@ class SettingsComponent extends React.Component {
       getSearchSettings({token: this.props.authenticatedUser.token}),
     );
   }
+  onAgeRangeChanged = values => {
+    this.props.dispatch(
+      setSearchSettings({
+        token: this.props.authenticatedUser.token,
+        settings: {
+          minSearchAge: values[0],
+          maxSearchAge: values[1],
+        },
+      }),
+    );
+  };
 
   onLogoutPressed = () => {
     this.props.dispatch(logoutUser());
   };
+
+  onGendersChanged = gender => {
+    return () => {
+      const newgenders = this.props.searchSettings.genders.includes(gender)
+        ? this.props.searchSettings.genders.filter(g => g != gender)
+        : this.props.searchSettings.genders.concat(gender);
+      this.props.dispatch(
+        setSearchSettings({
+          token: this.props.authenticatedUser.token,
+          settings: {
+            genders: newgenders,
+          },
+        }),
+      );
+    };
+  };
+
+  onLanguagesChanged = () => {};
 
   render() {
     return (
@@ -131,7 +179,12 @@ class SettingsComponent extends React.Component {
             <AppSettings
               minSearchAge={this.props.searchSettings.minSearchAge}
               maxSearchAge={this.props.searchSettings.maxSearchAge}
+              genders={this.props.searchSettings.genders}
+              languages={this.props.searchSettings.languages}
+              onAgeRangeChanged={this.onAgeRangeChanged}
               onLogoutPressed={this.onLogoutPressed}
+              onGendersChanged={this.onGendersChanged}
+              onLanguagesChanged={this.onLanguagesChanged}
             />
           </ScrollView>
         ) : null}

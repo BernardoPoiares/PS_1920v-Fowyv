@@ -17,8 +17,9 @@ export const getSearchSettings = payload => {
           type: 'GET_SEARCH_SETTINGS_SUCCESS',
           payload: {
             genders: response.responseBody.searchGenders,
-            maxAge: response.responseBody.maxSearchAge,
-            minAge: response.responseBody.minSearchAge,
+            maxSearchAge: response.responseBody.maxSearchAge,
+            minSearchAge: response.responseBody.minSearchAge,
+            languages: response.responseBody.languages,
           },
         });
       } else {
