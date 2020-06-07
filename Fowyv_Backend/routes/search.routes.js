@@ -11,7 +11,7 @@ module.exports = (app)=> {
   });
 
   app.get(
-    "/api/search",
+    "/api/search/users",
     [
         authMiddleware.verifyToken
     ],

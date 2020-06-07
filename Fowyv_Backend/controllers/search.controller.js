@@ -1,5 +1,8 @@
 import UsersSearchSettings from '../dummy/UsersSearchSettings';
 import UsersDetails from '../dummy/UsersDetails';
+import UsersChoises from '../dummy/UsersChoises';
+
+import {GetAge} from '../utils/dates';
 
 
 exports.getSearchSettings = (req, res) => {
@@ -24,13 +27,15 @@ exports.setSearchSettings = (req, res) => {
 }
 
 exports.searchUsers = (req, res) => {
-    usersNotLiked = UsersSearchSettings.find(user=>user.email == req.email);
-    if(!usersNotLiked)
+    let userSearchSettings = UsersSearchSettings.find(user=>user.email == req.email);
+    if(!userSearchSettings)
         return res.status(404).send({ message: "User Not found." });
-    var usersSearchResult = UsersDetails.filter(user => user.email != req.email);
-
-    if(usersNotLiked!=null && usersNotLiked.users.Length != 0 )
-        usersSearchResult = usersSearchResult.filter(val => !usersNotLiked.users.includes(val))
+    let usersChoises = UsersChoises.find(user=>user.email == req.email);
+    if(!usersChoises)
+        return res.status(404).send({ message: "User Not found." });
+    let usersSearchResult = UsersDetails.filter(user => user.email != req.email);
+    if(usersSearchResult != null && usersSearchResult != undefined && usersSearchResult.length > 0 )
+        usersSearchResult = usersSearchResult.filter(user => !usersChoises.dislikedUsers.includes(user) && GetAge(user.age)>=userSearchSettings.minSearchAge && GetAge(user.age)<=userSearchSettings.maxSearchAge && userSearchSettings.searchGenders.includes(user.gender))
             
     res.status(200).send(usersSearchResult);
     
