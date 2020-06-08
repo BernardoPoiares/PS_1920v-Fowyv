@@ -17,6 +17,7 @@ import {
   getSearchSettings,
   setSearchSettings,
 } from '../redux/actions/searchSettings.actions';
+import {GetAge} from '../utils/DatesUtil';
 
 const DATA = [
   {
@@ -26,14 +27,14 @@ const DATA = [
 
 const Genders = [{gender: 'male'}, {gender: 'female'}];
 
-const AccountSettings = ({name}) => {
+const AccountSettings = ({name, age}) => {
   return (
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>Account Settings</Text>
       <Text style={settingsStyle.fieldHeader}>Name</Text>
       <TextInput style={settingsStyle.fieldInput} value={name} />
       <Text style={settingsStyle.fieldHeader}>Age</Text>
-      <TextInput style={settingsStyle.fieldInput}>23</TextInput>
+      <TextInput style={settingsStyle.fieldInput}>{age}</TextInput>
     </View>
   );
 };
@@ -176,7 +177,10 @@ class SettingsComponent extends React.Component {
       <View style={settingsStyle.view}>
         {this.props.getUser.userDetails ? (
           <ScrollView style={settingsStyle.scrollView}>
-            <AccountSettings name={this.props.getUser.userDetails.name} />
+            <AccountSettings
+              name={this.props.getUser.userDetails.name}
+              age={GetAge(this.props.getUser.userDetails.age)}
+            />
             <PersonalAudio />
             <AppSettings
               minSearchAge={this.props.searchSettings.minSearchAge}
