@@ -11,13 +11,12 @@ import {connect} from 'react-redux';
 import {ListenUser} from '../components/ListenUser';
 import {ListenLobbyIcon} from '../components/ListenLobbyIcon';
 import {searchUsers} from '../redux/actions/userFunctionalities.actions.js';
-import {GetAge} from '../utils/DatesUtil';
+import {
+  likedUser,
+  dislikedUser,
+} from '../redux/actions/userFunctionalities.actions.js';
 
-const data = [
-  {id: 'a@a.a', name: 'Jessica', age: 23},
-  {id: 'a2@a.a', name: 'Telma', age: 30},
-  {id: 'a3@a.a', name: 'Andreia', age: 21},
-];
+import {GetAge} from '../utils/DatesUtil';
 
 const WINDOW_WIDTH = Math.round(Dimensions.get('window').width);
 const WINDOW_HEIGTH = Math.round(Dimensions.get('window').height);
@@ -67,17 +66,13 @@ export class ListenLobbyComponent extends React.Component {
           Animated.spring(this.position, {
             toValue: {x: WINDOW_WIDTH + 100, y: gestureState.dy},
           }).start(() => {
-            this.setState({currentIndex: this.state.currentIndex + 1}, () => {
-              this.position.setValue({x: 0, y: 0});
-            });
+            this.onSwipeRight();
           });
         } else if (gestureState.dx < -100) {
           Animated.spring(this.position, {
             toValue: {x: -WINDOW_WIDTH - 100, y: gestureState.dy},
           }).start(() => {
-            this.setState({currentIndex: this.state.currentIndex + 1}, () => {
-              this.position.setValue({x: 0, y: 0});
-            });
+            this.onSwipeLeft();
           });
         } else {
           Animated.spring(this.position, {
@@ -91,6 +86,23 @@ export class ListenLobbyComponent extends React.Component {
       searchUsers({token: this.props.authenticatedUser.token}),
     );
   }
+
+  onSwipeRight = () => {
+    this.props.dispatch(
+      likedUser({
+        token: this.props.authenticatedUser.token,
+        user: this.props.usersFound[0].email,
+      }),
+    );
+  };
+  onSwipeLeft = () => {
+    this.props.dispatch(
+      dislikedUser({
+        token: this.props.authenticatedUser.token,
+        user: this.props.usersFound[0].email,
+      }),
+    );
+  };
 
   areMoreUsers = () => {
     return (
@@ -131,7 +143,11 @@ export class ListenLobbyComponent extends React.Component {
             </Animated.View>
           </View>
         ) : (
-          <Text />
+          <View style={listenLobbyStyle.noUsersContainer}>
+            <Text style={listenLobbyStyle.noUsersText}>
+              {'No more users \n Check later'}
+            </Text>
+          </View>
         )}
       </View>
     );
@@ -181,5 +197,15 @@ const listenLobbyStyle = StyleSheet.create({
     top: WINDOW_HEIGTH / 2,
     right: 10,
     zIndex: 1000,
+  },
+  noUsersContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noUsersText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'white',
   },
 });

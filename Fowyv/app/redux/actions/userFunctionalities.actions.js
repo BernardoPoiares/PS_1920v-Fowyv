@@ -26,54 +26,59 @@ export const searchUsers = payload => {
   };
 };
 
-export const likeUser = payload => {
-  return async dispatch => {
+export const likedUser = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
-      dispatch({type: 'SET_SEARCH_SETTINGS_LOADING'});
+      dispatch({type: 'LIKED_USER_LOADING'});
       const response = await fetchApi(
-        '/api/user/settings',
+        '/api/interaction/like',
         'POST',
-        payload.settings,
+        {email: payload.user},
         200,
         payload.token,
       );
 
       if (response.success) {
         dispatch({
-          type: 'SET_SEARCH_SETTINGS_SUCCESS',
-          payload: payload.settings,
+          type: 'LIKED_USER_SUCCESS',
+          payload: state.userFunctionalities.searchUsers.users.slice(1),
         });
       } else {
         throw response;
       }
     } catch (ex) {
-      dispatch({type: 'SET_SEARCH_SETTINGS_FAIL', payload: ex.responseBody});
+      console.log(ex);
+      dispatch({type: 'LIKED_USER_FAIL', payload: ex.responseBody});
     }
   };
 };
 
-export const dislikeUser = payload => {
-  return async dispatch => {
+export const dislikedUser = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    console.log(payload.user);
     try {
-      dispatch({type: 'SET_SEARCH_SETTINGS_LOADING'});
+      dispatch({type: 'DISLIKED_USER_LOADING'});
       const response = await fetchApi(
-        '/api/search/settings',
+        '/api/interaction/dislike',
         'POST',
-        payload.settings,
+        {email: payload.user},
         200,
         payload.token,
       );
 
       if (response.success) {
         dispatch({
-          type: 'SET_SEARCH_SETTINGS_SUCCESS',
-          payload: payload.settings,
+          type: 'DISLIKED_USER_SUCCESS',
+          payload: state.userFunctionalities.searchUsers.users.slice(1),
         });
       } else {
         throw response;
       }
     } catch (ex) {
-      dispatch({type: 'SET_SEARCH_SETTINGS_FAIL', payload: ex.responseBody});
+      console.log(ex);
+      dispatch({type: 'DISLIKED_USER_FAIL', payload: ex.responseBody});
     }
   };
 };
