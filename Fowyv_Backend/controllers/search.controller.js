@@ -35,7 +35,12 @@ exports.searchUsers = (req, res) => {
         return res.status(404).send({ message: "User Not found." });
     let usersSearchResult = UsersDetails.filter(user => user.email != req.email);
     if(usersSearchResult != null && usersSearchResult != undefined && usersSearchResult.length > 0 )
-        usersSearchResult = usersSearchResult.filter(user => !usersChoises.dislikedUsers.includes(user) && GetAge(user.age)>=userSearchSettings.minSearchAge && GetAge(user.age)<=userSearchSettings.maxSearchAge && userSearchSettings.searchGenders.includes(user.gender))
+        usersSearchResult = usersSearchResult.filter(user => 
+            usersChoises.dislikedUsers.find(userDis=>userDis.email == user.email)== undefined 
+            && usersChoises.likedUsers.find(userlik=>userlik.email == user.email)==undefined  
+            && GetAge(user.age)>=userSearchSettings.minSearchAge 
+            && GetAge(user.age)<=userSearchSettings.maxSearchAge
+            && userSearchSettings.searchGenders.includes(user.gender))
             
     res.status(200).send(usersSearchResult);
     
