@@ -1,5 +1,7 @@
 import { userDetailsMiddleware,authMiddleware } from "../middlewares";
 import controller from "../controllers/user.controller";
+import userMatchesController from "../controllers/userMatches.controller";
+
 
 module.exports = (app)=> {
   app.use(function(req, res, next) {
@@ -34,5 +36,13 @@ module.exports = (app)=> {
         userDetailsMiddleware.verifyDetails
     ],
     controller.setProfile
+  );
+
+  app.get(
+    "/api/user/matches",
+    [
+        authMiddleware.verifyToken
+    ],
+    userMatchesController.getMatches
   );
 };
