@@ -24,7 +24,7 @@ export class Match extends React.Component {
         )}
         onPress={this.props.onPress}>
         <Icon name="md-play-circle" size={this.props.iconSize} color="white" />
-        <Text>Name</Text>
+        <Text>{this.props.name}</Text>
       </TouchableOpacity>
     );
   }

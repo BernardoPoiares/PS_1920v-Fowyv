@@ -10,39 +10,39 @@ const {windowHeight} = Dimensions.get('window').height;
 const DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53a3bb28ba',
-    title: 'First Item',
+    name: 'First Item',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd93211aa97f63',
-    title: 'Second Item',
+    name: 'Second Item',
   },
   {
     id: '58694a0f-3da1-471f-bd96-145573111e29d72',
-    title: 'Third Item',
+    name: 'Third Item',
   },
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53a112bb28ba',
-    title: 'First Item',
+    name: 'First Item',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91a2121a97f63',
-    title: 'Second Item',
+    name: 'Second Item',
   },
   {
     id: '58694a0f-3da1-471f-bd96-1455731231231e29d72',
-    title: 'Third Item',
+    name: 'Third Item',
   },
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53a4324213bb28ba',
-    title: 'First Item',
+    name: 'First Item',
   },
   {
     id: '3ac68afc-c605-48d3-a4f8-fbd91243531425aa97f63',
-    title: 'Second Item',
+    name: 'Second Item',
   },
   {
     id: '58694a0f-3da1-471f-bd96-14557156457547e29d72',
-    title: 'Third Item',
+    name: 'Third Item',
   },
 ];
 
@@ -64,15 +64,16 @@ export class MatchLobbyComponent extends React.Component {
     return (
       <View style={matchLobbyStyle.View}>
         <View style={matchLobbyStyle.topMatchesContainer}>
-          {this.props.users ? (
+          {this.props.userMatches ? (
             <Carousel
-              data={DATA}
-              renderItem={() => (
+              data={this.props.userMatches}
+              renderItem={({item}) => (
                 <Match
                   onPress={this.onMatchPressed}
                   navigation={this.props.navigation}
                   iconSize={130}
                   size={400}
+                  name={item.name}
                 />
               )}
               itemWidth={Dimensions.get('window').width / 3}
@@ -97,8 +98,13 @@ export class MatchLobbyComponent extends React.Component {
         <View style={matchLobbyStyle.bottomMatchesContainer}>
           <Carousel
             data={DATA}
-            renderItem={(item, index, separators) => (
-              <Match onPress={this.onMatchPressed} iconSize={80} size={200} />
+            renderItem={({item}, index, separators) => (
+              <Match
+                onPress={this.onMatchPressed}
+                iconSize={80}
+                size={200}
+                name={item.name}
+              />
             )}
             itemWidth={Dimensions.get('window').width / 3}
             containerWidth={Dimensions.get('window').width}
