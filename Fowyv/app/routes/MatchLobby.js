@@ -1,8 +1,10 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {View, Text, StyleSheet, FlatList, Dimensions} from 'react-native';
+import {connect} from 'react-redux';
+
 import {Match} from '../components/Match.js';
 import Carousel from 'react-native-anchor-carousel';
-import routes from 'res/routes';
+import {searchUserMatches} from '../redux/actions/userMatches.actions.js';
 
 const {windowHeight} = Dimensions.get('window').height;
 const DATA = [
@@ -44,7 +46,7 @@ const DATA = [
   },
 ];
 
-export class MatchLobby extends React.Component {
+export class MatchLobbyComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -52,28 +54,44 @@ export class MatchLobby extends React.Component {
     this.props.navigation.navigate('ChatStack', {screen: 'Chat'});
   };
 
+  UNSAFE_componentWillMount() {
+    this.props.dispatch(
+      searchUserMatches({token: this.props.authenticatedUser.token}),
+    );
+  }
+
   render() {
     return (
       <View style={matchLobbyStyle.View}>
         <View style={matchLobbyStyle.topMatchesContainer}>
-          <Carousel
-            data={DATA}
-            renderItem={() => (
-              <Match
-                onPress={this.onMatchPressed}
-                navigation={this.props.navigation}
-                iconSize={130}
-                size={400}
-              />
-            )}
-            itemWidth={Dimensions.get('window').width / 3}
-            containerWidth={Dimensions.get('window').width}
-            separatorWidth={15}
-            inActiveOpacity={0.6}
-            ref={c => {
-              this._carousel = c;
-            }}
-          />
+          {this.props.users ? (
+            <Carousel
+              data={DATA}
+              renderItem={() => (
+                <Match
+                  onPress={this.onMatchPressed}
+                  navigation={this.props.navigation}
+                  iconSize={130}
+                  size={400}
+                />
+              )}
+              itemWidth={Dimensions.get('window').width / 3}
+              containerWidth={Dimensions.get('window').width}
+              separatorWidth={15}
+              inActiveOpacity={0.6}
+              ref={c => {
+                this._carousel = c;
+              }}
+            />
+          ) : (
+            <View style={matchLobbyStyle.noUsersContainer}>
+              <Text
+                style={matchLobbyStyle.noUsersText}
+                textBreakStrategy="simple">
+                No Matches{' '}
+              </Text>
+            </View>
+          )}
         </View>
         <Text style={matchLobbyStyle.newMatchesHeader}>New Matches</Text>
         <View style={matchLobbyStyle.bottomMatchesContainer}>
@@ -96,6 +114,20 @@ export class MatchLobby extends React.Component {
   }
 }
 
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+  userMatches: state.userMatches.userMatches.users,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const MatchLobby = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(MatchLobbyComponent);
+
 const matchLobbyStyle = StyleSheet.create({
   View: {
     flex: 1,
@@ -109,11 +141,22 @@ const matchLobbyStyle = StyleSheet.create({
   bottomMatchesContainer: {
     height: '30%',
   },
-  Logo: {width: 200, height: 200, resizeMode: 'contain'},
   newMatchesHeader: {
     fontSize: 20,
     color: 'white',
     textDecorationLine: 'underline',
   },
-  Description: {fontSize: 20},
+  noUsersContainer: {
+    flex: 1,
+    alignContent: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  noUsersText: {
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: 'white',
+    alignSelf: 'stretch',
+    textAlign: 'center',
+  },
 });

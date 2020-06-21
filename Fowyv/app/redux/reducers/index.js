@@ -4,12 +4,14 @@ import authReducer from './auth.reducer.js';
 import userReducer from './user.reducer.js';
 import searchSettingsReducer from './searchSettings.reducer.js';
 import userFunctionalities from './userFunctionalities.reducer.js';
+import userMatches from './userMatchesReducer.js';
 
 const reducers = {
   authReducer,
   userReducer,
   searchSettingsReducer,
   userFunctionalities,
+  userMatches,
 };
 
 const appReducer = combineReducers(reducers);
