@@ -58,7 +58,7 @@ class LoginComponent extends React.Component {
   render() {
     return (
       <View style={loginStyle.view}>
-        <Text style={loginStyle.header}>FOWYV</Text>
+        <Text style={loginStyle.header}>FOWYV{' '}</Text>
         <View style={loginStyle.container}>
           <Text style={loginStyle.formHeader}>Email</Text>
           <TextInput

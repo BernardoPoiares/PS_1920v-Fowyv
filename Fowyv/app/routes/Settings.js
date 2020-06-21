@@ -32,9 +32,9 @@ const AccountSettings = ({name, age}) => {
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>Account Settings</Text>
       <Text style={settingsStyle.fieldHeader}>Name</Text>
-      <TextInput style={settingsStyle.fieldInput} value={name} />
+      <Text style={settingsStyle.fieldValue}>{name}</Text>
       <Text style={settingsStyle.fieldHeader}>Age</Text>
-      <TextInput style={settingsStyle.fieldInput}>{age}</TextInput>
+      <Text style={settingsStyle.fieldValue}>{age}</Text>
     </View>
   );
 };
@@ -234,11 +234,11 @@ const settingsStyle = StyleSheet.create({
     fontSize: 12,
     alignSelf: 'flex-start',
   },
-  fieldInput: {
+  fieldValue: {
     backgroundColor: 'white',
     height: 35,
+    fontSize: 18,
     width: '100%',
-    alignSelf: 'flex-start',
   },
 });
 

@@ -19,7 +19,7 @@ export class Home extends React.Component {
           style={homeStyle.Logo}
           source={require('../assets/images/logo.png')}
         />
-        <Text style={homeStyle.Name}>FOWYV</Text>
+        <Text style={homeStyle.Name}>FOWYV{' '}</Text>
         <Text style={homeStyle.Description}>find others with your voice</Text>
       </View>
     );

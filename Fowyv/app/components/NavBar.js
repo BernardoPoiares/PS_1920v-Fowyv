@@ -48,7 +48,7 @@ export class NavBar extends React.Component {
             activeNavTabStyle.header,
             baseComponentsStyle.header,
           )}>
-          Settings
+          Settings{' '}
         </Text>
       </TouchableOpacity>
     );
@@ -69,7 +69,7 @@ export class NavBar extends React.Component {
             activeNavTabStyle.header,
             baseComponentsStyle.header,
           )}>
-          Listen
+          Listen{' '}
         </Text>
       </TouchableOpacity>
     );
@@ -90,7 +90,7 @@ export class NavBar extends React.Component {
             activeNavTabStyle.header,
             baseComponentsStyle.header,
           )}>
-          Lobby
+          Lobby{' '}
         </Text>
       </TouchableOpacity>
     );
