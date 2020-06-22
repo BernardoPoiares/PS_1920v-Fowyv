@@ -67,12 +67,14 @@ export class ListenLobbyComponent extends React.Component {
             toValue: {x: WINDOW_WIDTH + 100, y: gestureState.dy},
           }).start(() => {
             this.onSwipeRight();
+            this.position.setValue({x: 0, y: 0});
           });
         } else if (gestureState.dx < -100) {
           Animated.spring(this.position, {
             toValue: {x: -WINDOW_WIDTH - 100, y: gestureState.dy},
           }).start(() => {
             this.onSwipeLeft();
+            this.position.setValue({x: 0, y: 0});
           });
         } else {
           Animated.spring(this.position, {
