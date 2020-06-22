@@ -7,44 +7,6 @@ import Carousel from 'react-native-anchor-carousel';
 import {searchUserMatches} from '../redux/actions/userMatches.actions.js';
 
 const {windowHeight} = Dimensions.get('window').height;
-const DATA = [
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53a3bb28ba',
-    name: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd93211aa97f63',
-    name: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-145573111e29d72',
-    name: 'Third Item',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53a112bb28ba',
-    name: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91a2121a97f63',
-    name: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-1455731231231e29d72',
-    name: 'Third Item',
-  },
-  {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53a4324213bb28ba',
-    name: 'First Item',
-  },
-  {
-    id: '3ac68afc-c605-48d3-a4f8-fbd91243531425aa97f63',
-    name: 'Second Item',
-  },
-  {
-    id: '58694a0f-3da1-471f-bd96-14557156457547e29d72',
-    name: 'Third Item',
-  },
-];
 
 export class MatchLobbyComponent extends React.Component {
   constructor(props) {
@@ -60,11 +22,17 @@ export class MatchLobbyComponent extends React.Component {
     );
   }
 
+  areMatches = () => {
+    return (
+      this.props.userMatches != undefined && this.props.userMatches.length > 0
+    );
+  };
+
   render() {
     return (
       <View style={matchLobbyStyle.View}>
         <View style={matchLobbyStyle.topMatchesContainer}>
-          {this.props.userMatches ? (
+          {false ? (
             <Carousel
               data={this.props.userMatches}
               renderItem={({item}) => (
@@ -89,31 +57,41 @@ export class MatchLobbyComponent extends React.Component {
               <Text
                 style={matchLobbyStyle.noUsersText}
                 textBreakStrategy="simple">
-                No Matches{' '}
+                {'No conversations \n'}
               </Text>
             </View>
           )}
         </View>
         <Text style={matchLobbyStyle.newMatchesHeader}>New Matches</Text>
         <View style={matchLobbyStyle.bottomMatchesContainer}>
-          <Carousel
-            data={DATA}
-            renderItem={({item}, index, separators) => (
-              <Match
-                onPress={this.onMatchPressed}
-                iconSize={80}
-                size={200}
-                name={item.name}
-              />
-            )}
-            itemWidth={Dimensions.get('window').width / 3}
-            containerWidth={Dimensions.get('window').width}
-            separatorWidth={15}
-            inActiveOpacity={0.6}
-            ref={c => {
-              this._carousel = c;
-            }}
-          />
+          {this.areMatches() ? (
+            <Carousel
+              data={this.props.userMatches}
+              renderItem={({item}, index, separators) => (
+                <Match
+                  onPress={this.onMatchPressed}
+                  iconSize={80}
+                  size={200}
+                  name={item.name}
+                />
+              )}
+              itemWidth={Dimensions.get('window').width / 3}
+              containerWidth={Dimensions.get('window').width}
+              separatorWidth={15}
+              inActiveOpacity={0.6}
+              ref={c => {
+                this._carousel = c;
+              }}
+            />
+          ) : (
+            <View style={matchLobbyStyle.noUsersContainer}>
+              <Text
+                style={matchLobbyStyle.noUsersText}
+                textBreakStrategy="simple">
+                {'No new matches \n'}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     );
