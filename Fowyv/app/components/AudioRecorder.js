@@ -40,12 +40,8 @@ export class AudioRecorder extends React.Component {
         AudioEncoding: 'aac',
         AudioEncodingBitRate: 32000,
       })
-      .then(a => {
-        console.log(a);
-      })
-      .catch(c => {
-        console.log(c);
-      });
+      .then(a => {})
+      .catch(c => {});
   }
 
   async _pause() {
@@ -57,9 +53,7 @@ export class AudioRecorder extends React.Component {
     try {
       const filePath = await recorder.pauseRecording();
       this.setState({paused: true});
-    } catch (error) {
-      console.error(error);
-    }
+    } catch (error) {}
   }
 
   async _resume() {
@@ -99,7 +93,7 @@ export class AudioRecorder extends React.Component {
     }
   }
 
-   async startRecording() {
+  async startRecording() {
     if (this.state.recording) {
       console.warn('Already recording!');
       return;

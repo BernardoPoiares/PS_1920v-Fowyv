@@ -48,7 +48,6 @@ export const likedUser = payload => {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'LIKED_USER_FAIL', payload: ex.responseBody});
     }
   };
@@ -57,7 +56,6 @@ export const likedUser = payload => {
 export const dislikedUser = payload => {
   return async (dispatch, getState) => {
     const state = getState();
-    console.log(payload.user);
     try {
       dispatch({type: 'DISLIKED_USER_LOADING'});
       const response = await fetchApi(
@@ -77,7 +75,6 @@ export const dislikedUser = payload => {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'DISLIKED_USER_FAIL', payload: ex.responseBody});
     }
   };

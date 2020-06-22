@@ -51,7 +51,6 @@ export const fetchApi = async (
     }
 
     const response = await api(url, method, body, headers);
-    console.log(response);
     if (response.status === statusCode) {
       result.success = true;
       if (response.headers.get('Content-Type')) {

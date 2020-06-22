@@ -19,9 +19,6 @@ const languages = [
   {
     value: 'English',
   },
-  {
-    value: 'Portuguese',
-  },
 ];
 
 export class PersonalAudioRecorder extends React.Component {

@@ -19,7 +19,6 @@ export const loginUser = payload => {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };
@@ -42,14 +41,12 @@ export const logoutUser = payload => {
         200,
         token,
       );
-      console.log(response);
       if (response.success) {
         dispatch({type: 'LOGOUT_USER_SUCCESS'});
       } else {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'LOGOUT_USER_FAIL', payload: ex.responseBody});
     }
   };

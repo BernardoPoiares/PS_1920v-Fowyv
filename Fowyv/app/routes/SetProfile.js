@@ -21,7 +21,7 @@ class SetProfileComponent extends React.Component {
     super(props);
     this.state = {
       name: null,
-      date: '2016-05-15',
+      date: '2002-06-22',
       icon: 'play',
       audioFile: null,
     };
@@ -67,8 +67,8 @@ class SetProfileComponent extends React.Component {
               mode="date"
               placeholder="select date"
               format="YYYY-MM-DD"
-              minDate="2002-05-01"
-              maxDate="2100-06-01"
+              minDate="1900-01-01"
+              maxDate="2002-06-22"
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               customStyles={{

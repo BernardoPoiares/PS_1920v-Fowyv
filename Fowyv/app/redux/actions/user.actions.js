@@ -21,7 +21,6 @@ export const saveUserDetails = payload => {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'GET_USER_FAIL', payload: ex.responseBody});
     }
   };
@@ -48,7 +47,6 @@ export const getUserDetails = payload => {
         throw response;
       }
     } catch (ex) {
-      console.log(ex);
       dispatch({type: 'GET_USER_FAIL', payload: ex.responseBody});
     }
   };
