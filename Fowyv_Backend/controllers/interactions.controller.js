@@ -16,8 +16,8 @@ exports.likeUser = (req, res) => {
     const otherUserChoises= UsersChoises.find(user=>
         user.email == req.body.email);
     if(otherUserChoises.likedUsers.find(likedUser=>likedUser.email == req.email))
-        UsersMatches.push({emails:[req.email,req.body],historic:[]})
-
+        UsersMatches.push({emails:[req.email,req.body.email],historic:[]})
+ 
     return res.status(200).send();
 }
 

@@ -27,8 +27,7 @@ exports.setProfile = (req, res) => {
     let user=UsersDetails.find(
         user=>user.email == req.email);
     if(!user){
-        user={email:req.email,name:null,age:null,icon:null};
-        ({audioFile,...user} = req.body);
+        user={email:req.email,name:req.body.name,gender:"female",age:req.body.date,icon:req.body.icon};
         UsersDetails.push(user);
     }else{
         ({...user} = req.body);
@@ -44,5 +43,6 @@ exports.setProfile = (req, res) => {
         AudioFiles[AudioFiles.findIndex(af=>af.email==req.email)]=audioFile;
     }
         
+    const b=UsersDetails;
     res.status(200).send();
 }
