@@ -7,6 +7,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
 import Users from '../dummy/Users';
+import AudioFiles from '../dummy/AudioFiles';
+import UsersChoises from '../dummy/UsersChoises';
+import UsersMatches from '../dummy/UsersMatches';
+import UsersSearchSettings from '../dummy/UsersSearchSettings';
+
 
 exports.signup = (req, res) => {
   /*const user = new User({
@@ -23,7 +28,12 @@ exports.signup = (req, res) => {
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8)
     });
-
+    UsersChoises.push({
+      email: req.body.email,
+      likedUsers:[],
+      dislikedUsers:[]});
+    UsersSearchSettings.push(
+      {email: req.body.email, minSearchAge:18, maxSearchAge:35, searchGenders:['female'], languages:["English"]});
     /*if (req.body.roles) {
       Role.find(
         {
