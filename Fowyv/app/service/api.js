@@ -1,10 +1,9 @@
-const BASE_URL = 'http://192.168.1.131:3001';
+const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 export const api = async (url, method, body = null, headers = {}) => {
   try {
-    const endPoint = BASE_URL.concat(url);
+    const endPoint = BASE_URL + url;
     const reqBody = body ? JSON.stringify(body) : null;
-
     const fetchParams = {method, headers};
 
     if (method === 'POST' && method === 'PUT' && !reqBody) {
@@ -27,6 +26,7 @@ export const api = async (url, method, body = null, headers = {}) => {
 
     return response;
   } catch (e) {
+    console.log(e);
     throw new Error(e);
   }
 };

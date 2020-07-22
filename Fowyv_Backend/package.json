@@ -4,7 +4,7 @@
   "description": "Server application for Fowyv",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start":"pm2 start --no-daemon start.js"
   },
   "author": "BernardoPoiares",
   "license": "ISC",
