@@ -33,7 +33,7 @@ exports.signup = (req, res) => {
       likedUsers:[],
       dislikedUsers:[]});
     UsersSearchSettings.push(
-      {email: req.body.email, minSearchAge:18, maxSearchAge:35, searchGenders:['female'], languages:["English"]});
+      {email: req.body.email, minSearchAge:18, maxSearchAge:35, searchGenders:['female','male'], languages:["English"]});
     /*if (req.body.roles) {
       Role.find(
         {
