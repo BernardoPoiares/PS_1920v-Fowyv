@@ -4,17 +4,18 @@
   "description": "Server application for Fowyv",
   "main": "index.js",
   "scripts": {
-    "start":"pm2 start --no-daemon start.js"
+    "start": "pm2 start --no-daemon start.js"
   },
   "author": "BernardoPoiares",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
-    "eslint": "^5.0.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
-    "jsonwebtoken": "^8.5.1"
+    "eslint": "^5.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "socket.io": "^2.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",

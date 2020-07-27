@@ -23,8 +23,20 @@ require('./routes/user.routes')(app);
 require('./routes/search.routes')(app);
 require('./routes/interactions.routes')(app);
 
+const server = require("http").createServer(app);
+const io = require("socket.io").listen(server);
+
+
 // set port, listen for requests
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
+});
+
+io.on("connection", (socket) => {
+  console.log("a user connected :D");
+  socket.on("chat message", (msg) => {
+    console.log(msg);
+    io.emit("chat message", msg);
+  });
 });
