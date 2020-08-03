@@ -11,6 +11,7 @@ import routes from 'res/routes';
 import {FieldValidator} from '../utils/FieldValidator';
 import {connect} from 'react-redux';
 import {loginUser} from '../redux/actions/auth.actions';
+import {initialize} from '../redux/actions/messages.actions';
 
 class LoginComponent extends React.Component {
   constructor(props) {
@@ -21,6 +22,7 @@ class LoginComponent extends React.Component {
     };
   }
   onLoginPressed = () => {
+    this.props.dispatch(initialize());
     this.props.dispatch(
       loginUser({email: this.state.email, password: this.state.password}),
     );

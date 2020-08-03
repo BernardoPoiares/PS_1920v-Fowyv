@@ -5,6 +5,7 @@ import userReducer from './user.reducer.js';
 import searchSettingsReducer from './searchSettings.reducer.js';
 import userFunctionalities from './userFunctionalities.reducer.js';
 import userMatches from './userMatchesReducer.js';
+import messagesReducer from './messages.reducer.js';
 
 const reducers = {
   authReducer,
@@ -12,6 +13,7 @@ const reducers = {
   searchSettingsReducer,
   userFunctionalities,
   userMatches,
+  messagesReducer,
 };
 
 const appReducer = combineReducers(reducers);
