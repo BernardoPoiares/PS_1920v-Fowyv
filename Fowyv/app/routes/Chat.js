@@ -13,6 +13,7 @@ import {AudioRecorder} from '../components/AudioRecorder.js';
 import {AudioMessage} from '../components/AudioMessage.js';
 import uuid from 'react-native-uuid';
 import {AudioUtils} from 'react-native-audio';
+import {sendTextMessage} from '../redux/actions/messages.actions';
 
 const DATA = [];
 
@@ -20,6 +21,7 @@ export class Chat extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      textMessage: '',
       audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
     };
   }
@@ -29,6 +31,17 @@ export class Chat extends React.Component {
     this.setState({
       audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
     });
+  };
+
+  onTextMessageChanged = value => {
+    this.setState({textMessage: value});
+  };
+
+  onSendPressed = () => {
+    this.props.dispatch(
+      sendTextMessage({email: 'e@e.e', message: this.state.textMessage}),
+    );
+    this.setState({textMessage: ''});
   };
 
   render() {
@@ -46,7 +59,19 @@ export class Chat extends React.Component {
             style={chatStyle.messageInput}
             multiline
             numberOfLines={4}
+            onChangeText={this.onTextMessageChanged}
           />
+          <TouchableOpacity
+            style={{alignSelf: 'center'}}
+            onPress={this.onSendPressed}>
+            {' '}
+            <Icon
+              name={'long-arrow-alt-up'}
+              size={15}
+              color={'darkorange'}
+              style={this.props.sendIcon}
+            />
+          </TouchableOpacity>
           <View style={chatStyle.microphoneContainer}>
             <AudioRecorder
               audioPath={this.state.audioPath}
@@ -95,6 +120,12 @@ const chatStyle = StyleSheet.create({
     marginRight: '5%',
   },
   microphone: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'darkorange',
+    padding: 10,
+  },
+  sendIcon: {
     justifyContent: 'center',
     alignItems: 'center',
     color: 'darkorange',

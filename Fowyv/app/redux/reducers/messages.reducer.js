@@ -36,6 +36,7 @@ const userMessages = (state = {}, action) => {
         isSuccess: false,
         errors: null,
         matches: state.matches,
+        connection: state.connection,
       };
     case 'USER_MESSAGES_GET_SUCCESS':
       return {
@@ -44,6 +45,7 @@ const userMessages = (state = {}, action) => {
         isSuccess: true,
         errors: null,
         matches: action.payload,
+        connection: state.connection,
       };
     case 'USER_MESSAGES_GET_FAIL':
       return {
@@ -52,6 +54,34 @@ const userMessages = (state = {}, action) => {
         isSuccess: false,
         errors: action.payload,
         matches: state.matches,
+        connection: state.connection,
+      };
+    case 'USER_MESSAGES_SEND_LOADING':
+      return {
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+        errors: null,
+        matches: action.payload,
+        connection: state.connection,
+      };
+    case 'USER_MESSAGES_SEND_SUCCESS':
+      return {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        errors: null,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    case 'USER_MESSAGES_SEND_FAIL':
+      return {
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        errors: action.payload,
+        matches: state.matches,
+        connection: state.connection,
       };
     default:
       return state;
