@@ -1,7 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import {authUserWebSocket} from './webSockets/authUserWebSocket'
+import {subscribeWebSocketEvents, sendAllMessages} from './webSockets/clientSocket'
 
+const connectionsOpened=[];
 const app = express();
 
 var corsOptions = {
@@ -26,13 +29,21 @@ require('./routes/interactions.routes')(app);
 const server = require("http").createServer(app);
 const io = require("socket.io").listen(server);
 
-
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
 
+io.use(authUserWebSocket);
+
 io.on("connection", (socket) => {
+  subscribeWebSocketEvents(socket);
+  connectionsOpened.push(addClientConnection(socket));
+  sendAllMessages(socket);
   console.log("a user connected :D");
 });
+
+const addClientConnection = (socket) => {
+  return {id:1};
+}
