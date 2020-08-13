@@ -34,14 +34,14 @@ export const sendTextMessage = payload => {
       const transID = uuid.v4();
       addMessageToConversation(
         matches,
-        payload.user,
+        payload.userEmail,
         transID,
         'TEXT',
         payload.message,
       );
       dispatch({type: 'USER_MESSAGES_SEND_LOADING', payload: matches});
 
-      await sendMessage(connection, payload.user, payload.message);
+      sendMessage(connection, payload.user, payload.message);
 
       dispatch({
         type: 'USER_MESSAGES_SEND_SUCCESS',
@@ -56,7 +56,11 @@ export const sendTextMessage = payload => {
 };
 
 const addMessageToConversation = (matches, user, transId, type, message) => {
-  matches
-    .find(u => u.user === user)
-    .messages.push({id: transId, messageType: type, message: message});
+  if (matches && matches.length > 0) {
+    matches
+      .find(u => u.user === user)
+      .messages.push({id: transId, messageType: type, message: message});
+  } else {
+    throw new Error('Matches are empty');
+  }
 };

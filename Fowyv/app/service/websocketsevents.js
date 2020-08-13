@@ -2,7 +2,7 @@ const BASE_URL = 'http://192.168.1.131:4000';
 
 import SocketIOClient from 'socket.io-client';
 
-export const createWebSocketClient = async dispatcher => {
+export const createWebSocketClient = dispatcher => {
   try {
     var socket = SocketIOClient(BASE_URL);
     subscribeEvents(socket, dispatcher);
@@ -19,14 +19,15 @@ const subscribeEvents = (socket, dispatcher) => {
   });
 
   socket.on('receiveAllMessages', messages => {
+    const msgs = JSON.parse(messages);
+    console.log(msgs);
     dispatcher({
       type: 'USER_MESSAGES_GET_SUCCESS',
-      payload: messages,
+      payload: msgs,
     });
-    console.log(messages);
   });
 };
 
-export const sendMessage = async (socket, message, token = null) => {
-  socket.emit('sendMessage', JSON.stringify({message: message}));
+export const sendMessage = (socket, message, token = null) => {
+  socket.emit('userMessage', JSON.stringify({message: message}));
 };

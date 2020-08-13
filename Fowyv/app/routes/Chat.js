@@ -12,12 +12,13 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {AudioRecorder} from '../components/AudioRecorder.js';
 import {AudioMessage} from '../components/AudioMessage.js';
 import uuid from 'react-native-uuid';
+import {connect} from 'react-redux';
 import {AudioUtils} from 'react-native-audio';
 import {sendTextMessage} from '../redux/actions/messages.actions';
 
 const DATA = [];
 
-export class Chat extends React.Component {
+class ChatComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -39,7 +40,7 @@ export class Chat extends React.Component {
 
   onSendPressed = () => {
     this.props.dispatch(
-      sendTextMessage({email: 'e@e.e', message: this.state.textMessage}),
+      sendTextMessage({userEmail: 'e@e.e', message: this.state.textMessage}),
     );
     this.setState({textMessage: ''});
   };
@@ -64,11 +65,10 @@ export class Chat extends React.Component {
           <TouchableOpacity
             style={{alignSelf: 'center'}}
             onPress={this.onSendPressed}>
-            {' '}
             <Icon
               name={'long-arrow-alt-up'}
               size={15}
-              color={'darkorange'}
+              color={'blue'}
               style={this.props.sendIcon}
             />
           </TouchableOpacity>
@@ -86,6 +86,19 @@ export class Chat extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const Chat = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ChatComponent);
 
 const chatStyle = StyleSheet.create({
   container: {
