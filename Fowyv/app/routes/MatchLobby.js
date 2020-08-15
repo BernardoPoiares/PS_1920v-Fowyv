@@ -12,8 +12,15 @@ export class MatchLobbyComponent extends React.Component {
   constructor(props) {
     super(props);
   }
-  onMatchPressed = () => {
-    this.props.navigation.navigate('ChatStack', {screen: 'Chat'});
+  onMatchPressed = email => {
+    return () => {
+      this.props.navigation.navigate('ChatStack', {
+        screen: 'Chat',
+        params: {
+          userMatch: email,
+        },
+      });
+    };
   };
 
   UNSAFE_componentWillMount() {
@@ -69,7 +76,7 @@ export class MatchLobbyComponent extends React.Component {
               data={this.props.userMatches}
               renderItem={({item}, index, separators) => (
                 <Match
-                  onPress={this.onMatchPressed}
+                  onPress={this.onMatchPressed(item.email)}
                   iconSize={80}
                   size={200}
                   name={item.name}

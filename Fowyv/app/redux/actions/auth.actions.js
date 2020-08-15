@@ -1,5 +1,7 @@
 import {fetchApi} from '../../service/api';
 import {getUserDetails} from './user.actions';
+import {initialize} from './messages.actions';
+
 export const loginUser = payload => {
   return async dispatch => {
     try {
@@ -8,12 +10,12 @@ export const loginUser = payload => {
 
       if (response.success) {
         dispatch(getUserDetails({token: response.responseBody.token})).then(
-          () => {
+          dispatch(initialize()).then(() => {
             dispatch({
               type: 'AUTHENTICATE_USER_SUCCESS',
               token: response.responseBody.token,
             });
-          },
+          }),
         );
       } else {
         throw response;

@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {AudioRecorder} from '../components/AudioRecorder.js';
-import {AudioMessage} from '../components/AudioMessage.js';
+import {Message} from '../components/Message.js';
 import uuid from 'react-native-uuid';
 import {connect} from 'react-redux';
 import {AudioUtils} from 'react-native-audio';
@@ -24,6 +24,12 @@ class ChatComponent extends React.Component {
     this.state = {
       textMessage: '',
       audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
+      user: props.route.params.userMatch,
+      match: props.matches
+        ? props.matches.find(
+            match => match.user == props.route.params.userMatch,
+          )
+        : null,
     };
   }
 
@@ -39,10 +45,23 @@ class ChatComponent extends React.Component {
   };
 
   onSendPressed = () => {
-    this.props.dispatch(
-      sendTextMessage({userEmail: 'e@e.e', message: this.state.textMessage}),
+    if (this.state.textMessage.length > 0) {
+      this.props.dispatch(
+        sendTextMessage({
+          userEmail: this.state.user,
+          message: this.state.textMessage,
+        }),
+      );
+      this.setState({textMessage: ''});
+    }
+  };
+
+  areMessagesToShow = () => {
+    return (
+      this.state.match &&
+      this.state.match.messages !== undefined &&
+      this.state.match.messages.length > 0
     );
-    this.setState({textMessage: ''});
   };
 
   render() {
@@ -50,10 +69,13 @@ class ChatComponent extends React.Component {
       <View style={chatStyle.container}>
         <StatusBar barStyle="light-content" backgroundColor="darkorange" />
         <View style={chatStyle.chatContainer}>
-          <FlatList
-            data={DATA}
-            renderItem={({item}) => <AudioMessage audioPath={item.audioPath} />}
-          />
+          {this.areMessagesToShow() ? (
+            <FlatList
+              data={this.state.match.messages}
+              //renderItem={({item}) => <AudioMessage audioPath={item.audioPath} />}
+              renderItem={({item}) => <Message message={item} />}
+            />
+          ) : null}
         </View>
         <View style={chatStyle.interactionContainer}>
           <TextInput
@@ -67,7 +89,7 @@ class ChatComponent extends React.Component {
             onPress={this.onSendPressed}>
             <Icon
               name={'long-arrow-alt-up'}
-              size={15}
+              size={30}
               color={'blue'}
               style={this.props.sendIcon}
             />
@@ -89,6 +111,7 @@ class ChatComponent extends React.Component {
 
 const mapStateToProps = state => ({
   authenticatedUser: state.authReducer.authenticateUser,
+  matches: state.messagesReducer.userMessages.matches,
 });
 
 const mapDispatchToProps = dispatch => ({
