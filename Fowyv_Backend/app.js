@@ -2,9 +2,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 //import {authUserWebSocket} from './webSockets/authUserWebSocket'
-import {subscribeEvents, sendAllMessages} from './webSockets/clientSocket'
+import {initializeSocketConnection, sendAllMessages} from './webSockets/clientSocket'
 
-const connectionsOpened=[];
 const app = express();
 
 var corsOptions = {
@@ -38,12 +37,7 @@ server.listen(PORT, () => {
 //io.use(authUserWebSocket);
 
 io.on("connection", (socket) => {
-  subscribeEvents(socket);
-  connectionsOpened.push(addClientConnection(socket));
-  sendAllMessages(socket);
+  initializeSocketConnection(socket);
   console.log("a user connected :D");
 });
 
-const addClientConnection = (socket) => {
-  return {id:1};
-}
