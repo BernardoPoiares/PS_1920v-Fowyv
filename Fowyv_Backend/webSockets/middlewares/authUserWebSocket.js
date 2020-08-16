@@ -8,7 +8,7 @@ export const authUserWebSocket = function socketAuth(socket, next){
     jwt.verify(token, config.secret, (err, decoded) => {
       if (err) 
         return socket.emit("tokenExpired")
-      socket.user = decoded.email;
+      socket.userMail = decoded.email;
       next();
     });
   }

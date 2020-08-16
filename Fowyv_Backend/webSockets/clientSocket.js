@@ -1,7 +1,7 @@
 
 
 const connectionsOpened=[];
-const messagesReceived=[{user : "b@b.b",messages : [{id:"12",user:'e@e.e',type:"text", date:"15-08-2020", content:"Hello :)", state:"received"}]}];
+const messagesReceived=[{users : ["a@a.a","b@b.b"],messages : [{id:"12",user:'b@b.b',type:"text", date:"15-08-2020", content:"Hello :)", state:"received"}]}];
 
 const addClientConnection = (socket) => {
   return {userConnection:1,connection};
@@ -21,8 +21,9 @@ const onMessageReceived = (socket) => {
     console.log(data);
     const obj=JSON.parse(data);
     obj.message.state="saved";
-    const interaction = messagesReceived.find(u=>u.user== obj.message.user)
+    const interaction = messagesReceived.find(interaction=>interaction.users.includes(socket.userMail) && interaction.users.includes(obj.message.user) )
     if(interaction){
+      obj.message.user=socket.userMail;
       interaction.messages.push(obj.message);
       socket.emit("messageReceived",obj.message);
     }
