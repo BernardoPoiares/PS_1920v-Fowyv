@@ -8,10 +8,12 @@ export class Message extends React.Component {
 
   render() {
     return (
-      <TouchableOpacity>
-        <View style={messageStyle.container}>
-          <Text style={messageStyle.text}>{this.props.message.content}</Text>
-        </View>
+      <TouchableOpacity
+        style={StyleSheet.compose(
+          messageStyle.container,
+          this.props.rightMode ? messageStyle.rightMode : messageStyle.leftMode,
+        )}>
+        <Text style={messageStyle.text}>{this.props.message.content}</Text>
       </TouchableOpacity>
     );
   }
@@ -19,14 +21,27 @@ export class Message extends React.Component {
 
 const messageStyle = StyleSheet.create({
   container: {
-    width: '10%',
-    height: '20%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    fontSize: 20,
+    alignItems: 'flex-start',
     backgroundColor: 'darkorange',
+    borderWidth: 1,
+    margin: 15,
+    marginLeft: 20,
+    marginRight: 20,
+    borderRadius: 20,
+    opacity: 0.7,
+  },
+  leftMode: {
+    marginRight: 50,
+  },
+  rightMode: {
+    marginLeft: 50,
+    backgroundColor: 'blue',
   },
   text: {
-    fontSize: 20,
+    fontSize: 15,
+    justifyContent: 'center',
     color: 'black',
+    margin: 10,
   },
 });

@@ -78,22 +78,23 @@ class ChatComponent extends React.Component {
           ) : null}
         </View>
         <View style={chatStyle.interactionContainer}>
+          <TouchableOpacity
+            style={chatStyle.sendContainer}
+            onPress={this.onSendPressed}>
+            <Icon
+              name={'long-arrow-alt-up'}
+              size={15}
+              color={'darkorange'}
+              style={this.props.sendIcon}
+            />
+          </TouchableOpacity>
           <TextInput
             style={chatStyle.messageInput}
             multiline
             numberOfLines={4}
+            value={this.state.textMessage}
             onChangeText={this.onTextMessageChanged}
           />
-          <TouchableOpacity
-            style={{alignSelf: 'center'}}
-            onPress={this.onSendPressed}>
-            <Icon
-              name={'long-arrow-alt-up'}
-              size={30}
-              color={'blue'}
-              style={this.props.sendIcon}
-            />
-          </TouchableOpacity>
           <View style={chatStyle.microphoneContainer}>
             <AudioRecorder
               audioPath={this.state.audioPath}
@@ -141,7 +142,7 @@ const chatStyle = StyleSheet.create({
     backgroundColor: 'darkorange',
   },
   messageInput: {
-    width: '70%',
+    width: '65%',
     backgroundColor: 'white',
     borderRadius: 10,
     margin: '5%',
@@ -160,6 +161,15 @@ const chatStyle = StyleSheet.create({
     alignItems: 'center',
     color: 'darkorange',
     padding: 10,
+  },
+  sendContainer: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 15,
+    backgroundColor: 'white',
+    width: 30,
+    height: 30,
+    marginLeft: '5%',
   },
   sendIcon: {
     justifyContent: 'center',
