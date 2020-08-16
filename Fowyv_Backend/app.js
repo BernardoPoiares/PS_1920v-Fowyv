@@ -1,7 +1,7 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
-//import {authUserWebSocket} from './webSockets/authUserWebSocket'
+import {authUserWebSocket} from './webSockets/middlewares/authUserWebSocket'
 import {initializeSocketConnection, sendAllMessages} from './webSockets/clientSocket'
 
 const app = express();
@@ -35,7 +35,7 @@ server.listen(PORT, () => {
 });
 
 //io.use(authUserWebSocket);
-
+io.use(authUserWebSocket);
 io.on("connection", (socket) => {
   initializeSocketConnection(socket);
   console.log("a user connected :D");
