@@ -8,7 +8,7 @@ export const initialize = payload => {
   return async dispatch => {
     try {
       dispatch({type: 'USER_MESSAGES_CONNECTION_LOADING'});
-      const socket = createWebSocketClient(dispatch);
+      const socket = createWebSocketClient(dispatch, payload);
       dispatch({
         type: 'USER_MESSAGES_CONNECTION_SUCCESS',
         payload: socket,

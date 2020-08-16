@@ -10,7 +10,7 @@ export const loginUser = payload => {
 
       if (response.success) {
         dispatch(getUserDetails({token: response.responseBody.token})).then(
-          dispatch(initialize()).then(() => {
+          dispatch(initialize(response.responseBody.token)).then(() => {
             dispatch({
               type: 'AUTHENTICATE_USER_SUCCESS',
               token: response.responseBody.token,

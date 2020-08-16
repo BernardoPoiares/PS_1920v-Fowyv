@@ -1,10 +1,13 @@
 const BASE_URL = 'http://192.168.1.131:4000';
 
-import SocketIOClient from 'socket.io-client';
+import io from 'socket.io-client';
 
-export const createWebSocketClient = dispatcher => {
+export const createWebSocketClient = (dispatcher, token) => {
   try {
-    var socket = SocketIOClient(BASE_URL);
+    var socket = io(BASE_URL, {
+      query: 'token=' + token,
+      forceNew: true,
+    });
     subscribeEvents(socket, dispatcher);
     return socket;
   } catch (ex) {
