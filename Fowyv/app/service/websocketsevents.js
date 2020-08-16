@@ -35,6 +35,6 @@ const subscribeEvents = (socket, dispatcher) => {
   });
 };
 
-export const sendMessage = (socket, token, message) => {
+export const sendMessage = (socket, message) => {
   socket.emit('userMessage', JSON.stringify({message: message}));
 };

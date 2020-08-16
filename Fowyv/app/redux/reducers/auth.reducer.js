@@ -18,6 +18,7 @@ const authenticateUser = (state = {}, action) => {
         isSuccess: true,
         errors: null,
         token: action.token,
+        email: action.email,
         isLoggedIn: true,
       };
     case 'AUTHENTICATE_USER_FAIL':

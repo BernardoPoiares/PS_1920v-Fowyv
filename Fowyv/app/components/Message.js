@@ -11,7 +11,9 @@ export class Message extends React.Component {
       <TouchableOpacity
         style={StyleSheet.compose(
           messageStyle.container,
-          this.props.rightMode ? messageStyle.rightMode : messageStyle.leftMode,
+          this.props.rightModeLayout
+            ? messageStyle.rightMode
+            : messageStyle.leftMode,
         )}>
         <Text style={messageStyle.text}>{this.props.message.content}</Text>
       </TouchableOpacity>
@@ -36,7 +38,7 @@ const messageStyle = StyleSheet.create({
   },
   rightMode: {
     marginLeft: 50,
-    backgroundColor: 'blue',
+    backgroundColor: 'yellow',
   },
   text: {
     fontSize: 15,

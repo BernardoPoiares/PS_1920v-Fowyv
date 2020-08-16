@@ -13,6 +13,7 @@ export const loginUser = payload => {
           dispatch(initialize(response.responseBody.token)).then(() => {
             dispatch({
               type: 'AUTHENTICATE_USER_SUCCESS',
+              email: payload.email,
               token: response.responseBody.token,
             });
           }),

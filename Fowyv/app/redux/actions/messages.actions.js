@@ -30,22 +30,33 @@ export const sendTextMessage = payload => {
         messagesReducer: {
           userMessages: {connection, matches},
         },
+        authReducer: {
+          authenticateUser: {userEmail},
+        },
       } = state;
       const transID = uuid.v4();
-      const msg = addMessageToConversation(
+      const msgAdded = addMessageToConversation(
         matches,
-        payload.userEmail,
+        userEmail,
         transID,
         'TEXT',
         payload.message,
       );
-      if (msg === null) {
+
+      if (!msgAdded) {
         throw Error('message not added');
       }
 
       dispatch({type: 'USER_MESSAGES_SEND_LOADING', payload: matches});
 
-      sendMessage(connection, payload.userEmail, msg);
+      sendMessage(connection, {
+        id: transID,
+        user: payload.userEmail,
+        type: 'TEXT',
+        date: '15-08-2020',
+        content: payload.message,
+        state: 'sended',
+      });
 
       dispatch({
         type: 'USER_MESSAGES_SEND_SUCCESS',
@@ -73,10 +84,10 @@ const addMessageToConversation = (matches, user, transId, type, message) => {
     const match = matches.find(u => u.user == user);
     if (match) {
       match.messages.push(msg);
-      return msg;
+      return true;
     }
+    return false;
   } else {
     throw new Error('Matches are empty');
   }
-  return null;
 };

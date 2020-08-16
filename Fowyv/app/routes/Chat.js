@@ -27,7 +27,9 @@ class ChatComponent extends React.Component {
       user: props.route.params.userMatch,
       match: props.matches
         ? props.matches.find(
-            match => match.user == props.route.params.userMatch,
+            match =>
+              match.users.includes(this.props.authenticatedUser.email) &&
+              match.users.includes(props.route.params.userMatch),
           )
         : null,
     };
@@ -73,7 +75,12 @@ class ChatComponent extends React.Component {
             <FlatList
               data={this.state.match.messages}
               //renderItem={({item}) => <AudioMessage audioPath={item.audioPath} />}
-              renderItem={({item}) => <Message message={item} />}
+              renderItem={({item}) => (
+                <Message
+                  message={item}
+                  rightModeLayout={this.state.user != item.user}
+                />
+              )}
             />
           ) : null}
         </View>
