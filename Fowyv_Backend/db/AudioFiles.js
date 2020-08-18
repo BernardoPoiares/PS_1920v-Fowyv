@@ -11,5 +11,6 @@ let AudioFiles=[
     {email:'d@d.d',language:'English',path:''}
 
 ]
+export const AudioFilesConnector={
 
-export default AudioFiles;
+};

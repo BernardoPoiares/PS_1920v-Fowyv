@@ -1,9 +1,7 @@
-import UsersMatches from '../dummy/UsersMatches';
-import UsersDetails from '../dummy/UsersDetails';
 
 
 exports.getMatches = (req, res) => {
-    const matches=UsersMatches.filter(match=>
+    /*const matches=UsersMatches.filter(match=>
         match.emails.includes(req.email));
     if(!matches)
         return res.status(404).send({ message: "Matches Not found." });
@@ -13,5 +11,6 @@ exports.getMatches = (req, res) => {
         matches.some(match=>
             match.emails.includes(user.email))
     );
-    return res.status(200).json(matchesDetails);
+    return res.status(200).json(matchesDetails);*/
+    return res.status(200).send();
 }

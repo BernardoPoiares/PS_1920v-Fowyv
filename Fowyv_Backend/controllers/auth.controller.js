@@ -1,20 +1,57 @@
 import config from "../config/auth.config";
-//const db = require("../models");
-//const User = db.user;
-//const Role = db.role;
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-import Users from '../dummy/Users';
-import AudioFiles from '../dummy/AudioFiles';
-import UsersChoises from '../dummy/UsersChoises';
-import UsersMatches from '../dummy/UsersMatches';
-import UsersSearchSettings from '../dummy/UsersSearchSettings';
+import {runTransaction} from '../db/dbClient.js'
+const mongodb = require('mongodb');
 
 
-exports.signup = (req, res) => {
-  /*const user = new User({
+exports.signup = async (req, res) => {
+
+  try{
+
+    await runTransaction(async (db,opts) => {
+
+      const data = await db.collection('user').insertOne(
+      {
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, 8)
+      }, {}, opts);
+
+      const data1 = await db.collection('UsersSearchSettings').insertOne(
+      {
+        email: req.body.email,
+        likedUsers:[],
+        dislikedUsers:[]
+      }, {}, opts);
+
+      const data2 = await db.collection('UsersChoises').insertOne(
+        {
+          email: req.body.email,
+          minSearchAge:18,
+          maxSearchAge:35,
+          searchGenders:['female','male'],
+          languages:["English"]
+        }, {}, opts);
+
+    });
+
+    var token = jwt.sign({ email: req.body.email }, config.secret, {
+      expiresIn: 86400 // 24 hours
+    });
+
+    res.status(200).json({
+      email: req.body.email,
+      token: token
+    });
+
+  }catch(error){
+    res.status(500).send({ message: error });
+    return;
+  }
+
+   /*const user = new User({
     email: req.body.email,
     password: bcrypt.hashSync(req.body.password, 8)
   });
@@ -24,6 +61,7 @@ exports.signup = (req, res) => {
       res.status(500).send({ message: err });
       return;
     }*/
+    /*
     Users.push({
       email: req.body.email,
       password: bcrypt.hashSync(req.body.password, 8)
@@ -34,7 +72,7 @@ exports.signup = (req, res) => {
       dislikedUsers:[]});
     UsersSearchSettings.push(
       {email: req.body.email, minSearchAge:18, maxSearchAge:35, searchGenders:['female','male'], languages:["English"]});
-    /*if (req.body.roles) {
+    if (req.body.roles) {
       Role.find(
         {
           name: { $in: req.body.roles }
@@ -73,21 +111,21 @@ exports.signup = (req, res) => {
           res.send({ message: "User was registered successfully!" });
         });
       });
-    }*/
+    }
     var token = jwt.sign({ email: req.body.email }, config.secret, {
       expiresIn: 86400 // 24 hours
     });
     res.status(200).json({
       email: req.body.email,
       token: token
-    });
+    });*/
 };
 
 exports.signin = (req, res) => {
   /*User.findOne({
     username: req.body.username
   })*/
-  const user=Users.find(user=>user.email===req.body.email)
+  /*const user=Users.find(user=>user.email===req.body.email)
     const exec=((err, user) => {
       if (err) {
         res.status(500).send({ message: err });
@@ -118,7 +156,9 @@ exports.signin = (req, res) => {
       });
     });
     
-    return exec (null,user)
+    return exec (null,user)*/
+    res.status(200).send();
+
 };
 
 exports.signout = (req, res) => {

@@ -2,7 +2,6 @@
 //const ROLES = db.ROLES;
 //const User = db.user;
 
-import  Users  from '../dummy/Users';
 const checkDuplicateEmail = (req, res, next) => {
 
     // Email
@@ -21,8 +20,6 @@ const checkDuplicateEmail = (req, res, next) => {
 
       next();
     });*/
-    if(Users.find(user=>user.email===req.body.email))
-      return res.status(500).send({ message: 'User already registered' });
     next();
 };
 
