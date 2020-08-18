@@ -69,6 +69,7 @@ export const createUser = payload => {
         throw response;
       }
     } catch (ex) {
+      console.log(ex);
       dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };

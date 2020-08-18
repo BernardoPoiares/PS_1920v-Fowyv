@@ -1,4 +1,4 @@
-const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
+const BASE_URL = 'http://192.168.1.131:4000';
 
 export const api = async (url, method, body = null, headers = {}) => {
   try {
