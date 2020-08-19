@@ -2,45 +2,91 @@ import {GetAge} from '../utils/dates';
 
 
 exports.getSearchSettings = (req, res) => {
-  /*  const user=UsersSearchSettings.find(user=>
-        user.email == req.email);
-    if(!user)
-        return res.status(404).send({ message: "User Not found." });
-    return res.status(200).json(user);*/
-    return res.status(200).send();
+
+    try{
+
+        const searchSettings = await runTransaction(async (db,opts) => {
+
+            const userSearchSettings= await db.collection("UserSearchSettings").findOne({email:req.email}, opts);
+
+            if(!userSearchSettings)
+                throw new Error("User Not found.");
+
+            return userSearchSettings;
+
+        }); 
+
+        return res.status(200).json(searchSettings);
+
+    }catch(error){
+        res.status(500).send({ message: error });
+        return;
+    }
+
 }
 
 exports.setSearchSettings = (req, res) => {
-  /*  let user=UsersSearchSettings.find(user=>user.email == req.email);
-    if(!user)
-        user={email:req.email}
     
-    Object.assign(user,req.body);
+    try{
 
-    UsersSearchSettings[UsersSearchSettings.indexOf(user=>user.email == req.email)] = user;
-*/
-    res.status(200).send();
-    
+        const searchSettings = await runTransaction(async (db,opts) => {
+
+            const collection = db.collection("UsersSearchSettings");
+
+            let userSearchSettings= await collection.findOne({email:req.email}, opts);
+
+            if(!userSearchSettings)
+                throw new Error("User Not found.");
+
+            Object.assign(userSearchSettings,req.body);
+            
+            await collection.replaceOne(({email:userSearchSettings.email}, userSearchSettings, options));
+
+        }); 
+
+        res.status(200).send();
+
+    }catch(error){
+        res.status(500).send({ message: error });
+        return;
+    }
+
 }
 
 exports.searchUsers = (req, res) => {
     
-    /*
-    let userSearchSettings = UsersSearchSettings.find(user=>user.email == req.email);
-    if(!userSearchSettings)
-        return res.status(404).send({ message: "User Not found." });
-    let usersChoises = UsersChoises.find(user=>user.email == req.email);
-    if(!usersChoises)
-        return res.status(404).send({ message: "User Not found." });
-    let usersSearchResult = UsersDetails.filter(user => user.email != req.email);
-    if(usersSearchResult != null && usersSearchResult != undefined && usersSearchResult.length > 0 )
-        usersSearchResult = usersSearchResult.filter(user => 
-            usersChoises.dislikedUsers.find(userDis=>userDis.email == user.email)== undefined 
-            && usersChoises.likedUsers.find(userlik=>userlik.email == user.email)==undefined  
-            && GetAge(user.age)>=userSearchSettings.minSearchAge 
-            && GetAge(user.age)<=userSearchSettings.maxSearchAge
-            && userSearchSettings.searchGenders.includes(user.gender))
-            
-    res.status(200).send(usersSearchResult);
-    */
+    try{
+        
+        const searchResult = await runTransaction(async (db,opts) => {
+
+            const userSearchSettings= await  db.collection("UsersSearchSettings").findOne({email:req.email}, opts);
+
+            if(!userSearchSettings)
+                throw new Error("User Not found.");
+
+            const userChoices= await  db.collection("UsersChoices").findOne({email:req.email}, opts);
+
+            if(!userChoices)
+                throw new Error("User Not found.");
+
+            let usersSearchResult = dbo.collection("UsersDetails").find(user => user.email != req.email).toArray();
+
+            if(!usersSearchResult)
+                usersSearchResult = usersSearchResult.filter(user => 
+                    userChoices.dislikedUsers.find(userDis=>userDis.email == user.email) == undefined 
+                    && userChoices.likedUsers.find(userlik=>userlik.email == user.email) == undefined  
+                    && GetAge(user.age)>=userSearchSettings.minSearchAge 
+                    && GetAge(user.age)<=userSearchSettings.maxSearchAge
+                    && userSearchSettings.searchGenders.includes(user.gender))
+                
+            return usersSearchResult;
+        }); 
+
+        res.status(200).send(searchResult);
+
+    }catch(error){
+        res.status(500).send({ message: error });
+        return;
+    }
+
 }

@@ -13,7 +13,7 @@ exports.signup = async (req, res) => {
 
     await runTransaction(async (db,opts) => {
 
-      const data = await db.collection('user').insertOne(
+      const data = await db.collection('Users').insertOne(
       {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
@@ -51,113 +51,47 @@ exports.signup = async (req, res) => {
     return;
   }
 
-   /*const user = new User({
-    email: req.body.email,
-    password: bcrypt.hashSync(req.body.password, 8)
-  });
-
-  user.save((err, user) => {
-    if (err) {
-      res.status(500).send({ message: err });
-      return;
-    }*/
-    /*
-    Users.push({
-      email: req.body.email,
-      password: bcrypt.hashSync(req.body.password, 8)
-    });
-    UsersChoises.push({
-      email: req.body.email,
-      likedUsers:[],
-      dislikedUsers:[]});
-    UsersSearchSettings.push(
-      {email: req.body.email, minSearchAge:18, maxSearchAge:35, searchGenders:['female','male'], languages:["English"]});
-    if (req.body.roles) {
-      Role.find(
-        {
-          name: { $in: req.body.roles }
-        },
-        (err, roles) => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          user.roles = roles.map(role => role._id);
-          user.save(err => {
-            if (err) {
-              res.status(500).send({ message: err });
-              return;
-            }
-
-            res.send({ message: "User was registered successfully!" });
-          });
-        }
-      );
-    } else {
-      Role.findOne({ name: "user" }, (err, role) => {
-        if (err) {
-          res.status(500).send({ message: err });
-          return;
-        }
-
-        user.roles = [role._id];
-        user.save(err => {
-          if (err) {
-            res.status(500).send({ message: err });
-            return;
-          }
-
-          res.send({ message: "User was registered successfully!" });
-        });
-      });
-    }
-    var token = jwt.sign({ email: req.body.email }, config.secret, {
-      expiresIn: 86400 // 24 hours
-    });
-    res.status(200).json({
-      email: req.body.email,
-      token: token
-    });*/
 };
 
 exports.signin = (req, res) => {
-  /*User.findOne({
-    username: req.body.username
-  })*/
-  /*const user=Users.find(user=>user.email===req.body.email)
-    const exec=((err, user) => {
-      if (err) {
-        res.status(500).send({ message: err });
-        return;
-      }
 
-      if (!user) {
-        return res.status(404).send({ message: "User Not found." });
-      }
+  try{
 
-      var passwordIsValid = bcrypt.compareSync(
-        req.body.password,
-        user.password
-      );
-      if (!passwordIsValid) {
-        return res.status(401).send({
-          token: null,
-          message: "Invalid Password!"
-        });
-      }
+    const user = await runTransaction(async (db,opts) => {
 
-      var token = jwt.sign({ email: user.email }, config.secret, {
-        expiresIn: 86400 // 24 hours
-      });
-      res.status(200).json({
-        email: user.email,
-        token: token
-      });
+        return await db.collection("Users").findOne({email:req.body.email}, opts);
+
     });
-    
-    return exec (null,user)*/
-    res.status(200).send();
+
+    if (!user) {
+      return res.status(404).send({ message: "User Not found." });
+    }
+
+    var passwordIsValid = bcrypt.compareSync(
+      req.body.password,
+      user.password
+    );
+
+    if (!passwordIsValid) {
+      return res.status(401).send({
+        token: null,
+        message: "Invalid Password!"
+      });
+    }
+
+    var token = jwt.sign({ email: user.email }, config.secret, {
+      expiresIn: 86400 // 24 hours
+    });
+
+    res.status(200).json({
+      email: user.email,
+      token: token
+    });
+
+  }catch(error){
+    res.status(500).send({ message: error });
+    return;
+  }
 
 };
 
