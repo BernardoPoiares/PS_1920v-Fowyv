@@ -1,0 +1,8 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/bc7ea2e2-2535-4f43-ba55-e683582c4b07/resourceGroups/appsvc_linux_centralus/providers/Microsoft.Web/sites/FOWYV-BACKEND",
+    "appService.deploySubpath": "."
+}
