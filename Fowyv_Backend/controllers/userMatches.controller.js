@@ -1,4 +1,5 @@
-
+import {Collections} from "../config/dbSettings.config";
+import {runTransaction} from '../db/dbClient.js'
 
 exports.getMatches = (req, res) => {
 
@@ -6,12 +7,13 @@ exports.getMatches = (req, res) => {
         
         const matchesDetails = await runTransaction(async (db,opts) => {
 
-            const userMatches = await db.collection("UsersMatches").findOne({email:req.email}, opts);
+            const userMatches = await db.collection(Collections.UserMatches).findOne({email:req.email}, opts);
 
             if(!userMatches)
-                throw new Error("User Not found.");
+                return {errorCode:404, errorMessage:"User matches not found."};
 
-            return await db.collection("UsersDetails")
+
+            return await db.collection(Collections.UserDetails)
                 .find(u => u.email != req.email)
                 .filter(u =>u.email != req.email)
                 .filter( user => matches
@@ -19,6 +21,9 @@ exports.getMatches = (req, res) => {
                 );
 
         }); 
+
+        if(matchesDetails && matchesDetails.errorCode)
+            return res.status(matchesDetails.errorCode).send(matchesDetails.errorMessage);
 
         res.status(200).json(matchesDetails);
 

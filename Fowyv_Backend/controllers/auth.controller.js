@@ -1,11 +1,13 @@
-import config from "../config/auth.config";
+import authConfig from "../config/auth.config";
+import appSettings from "../config/appSettings.config";
+import {Collections} from "../config/dbSettings.config";
+
+
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 
-import {runTransaction} from '../db/dbClient.js'
-const mongodb = require('mongodb');
-
+import {runQuery, runTransaction} from '../db/dbClient.js'
 
 exports.signup = async (req, res) => {
 
@@ -13,32 +15,32 @@ exports.signup = async (req, res) => {
 
     await runTransaction(async (db,opts) => {
 
-      const data = await db.collection('Users').insertOne(
+      const data = await db.collection(Collections.Users).insertOne(
       {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
       }, {}, opts);
 
-      const data1 = await db.collection('UsersSearchSettings').insertOne(
+      const data1 = await db.collection(Collections.UsersSearchSettings).insertOne(
       {
         email: req.body.email,
         likedUsers:[],
         dislikedUsers:[]
       }, {}, opts);
 
-      const data2 = await db.collection('UsersChoises').insertOne(
+      const data2 = await db.collection(Collections.UsersChoices).insertOne(
         {
           email: req.body.email,
-          minSearchAge:18,
-          maxSearchAge:35,
-          searchGenders:['female','male'],
-          languages:["English"]
+          minSearchAge:appSettings.minSearchAge,
+          maxSearchAge:appSettings.maxSearchAge,
+          searchGenders:appSettings.genders,
+          languages:appSettings.languages
         }, {}, opts);
 
     });
 
-    var token = jwt.sign({ email: req.body.email }, config.secret, {
-      expiresIn: 86400 // 24 hours
+    var token = jwt.sign({ email: req.body.email }, authConfig.secret, {
+      expiresIn: authConfig.tokenExpirationTime
     });
 
     res.status(200).json({
@@ -57,14 +59,14 @@ exports.signin = (req, res) => {
 
   try{
 
-    const user = await runTransaction(async (db,opts) => {
+    const user = await runQuery(async (db,opts) => {
 
-        return await db.collection("Users").findOne({email:req.body.email}, opts);
+        return await db.collection(Collections.Users).findOne({email:req.body.email}, opts);
 
     });
 
     if (!user) {
-      return res.status(404).send({ message: "User Not found." });
+      return res.status(404).send({ message: "User not found." });
     }
 
     var passwordIsValid = bcrypt.compareSync(
@@ -79,7 +81,7 @@ exports.signin = (req, res) => {
       });
     }
 
-    var token = jwt.sign({ email: user.email }, config.secret, {
+    var token = jwt.sign({ email: user.email }, authConfig.secret, {
       expiresIn: 86400 // 24 hours
     });
 

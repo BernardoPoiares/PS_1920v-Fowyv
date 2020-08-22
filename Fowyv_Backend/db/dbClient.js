@@ -17,6 +17,29 @@ const connectDb = async () => {
   return mongodb.connect(url, {useNewUrlParser: true});
 };
 
+export async function runQuery (query){
+  let connection = await connectDb();
+  const db = connection.db();
+
+  const session = connection.startSession();
+  try {
+    
+      let opts = {session, returnOriginal: false};
+      const ret = await query(db,opts);
+      
+      // After the successfull transaction sesstion gets ended and connection must be closed
+      session.endSession();
+      connection.close();
+      
+      return ret;
+
+  } catch (error) {
+      session.endSession();
+      connection.close();
+      throw error; // Rethrow so calling function sees error
+  }
+}
+
 export async function runTransaction (transaction){
   let connectionForTransaction = await connectDb();
   const db = connectionForTransaction.db();
@@ -48,6 +71,7 @@ export async function runTransaction (transaction){
 }
 
 export default {
+  runQuery,
   runTransaction
 }
 /*
