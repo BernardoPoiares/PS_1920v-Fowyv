@@ -1,15 +1,12 @@
 
-
 const connectionsOpened=[];
 const messagesReceived=[{users : ["a@a.a","b@b.b"],messages : [{id:"12",user:'b@b.b',type:"text", date:"15-08-2020", content:"Hello :)", state:"received"}]}];
 
-const addClientConnection = (socket) => {
-  return {userConnection:1,connection};
-}
-
+import {downloadFile, deleteTmpFile} from "../filesStorage/fileStorageClient";
 
 const initializeSocketConnection = (socket)=>{
     socket.on('userMessage',onMessageReceived(socket))
+    socket.on('getFile',onGetFileRequest(socket))
     socket.on('disconnect', onDisconnected(socket))
     connectionsOpened.push(socket);
     sendAllMessages(socket);
@@ -32,18 +29,38 @@ const onMessageReceived = (socket) => {
   
 const onDisconnected = (socket) => {
   return ()=>{
-  connectionsOpened.slice(connectionsOpened.indexOf(socket), 1);
-  console.log("client disconnected");
+    connectionsOpened.slice(connectionsOpened.indexOf(socket), 1);
+    console.log("client disconnected");
   }
 }
   
 const sendAllMessages= (socket)=>{
-  console.log("send messages");
-
+    console.log("send messages");
     socket.emit('receiveAllMessages',JSON.stringify(messagesReceived));
 }
 
+const onGetFileRequest= (socket)=>{
+  return (req)=>{
+
+    try{
+
+      console.log(req);
+      const obj=JSON.parse(req);
+
+      if(obj.fileID){
+        const file = downloadFile(obj.fileID);
+        socket.emit("fileFound",file, (error)=>{
+          deleteTmpFile(file);
+        });
+
+      }
+
+    }catch(error){
+
+    }
+  }
+}
+
 export {
-  initializeSocketConnection,
-  sendAllMessages
+  initializeSocketConnection
 };

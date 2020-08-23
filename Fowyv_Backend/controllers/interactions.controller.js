@@ -1,7 +1,7 @@
 import {Collections} from "../config/dbSettings.config";
 import {runTransaction} from '../db/dbClient.js'
 
-exports.likeUser = (req, res) => {
+exports.likeUser = async (req, res) => {
 
     try{
 
@@ -45,7 +45,7 @@ exports.likeUser = (req, res) => {
 
 }
 
-exports.dislikeUser = (req, res) => {
+exports.dislikeUser = async (req, res) => {
 
    try{
 

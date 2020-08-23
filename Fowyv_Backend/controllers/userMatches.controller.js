@@ -1,7 +1,7 @@
 import {Collections} from "../config/dbSettings.config";
 import {runTransaction} from '../db/dbClient.js'
 
-exports.getMatches = (req, res) => {
+exports.getMatches = async (req, res) => {
 
     try{
         

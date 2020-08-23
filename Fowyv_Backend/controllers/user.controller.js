@@ -2,7 +2,7 @@ import {Collections} from "../config/dbSettings.config";
 
 import {runQuery, runTransaction} from '../db/dbClient.js'
 
-exports.getDetails = (req, res) => {
+exports.getDetails = async (req, res) => {
 
     try{
 
@@ -24,7 +24,7 @@ exports.getDetails = (req, res) => {
 
 }
 
-exports.saveDetails = (req, res) => {
+exports.saveDetails = async (req, res) => {
 
     try{
 
@@ -62,7 +62,7 @@ exports.saveDetails = (req, res) => {
     
 }
 
-exports.setProfile = (req, res) => {
+exports.setProfile = async (req, res) => {
     
     try{
         

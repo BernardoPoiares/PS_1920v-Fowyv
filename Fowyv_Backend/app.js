@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import {authUserWebSocket} from './webSockets/middlewares/authUserWebSocket'
-import {initializeSocketConnection, sendAllMessages} from './webSockets/clientSocket'
+import {initializeSocketConnection} from './webSockets/clientSocket'
 
 const app = express();
 

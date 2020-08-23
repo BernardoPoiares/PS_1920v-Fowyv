@@ -9,9 +9,9 @@ client.connect(err => {
 });
 */
 
-const mongodb = require('mongodb');
+import mongodb from 'mongodb';
 
-const url = "mongodb://localhost:27017/mydb";
+const url = "mongodb+srv://Fowyv:FowyvPS1920v@fowyvcluster.4lr4a.azure.mongodb.net/db?retryWrites=true&w=majority";//"mongodb://localhost:27017/mydb";
 
 const connectDb = async () => {
   return mongodb.connect(url, {useNewUrlParser: true});

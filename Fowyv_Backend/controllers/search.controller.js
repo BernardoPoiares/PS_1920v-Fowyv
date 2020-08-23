@@ -5,7 +5,7 @@ import {runTransaction} from '../db/dbClient.js'
 import {GetAge} from '../utils/dates';
 
 
-exports.getSearchSettings = (req, res) => {
+exports.getSearchSettings = async (req, res) => {
 
     try{
 
@@ -32,7 +32,7 @@ exports.getSearchSettings = (req, res) => {
 
 }
 
-exports.setSearchSettings = (req, res) => {
+exports.setSearchSettings = async (req, res) => {
     
     try{
 
@@ -71,7 +71,7 @@ exports.setSearchSettings = (req, res) => {
 
 }
 
-exports.searchUsers = (req, res) => {
+exports.searchUsers = async (req, res) => {
     
     try{
         
