@@ -14,7 +14,10 @@ import {Message} from '../components/Message.js';
 import uuid from 'react-native-uuid';
 import {connect} from 'react-redux';
 import {AudioUtils} from 'react-native-audio';
-import {sendTextMessage} from '../redux/actions/messages.actions';
+import {
+  sendTextMessage,
+  downloadFileRequest,
+} from '../redux/actions/messages.actions';
 
 const DATA = [];
 
@@ -58,6 +61,14 @@ class ChatComponent extends React.Component {
     }
   };
 
+  onSend2Pressed = () => {
+    this.props.dispatch(
+      downloadFileRequest({
+        fileID: 'cat.aac',
+      }),
+    );
+  };
+
   areMessagesToShow = () => {
     return (
       this.state.match &&
@@ -78,7 +89,7 @@ class ChatComponent extends React.Component {
               renderItem={({item}) => (
                 <Message
                   message={item}
-                  rightModeLayout={this.state.user != item.user}
+                  rightModeLayout={this.state.user !== item.user}
                 />
               )}
             />
@@ -92,6 +103,16 @@ class ChatComponent extends React.Component {
               name={'long-arrow-alt-up'}
               size={15}
               color={'darkorange'}
+              style={this.props.sendIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={chatStyle.sendContainer}
+            onPress={this.onSend2Pressed}>
+            <Icon
+              name={'long-arrow-alt-down'}
+              size={20}
+              color={'blue'}
               style={this.props.sendIcon}
             />
           </TouchableOpacity>

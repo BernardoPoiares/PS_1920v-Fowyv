@@ -1,7 +1,7 @@
 import {
   createWebSocketClient,
   sendMessage,
-  downloadFileRequest,
+  sendDownloadFileRequest,
 } from '../../service/websocketsevents';
 import uuid from 'react-native-uuid';
 
@@ -84,7 +84,7 @@ export const downloadFileRequest = payload => {
 
       dispatch({type: 'USER_MESSAGES_GETFILE_LOADING'});
 
-      sendFileRequest(connection, payload.file);
+      sendDownloadFileRequest(connection, payload.fileID);
 
       dispatch({type: 'USER_MESSAGES_GETFILE_SUCCESS'});
     } catch (ex) {

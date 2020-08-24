@@ -37,9 +37,13 @@ const subscribeEvents = (socket, dispatcher) => {
   });
 
   socket.on('fileFound', async resp => {
-    console.log(resp);
-    const fileResponse = JSON.parse(resp);
-    await writeFile(fileResponse.id, fileResponse.content);
+    try {
+      console.log('fileFound');
+      //const fileResponse = JSON.parse(resp);
+      await writeFile('cat.aac', resp);
+    } catch (error) {
+      console.log(error);
+    }
   });
 };
 
@@ -47,6 +51,6 @@ export const sendMessage = (socket, message) => {
   socket.emit('userMessage', JSON.stringify({message: message}));
 };
 
-export const downloadFileRequest = (socket, fileID) => {
-  socket.emit('getFile', JSON.stringify({id: fileID}));
+export const sendDownloadFileRequest = (socket, id) => {
+  socket.emit('getFile', JSON.stringify({fileID: id}));
 };
