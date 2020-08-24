@@ -21,14 +21,14 @@ exports.signup = async (req, res) => {
         password: bcrypt.hashSync(req.body.password, 8)
       }, {}, opts);
 
-      const data1 = await db.collection(Collections.UsersSearchSettings).insertOne(
+      const data1 = await db.collection(Collections.UsersChoices).insertOne(
       {
         email: req.body.email,
         likedUsers:[],
         dislikedUsers:[]
       }, {}, opts);
 
-      const data2 = await db.collection(Collections.UsersChoices).insertOne(
+      const data2 = await db.collection(Collections.UsersSearchSettings).insertOne(
         {
           email: req.body.email,
           minSearchAge:appSettings.minSearchAge,

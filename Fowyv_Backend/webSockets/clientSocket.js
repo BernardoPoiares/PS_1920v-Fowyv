@@ -48,15 +48,19 @@ const onGetFileRequest= (socket)=>{
       const obj=JSON.parse(req);
 
       if(obj.fileID){
-        const file = downloadFile(obj.fileID);
-        socket.emit("fileFound",file, (error)=>{
-          deleteTmpFile(file);
-        });
-
+        const file = downloadFile(obj.fileID,function(err,data){
+          if (!err) {
+              socket.emit("fileFound",data, (error)=>{
+                deleteTmpFile(file);
+              });
+          } else {
+              console.log(err);
+          }
+      });
       }
 
     }catch(error){
-
+      console.log(error);
     }
   }
 }

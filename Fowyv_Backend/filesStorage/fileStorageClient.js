@@ -1,10 +1,16 @@
 import fs from 'fs';
 import AWS from 'aws-sdk';
+import tmp from 'tmp';
+ 
+
 
 const s3 = new AWS.S3({
   accessKeyId: 'AKIAJGFLMRUXDLELFR5Q',//process.env.AWS_ACCESS_KEY,
   secretAccessKey: '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'//process.env.AWS_SECRET_ACCESS_KEY
 });
+
+const directory = tmp.dirSync();
+console.log('Dir: ', directory);
 
 const uploadFile = (filepath, filename) => {
     // Read content from the file
@@ -26,7 +32,7 @@ const uploadFile = (filepath, filename) => {
     });
 };
 
-const downloadFile = (filename)=>{
+const downloadFile = (filename,cb)=>{
     
     var options = {
         Bucket    : 'fowyvps1920v',
@@ -35,13 +41,17 @@ const downloadFile = (filename)=>{
     
     let fileStream = s3.getObject(options).createReadStream();
     
-    var file = fs.createWriteStream('C:\\Users\\User01\\Desktop\\Work\\Workspace\\ISEL\\PS\\1920v\\PS_1920v-Fowyv\\Fowyv_Backend\\filesStorage\\'+filename);
+    var file = fs.createWriteStream(directory+filename);
     fileStream.pipe(file);
-    return file;
+    
+    fileStream.on("finish", ()=>{
+        fs.readFile(directory+filename,cb);
+    });
+
 };
 
 const deleteTmpFile = (filename)=>{
-   fs.unlinkSync('C:\\Users\\User01\\Desktop\\Work\\Workspace\\ISEL\\PS\\1920v\\PS_1920v-Fowyv\\Fowyv_Backend\\filesStorage\\'+filename);
+   fs.unlinkSync(directory+filename);
 };
 
 

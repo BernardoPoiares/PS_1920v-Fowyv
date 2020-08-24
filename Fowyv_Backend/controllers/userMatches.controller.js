@@ -7,18 +7,20 @@ exports.getMatches = async (req, res) => {
         
         const matchesDetails = await runTransaction(async (db,opts) => {
 
-            const userMatches = await db.collection(Collections.UserMatches).findOne({email:req.email}, opts);
+            const userMatches = await db.collection(Collections.UsersMatches).find({emails: req.email }, opts).toArray();
 
             if(!userMatches)
                 return {errorCode:404, errorMessage:"User matches not found."};
 
 
-            return await db.collection(Collections.UserDetails)
-                .find(u => u.email != req.email)
-                .filter(u =>u.email != req.email)
-                .filter( user => matches
+            const usersDetails = await db.collection(Collections.UsersDetails).find({ email: { $ne : req.email } },opts).toArray();
+
+            if(usersDetails)
+                return usersDetails.filter( user => userMatches
                         .some( match => match.emails.includes(user.email) )
                 );
+
+            return usersDetails;
 
         }); 
 

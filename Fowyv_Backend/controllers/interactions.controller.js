@@ -3,21 +3,34 @@ import {runTransaction} from '../db/dbClient.js'
 
 exports.likeUser = async (req, res) => {
 
-    try{
+    try{        
+
+        const userReq = getUserFromReq(req.body);
+
+        if(Object.keys(userReq).length === 0 && userReq.constructor === Object)
+            res.status(404).send("No valid user email on request.");   
+
+        else if(userReq.validationErrorMessage)
+            return res.status(404).send(userReq.validationErrorMessage);   
 
         const transactionResult = await runTransaction(async (db,opts) => {
+            
+            const otherUser= await db.collection(Collections.Users).findOne({email:userReq.email}, opts);
+
+            if(!otherUser)
+                return {errorCode:404, errorMessage:"User not found."};
 
             const userChoices= await db.collection(Collections.UsersChoices).findOne({email:req.email}, opts);
 
             if(!userChoices)
                 return {errorCode:404, errorMessage:"User choices not found."};
 
-            userChoices.likedUsers.push(req.body);
+            userChoices.likedUsers.push(userReq);
             const newValues = { $set: {likedUsers:userChoices.likedUsers} };
 
             await db.collection(Collections.UsersChoices).updateOne({email:userChoices.email}, newValues, opts )
 
-            const otherUserChoices= await db.collection(Collections.UsersChoices).findOne({email:req.body.email}, opts);
+            const otherUserChoices= await db.collection(Collections.UsersChoices).findOne({email:userReq.email}, opts);
 
             if(!otherUserChoices)
                 return {errorCode:404, errorMessage:"User choices not found."};
@@ -27,7 +40,7 @@ exports.likeUser = async (req, res) => {
                 await db.collection(Collections.UsersMatches).insertOne(
                     {
                         emails:[req.email,
-                        req.body.email],
+                        userReq.email],
                         historic:[]
                     }, {}, opts);
 
@@ -49,18 +62,31 @@ exports.dislikeUser = async (req, res) => {
 
    try{
 
+        const userReq = getUserFromReq(req.body);
+
+        if(Object.keys(userReq).length === 0 && userReq.constructor === Object)
+            res.status(404).send("No valid user email on request.");   
+
+        else if(userReq.validationErrorMessage)
+            return res.status(404).send(userReq.validationErrorMessage);   
+
         const transactionResult = await runTransaction(async (db,opts) => {
 
-            const userChoices= await db.collection(UsersMatches.userChoices).findOne({email:req.email}, opts);
+            const otherUser= await db.collection(Collections.Users).findOne({email:userReq.email}, opts);
+
+            if(!otherUser)
+                return {errorCode:404, errorMessage:"User not found."};
+
+            const userChoices= await db.collection(Collections.UsersChoices).findOne({email:req.email}, opts);
 
             if(!userChoices)
-                return {errorCode:404, errorMessage:"User matches not found."};
+                return {errorCode:404, errorMessage:"User choices not found."};
 
-            userChoices.dislikedUsers.push(req.body);
+            userChoices.dislikedUsers.push(userReq);
 
             const newValues = { $set: {dislikedUsers:userChoices.dislikedUsers} };
 
-            await db.collection(UsersMatches.UserChoices).updateOne({email:userChoices.email}, newValues, opts )
+            await db.collection(Collections.UsersChoices).updateOne({email:userChoices.email}, newValues, opts )
 
         });
 
@@ -74,4 +100,17 @@ exports.dislikeUser = async (req, res) => {
         return;
     }
 
+}
+
+
+
+const getUserFromReq= (req) => {
+
+    let ret={};
+
+    if(req.email){
+        ret.email=req.email;
+    }
+
+    return ret;
 }

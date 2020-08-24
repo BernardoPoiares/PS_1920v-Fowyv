@@ -48,14 +48,16 @@ exports.setSearchSettings = async (req, res) => {
 
             const collection = db.collection(Collections.UsersSearchSettings);
 
-            let userSearchSettings= await collection.findOne({email:req.email}, opts);
+            let userSearchSettings= await collection.findOne({email:req.email},{...opts, projection : { _id : 0 }});
 
             if(!userSearchSettings)
                 return {errorCode:404, errorMessage:"No search settings for user."};
 
             Object.assign(userSearchSettings,searchSettingsReq);
             
-            await collection.replaceOne(({email:userSearchSettings.email}, userSearchSettings, options));
+            const newValues = { $set: {...userSearchSettings} };
+    
+            await collection.updateOne(({email:userSearchSettings.email}, newValues, opts));
 
         }); 
 
@@ -82,12 +84,14 @@ exports.searchUsers = async (req, res) => {
             if(!userSearchSettings)
                 return {errorCode:404, errorMessage:"No user found."};
 
-            const userChoices= await  db.collection(Collections.UserChoices).findOne({email:req.email}, opts);
+            const userChoices= await  db.collection(Collections.UsersChoices).findOne({email:req.email}, opts);
 
             if(!userChoices)
                 return {errorCode:404, errorMessage:"No userChoices found."};
 
-            let usersSearchResult = dbo.collection(Collections.UsersDetails).find(user => user.email != req.email).toArray();
+            const query = { email: { $ne : req.email } };
+
+            let usersSearchResult = await db.collection(Collections.UsersDetails).find(query).toArray();
 
             if(!usersSearchResult)
                 usersSearchResult = usersSearchResult.filter(user => 
@@ -118,39 +122,59 @@ const getSearchSettingsFromReq= (req) =>{
     let ret={};
 
     if(req.minSearchAge){ 
-        if(!Number.isInteger(req.minSearchAge))
-            return ret.validationErrorMessage = "Minimum search age must be number."
-        if(req.minSearchAge<appSettings.minSearchAge)
-            return ret.validationErrorMessage = `Minimum search age must be higher or equal then ${appSettings.minSearchAge}`
-        if(req.minSearchAge>appSettings.maxSearchAge)
-            return ret.validationErrorMessage = `Minimum search age must be lower or equal then ${appSettings.maxSearchAge}`
+        if(!Number.isInteger(req.minSearchAge)){
+            ret.validationErrorMessage = "Minimum search age must be number."
+            return ret;
+        }
+        if(req.minSearchAge<appSettings.minSearchAge){
+            ret.validationErrorMessage = `Minimum search age must be higher or equal then ${appSettings.minSearchAge}`
+            return ret;
+        }
+        if(req.minSearchAge>appSettings.maxSearchAge){
+            ret.validationErrorMessage = `Minimum search age must be lower or equal then ${appSettings.maxSearchAge}`
+            return ret;
+        }
 
         ret.minSearchAge=req.minSearchAge;
     }
     if(req.maxSearchAge){
-        if(!Number.isInteger(req.maxSearchAge))
-            return ret.validationErrorMessage = "Maximum search age must be number."
-        if(req.maxSearchAge<appSettings.minSearchAge)
-            return ret.validationErrorMessage = `Maximum search age must be higher or equal then ${appSettings.minSearchAge}.`
-        if(req.maxSearchAge>appSettings.maxSearchAge)
-            return ret.validationErrorMessage = `Maximum search age must be lower or equal then ${appSettings.maxSearchAge}.`
+        if(!Number.isInteger(req.maxSearchAge)){
+            ret.validationErrorMessage = "Maximum search age must be number."
+            return ret;
+        }
+        if(req.maxSearchAge<appSettings.minSearchAge){
+            ret.validationErrorMessage = `Maximum search age must be higher or equal then ${appSettings.minSearchAge}.`
+            return ret;
+        }
+        if(req.maxSearchAge>appSettings.maxSearchAge){
+            ret.validationErrorMessage = `Maximum search age must be lower or equal then ${appSettings.maxSearchAge}.`
+            return ret;
+        }
     
         ret.maxSearchAge=req.maxSearchAge;
     }
     if(req.searchGenders){
-        if(!Array.isArray(req.searchGenders))
-            return ret.validationErrorMessage = "Search genders must be an array."
-        if(!req.searchGenders.every(gender=>appSettings.genders.includes(gender)))
-            return ret.validationErrorMessage = "Genders passed not valid."
+        if(!Array.isArray(req.searchGenders)){
+            ret.validationErrorMessage = "Search genders must be an array."
+            return ret;
+        }
+        if(!req.searchGenders.every(gender=>appSettings.genders.includes(gender))){
+            ret.validationErrorMessage = "Genders passed not valid."
+            return ret;
+        }
 
         ret.searchGenders=req.searchGenders;
     }
     if(req.languages){ 
         
-        if(!Array.isArray(req.languages))
-            return ret.validationErrorMessage = "Languages must be an array."
-        if(!req.languages.every(language=>appSettings.languages.includes(language)))
-            return ret.validationErrorMessage = "Languages passed not valid."
+        if(!Array.isArray(req.languages)){
+            ret.validationErrorMessage = "Languages must be an array."
+            return ret;
+        }
+        if(!req.languages.every(language=>appSettings.languages.includes(language))){
+            ret.validationErrorMessage = "Languages passed not valid."
+            return ret;
+        }
 
         ret.languages=req.languages;
     

@@ -1,5 +1,5 @@
 import {Collections} from "../config/dbSettings.config";
-
+import appSettings from "../config/appSettings.config";
 import {runQuery, runTransaction} from '../db/dbClient.js'
 
 exports.getDetails = async (req, res) => {
@@ -40,14 +40,16 @@ exports.saveDetails = async (req, res) => {
             
             const collection = db.collection(Collections.UsersDetails);
 
-            let userDetails= await collection.findOne({email:req.email}, opts);
+            let userDetails= await collection.findOne({email:req.email}, {...opts, projection : { _id : 0 }});
 
             if(!userDetails)
                 return {errorCode:404, errorMessage:"User details not found."};
-
+                
             Object.assign(userDetails,detailsValuesReq);
             
-            await collection.replaceOne(({email:userDetails.email}, userDetails, options));
+            const newValues = { $set: {...userDetails} };
+
+            await collection.updateOne({email:userDetails.email}, newValues, opts );
         });
 
         if(transactionResult && transactionResult.errorCode)
@@ -71,8 +73,8 @@ exports.setProfile = async (req, res) => {
         if(Object.keys(profileValuesReq).length === 0 && profileValuesReq.constructor === Object)
             res.status(404).send("No valid profile values on request.");   
 
-        else if(searchSettingsReq.validationErrorMessage)
-            return res.status(404).send(searchSettingsReq.validationErrorMessage);   
+        else if(profileValuesReq.validationErrorMessage)
+            return res.status(404).send(profileValuesReq.validationErrorMessage);   
 
         await runTransaction(async (db,opts) => {
             
@@ -90,8 +92,8 @@ exports.setProfile = async (req, res) => {
                 };
                 await usersDetailsCollection.insertOne(userDetails, {}, opts);
             }else{
-                ({...userDetails} = req.body);
-                await usersDetailsCollection.replaceOne(({email:userDetails.email}, userDetails, options));
+                ({...userDetails} = profileValuesReq);
+                await usersDetailsCollection.replaceOne(({email:userDetails.email}, userDetails, opts));
             }
 
             const audioFilesCollection = db.collection(Collections.AudioFiles);
@@ -101,11 +103,10 @@ exports.setProfile = async (req, res) => {
             if(!audioFile){
                 audioFile = { email:req.email, language:null, path:null};
                 ({...audioFile} = profileValuesReq.audioFile);
-                AudioFiles.push(audioFile);
                 await audioFilesCollection.insertOne(audioFile, {}, opts);
             }else{
                 ({...audioFile} = profileValuesReq.audioFile);
-                await audioFilesCollection.replaceOne(({email:userDetails.email}, audioFile, options));
+                await audioFilesCollection.replaceOne(({email:userDetails.email}, audioFile, opts));
             }
         
         });
@@ -135,22 +136,20 @@ const getDetailsValuesFromReq= (req) => {
 
     let ret={};
 
-    if(req.age){ 
-        if(!(req.age instanceof Date))
-            return ret.validationErrorMessage = "Age must be Date."
-        if(GetAge(req.age)<appSettings.minSearchAge)
-            return ret.validationErrorMessage = `Age passed is minor then minimum age allowed (${appSettings.minSearchAge} years old) to use this application.`
+    if(req.date){
+        if(!(Date.parse(req.date))){
+            ret.validationErrorMessage = "Age must be Date."
+            return ret;
+        }
+        if(GetAge(req.date) < appSettings.minSearchAge){
+            ret.validationErrorMessage = `Age passed is minor then minimum age allowed (${appSettings.minSearchAge} years old) to use this application.`
+            return ret;
+        }
 
-        ret.minSearchAge=req.minSearchAge;
-    }
-    if(req.gender){
-         if(!appSettings.genders.includes(req.gender))
-            return ret.validationErrorMessage = "Gender passed not valid."
-
-        ret.searchGenders=req.searchGenders;
+        ret.date=req.date;
     }
     if(req.name)
-        ret.languages=req.languages;
+        ret.name=req.name;
 
     return ret;
 }
