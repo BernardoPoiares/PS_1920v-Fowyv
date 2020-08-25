@@ -5,8 +5,8 @@ import tmp from 'tmp';
 
 
 const s3 = new AWS.S3({
-  accessKeyId: 'AKIAJGFLMRUXDLELFR5Q',//process.env.AWS_ACCESS_KEY,
-  secretAccessKey: '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'//process.env.AWS_SECRET_ACCESS_KEY
+  accessKeyId: process.env.AWS_ACCESS_KEY,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 });
 
 const directory = tmp.dirSync();
@@ -18,7 +18,7 @@ const uploadFile = (filepath, filename) => {
 
     // Setting up S3 upload parameters
     const params = {
-        Bucket: 'fowyvps1920v',
+        Bucket: process.env.AWS_BUCKET,
         Key: filename, // File name you want to save as in S3
         Body: fileContent
     };
@@ -35,17 +35,29 @@ const uploadFile = (filepath, filename) => {
 const downloadFile = (filename,cb)=>{
     
     var options = {
-        Bucket    : 'fowyvps1920v',
+        Bucket    : process.env.AWS_BUCKET,
         Key    : filename,
     };
     
     let fileStream = s3.getObject(options).createReadStream();
-    
-    var file = fs.createWriteStream(directory+filename);
+    const path= directory.name+'/'+filename;
+    var file = fs.createWriteStream(path);
     fileStream.pipe(file);
     
     fileStream.on("finish", ()=>{
-        fs.readFile(directory+filename,cb);
+        fs.readFile(directory.name+'/'+filename,(error,data)=>{
+            const path2= directory.name+"/asad2.aac";
+
+            var file2 = fs.writeFile(path2,data,(e)=>{
+                console.log(e);
+            });
+
+            for (let i = 0; i < data.length; i++) {
+                const num = data[i];
+                const str = String.fromCharCode(num);
+                fs.appendFileSync('./test1.aac', str, { encoding: 'ascii' });
+              }
+        });
     });
 
 };
