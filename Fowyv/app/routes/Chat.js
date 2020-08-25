@@ -64,7 +64,7 @@ class ChatComponent extends React.Component {
   onSend2Pressed = () => {
     this.props.dispatch(
       downloadFileRequest({
-        fileID: 'cat.aac',
+        fileID: '_file_example_WAV_1MG.wav',
       }),
     );
   };

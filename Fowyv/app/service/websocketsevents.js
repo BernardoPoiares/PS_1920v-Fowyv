@@ -40,7 +40,7 @@ const subscribeEvents = (socket, dispatcher) => {
     try {
       console.log('fileFound');
       //const fileResponse = JSON.parse(resp);
-      writeFile('cat.aac', resp);
+      writeFile('_file_example_WAV_1MG.wav', resp);
       //console.log(readFile('cat.aac'));
     } catch (error) {
       console.log(error);
