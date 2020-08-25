@@ -1,7 +1,9 @@
 import fs from 'fs';
 import AWS from 'aws-sdk';
 import tmp from 'tmp';
- 
+//const fs = require( 'fs');
+//const AWS =require( 'aws-sdk');
+//const tmp =require( 'tmp');
 
 
 const s3 = new AWS.S3({
@@ -45,19 +47,15 @@ const downloadFile = (filename,cb)=>{
     fileStream.pipe(file);
     
     fileStream.on("finish", ()=>{
-        fs.readFile(directory.name+'/'+filename,(error,data)=>{
-            const path2= directory.name+"/asad2.aac";
+        fs.readFile(directory.name+'/'+filename,//(error,data)=>{
+                cb);
+            /*const path2= directory.name+"/_"+filename;
 
             var file2 = fs.writeFile(path2,data,(e)=>{
                 console.log(e);
             });
 
-            for (let i = 0; i < data.length; i++) {
-                const num = data[i];
-                const str = String.fromCharCode(num);
-                fs.appendFileSync('./test1.aac', str, { encoding: 'ascii' });
-              }
-        });
+        });*/
     });
 
 };

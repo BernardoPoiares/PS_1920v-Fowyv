@@ -52,7 +52,8 @@ const onGetFileRequest= (socket)=>{
           if (!err) {
             
               socket.emit("fileFound",data, (error)=>{
-                deleteTmpFile(file);
+                console.log(error)
+                deleteTmpFile(obj.fileID);
               });
           } else {
               console.log(err);
