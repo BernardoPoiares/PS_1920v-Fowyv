@@ -2,7 +2,7 @@ const BASE_URL = 'http://192.168.1.131:4000';
 
 import io from 'socket.io-client';
 
-import {writeFile} from '../utils/filesUtils';
+import {writeFile, readFile} from '../utils/filesUtils';
 
 export const createWebSocketClient = (dispatcher, token) => {
   try {
@@ -36,11 +36,12 @@ const subscribeEvents = (socket, dispatcher) => {
     console.log(message);
   });
 
-  socket.on('fileFound', async resp => {
+  socket.on('fileFound', resp => {
     try {
       console.log('fileFound');
       //const fileResponse = JSON.parse(resp);
-      await writeFile('cat.aac', resp);
+      writeFile('cat.aac', resp);
+      //console.log(readFile('cat.aac'));
     } catch (error) {
       console.log(error);
     }
