@@ -14,9 +14,9 @@ const s3 = new AWS.S3({
 const directory = tmp.dirSync();
 console.log('Dir: ', directory);
 
-const uploadFile = (filepath, filename) => {
+const uploadFile = (filename, fileContent, cb ) => {
     // Read content from the file
-    const fileContent = fs.readFileSync(filepath);
+    //const fileContent = fs.readFileSync(filepath);
 
     // Setting up S3 upload parameters
     const params = {
@@ -30,6 +30,7 @@ const uploadFile = (filepath, filename) => {
         if (err) {
             throw err;
         }
+        cb(err);
         console.log(`File uploaded successfully. ${data.Location}`);
     });
 };
@@ -61,7 +62,7 @@ const downloadFile = (filename,cb)=>{
 };
 
 const deleteTmpFile = (filename)=>{
-   fs.unlinkSync(directory+filename);
+   fs.unlinkSync(directory.name+'/'+filename);
 };
 
 
