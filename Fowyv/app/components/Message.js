@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {AudioMessage} from './AudioMessage';
 
 export class Message extends React.Component {
   constructor(props) {
@@ -7,17 +8,28 @@ export class Message extends React.Component {
   }
 
   render() {
-    return (
-      <TouchableOpacity
-        style={StyleSheet.compose(
-          messageStyle.container,
-          this.props.rightModeLayout
-            ? messageStyle.rightMode
-            : messageStyle.leftMode,
-        )}>
-        <Text style={messageStyle.text}>{this.props.message.content}</Text>
-      </TouchableOpacity>
-    );
+    if (this.props.message) {
+      return (
+        <View>
+          {this.props.message.type == 'AUDIO' ? (
+            <AudioMessage audioPath={this.props.message.content} />
+          ) : this.props.message.type == 'TEXT' ? (
+            <TouchableOpacity
+              style={StyleSheet.compose(
+                messageStyle.container,
+                this.props.rightModeLayout
+                  ? messageStyle.rightMode
+                  : messageStyle.leftMode,
+              )}>
+              <Text style={messageStyle.text}>
+                {this.props.message.content}
+              </Text>
+            </TouchableOpacity>
+          ) : null}
+        </View>
+      );
+    }
+    return null;
   }
 }
 

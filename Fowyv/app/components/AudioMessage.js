@@ -1,10 +1,11 @@
 import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-
+import {checkAudioFile, getAudioFilePath} from './../utils/filesUtils';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
-export class AudioMessage extends React.Component {
+export class AudioMessageComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -15,7 +16,10 @@ export class AudioMessage extends React.Component {
   }
 
   componentDidMount() {
-    AudioPlayer.createSound(this.props.audioPath, this.setSound);
+    if (checkAudioFile(this.props.audioPath, this.props.dispatch)) {
+      const path = getAudioFilePath(this.props.audioPath);
+      AudioPlayer.createSound(path, this.setSound);
+    }
   }
 
   setSound = sound => {
@@ -50,3 +54,17 @@ export class AudioMessage extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  authenticatedUser: state.authReducer.authenticateUser,
+  usersFound: state.userFunctionalities.searchUsers.users,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const AudioMessage = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AudioMessageComponent);

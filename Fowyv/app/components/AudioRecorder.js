@@ -2,7 +2,8 @@ import React from 'react';
 
 import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {AudioRecorder as recorder} from 'react-native-audio';
+import {AudioRecorder as recorder, AudioUtils} from 'react-native-audio';
+import uuid from 'react-native-uuid';
 
 export class AudioRecorder extends React.Component {
   constructor(props) {
@@ -31,14 +32,16 @@ export class AudioRecorder extends React.Component {
     });
   }
 
-  prepareRecordingPath(audioPath) {
+  prepareRecordingPath() {
+    const audioPath =
+      AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac';
     recorder
       .prepareRecordingAtPath(audioPath, {
         SampleRate: 22050,
         Channels: 1,
         AudioQuality: 'Low',
         AudioEncoding: 'aac',
-        AudioEncodingBitRate: 32000,
+        IncludeBase64: true,
       })
       .then(a => {})
       .catch(c => {});
@@ -103,7 +106,7 @@ export class AudioRecorder extends React.Component {
       console.warn("Can't record, no permission granted!");
       return;
     }
-    this.prepareRecordingPath(this.state.audioPath);
+    this.prepareRecordingPath();
 
     try {
       const filePath = await recorder.startRecording();

@@ -4,29 +4,23 @@ import {
   View,
   TextInput,
   StyleSheet,
-  Text,
   FlatList,
   StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {AudioRecorder} from '../components/AudioRecorder.js';
 import {Message} from '../components/Message.js';
-import uuid from 'react-native-uuid';
 import {connect} from 'react-redux';
-import {AudioUtils} from 'react-native-audio';
 import {
   sendTextMessage,
-  downloadFileRequest,
+  sendAudioFile,
 } from '../redux/actions/messages.actions';
-
-const DATA = [];
 
 class ChatComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       textMessage: '',
-      audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
       user: props.route.params.userMatch,
       match: props.matches
         ? props.matches.find(
@@ -39,10 +33,12 @@ class ChatComponent extends React.Component {
   }
 
   finishedRecording = async audioPath => {
-    DATA.push({audioPath: audioPath});
-    this.setState({
-      audioPath: AudioUtils.DocumentDirectoryPath + uuid.v4() + '.aac',
-    });
+    this.props.dispatch(
+      sendAudioFile({
+        userEmail: this.state.user,
+        audioPath: audioPath,
+      }),
+    );
   };
 
   onTextMessageChanged = value => {
@@ -61,14 +57,6 @@ class ChatComponent extends React.Component {
     }
   };
 
-  onSend2Pressed = () => {
-    this.props.dispatch(
-      downloadFileRequest({
-        fileID: '_file_example_WAV_1MG.wav',
-      }),
-    );
-  };
-
   areMessagesToShow = () => {
     return (
       this.state.match &&
@@ -85,7 +73,6 @@ class ChatComponent extends React.Component {
           {this.areMessagesToShow() ? (
             <FlatList
               data={this.state.match.messages}
-              //renderItem={({item}) => <AudioMessage audioPath={item.audioPath} />}
               renderItem={({item}) => (
                 <Message
                   message={item}

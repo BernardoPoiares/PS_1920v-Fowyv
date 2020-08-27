@@ -83,6 +83,39 @@ const userMessages = (state = {}, action) => {
         matches: state.matches,
         connection: state.connection,
       };
+    case 'USER_MESSAGES_SENDAUDIO_LOADING': {
+      const fileid = action.payload;
+      return {
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+        errors: null,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    }
+    case 'USER_MESSAGES_SENDAUDIO_SUCCESS': {
+      const fileid = action.payload;
+      return {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        errors: null,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    }
+    case 'USER_MESSAGES_SENDAUDIO_FAIL': {
+      const fileid = action.payload;
+      return {
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        errors: action.payload,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    }
     default:
       return state;
   }

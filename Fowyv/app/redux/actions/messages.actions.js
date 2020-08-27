@@ -1,7 +1,8 @@
 import {
   createWebSocketClient,
   sendMessage,
-  sendDownloadFileRequest,
+  sendGetAudioMessageRequest,
+  sendAudioMessage,
 } from '../../service/websocketsevents';
 import uuid from 'react-native-uuid';
 
@@ -72,7 +73,56 @@ export const sendTextMessage = payload => {
   };
 };
 
-export const downloadFileRequest = payload => {
+export const sendAudioFile = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        messagesReducer: {
+          userMessages: {connection, matches},
+        },
+        authReducer: {
+          authenticateUser: {userEmail},
+        },
+      } = state;
+      const transID = uuid.v4();
+      const filename = payload.audioPath.replace(/^.*[\\\/]/, '');
+
+      const msgAdded = addMessageToConversation(
+        matches,
+        userEmail,
+        transID,
+        'AUDIO',
+        filename,
+      );
+
+      if (!msgAdded) {
+        throw Error('message not added');
+      }
+
+      dispatch({type: 'USER_MESSAGES_SENDAUDIO_LOADING'});
+
+      await sendAudioMessage(connection, {
+        id: transID,
+        user: payload.userEmail,
+        type: 'AUDIO',
+        date: '15-08-2020',
+        content: payload.audioPath,
+        state: 'sended',
+      });
+
+      dispatch({type: 'USER_MESSAGES_SENDAUDIO_SUCCESS'});
+    } catch (ex) {
+      console.log(ex);
+      dispatch({
+        type: 'USER_MESSAGES_SENDAUDIO_FAIL',
+        payload: ex.responseBody,
+      });
+    }
+  };
+};
+
+export const sendAudioMessageRequest = payload => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
@@ -82,15 +132,15 @@ export const downloadFileRequest = payload => {
         },
       } = state;
 
-      dispatch({type: 'USER_MESSAGES_GETFILE_LOADING'});
+      dispatch({type: 'USER_MESSAGES_GETAUDIO_LOADING'});
 
-      sendDownloadFileRequest(connection, payload.fileID);
+      sendGetAudioMessageRequest(connection, payload.fileID);
 
-      dispatch({type: 'USER_MESSAGES_GETFILE_SUCCESS'});
+      dispatch({type: 'USER_MESSAGES_GETAUDIO_SUCCESS'});
     } catch (ex) {
       console.log(ex);
       dispatch({
-        type: 'USER_MESSAGES_GETFILE_FAIL',
+        type: 'USER_MESSAGES_GETAUDIO_FAIL',
         payload: ex.responseBody,
       });
     }
