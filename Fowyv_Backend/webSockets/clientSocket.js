@@ -1,6 +1,13 @@
 
 const connectionsOpened=[];
 const messagesReceived=[{users : ["a@a.a","b@b.b"],messages : [{id:"12",user:'b@b.b',type:"TEXT", date:"15-08-2020", content:"Hello :)", state:"received"},{id:"12",user:'b@b.b',type:"AUDIO", date:"15-08-2020", content:"2644e2df-95d0-48f9-a8c1-02db6de8d92b.mp3", state:"received"}]}];
+import tmp from 'tmp';
+import fs from 'fs';
+
+
+
+const directory = tmp.dirSync();
+console.log('Dir: ', directory);
 
 import {downloadFile, deleteTmpFile, uploadFile} from "../filesStorage/fileStorageClient";
 const { v4: uuidv4 } = require('uuid');
@@ -13,8 +20,7 @@ const initializeSocketConnection = (socket)=>{
     connectionsOpened.push(socket);
     sendAllMessages(socket);
 }
-  
-  
+
 const onMessageReceived = (socket) => {
   return (data)=>{
     console.log(data);
@@ -77,7 +83,14 @@ const onAudioMessageReceived= (socket)=>{
         if(interaction){          
           obj.message.state="saved";
           const filename = uuidv4()+'.'+obj.message.content.replace(/^.*[\\\/]/, '').split('.')[1];
-          uploadFile(filename,obj.content,(err)=>{
+          const content = Buffer.from(obj.content, 'base64');
+          fs.writeFile(directory.name+'/'+filename,obj.content,'base64',(error)=>{
+              console.log(error);
+          });
+          fs.writeFile(directory.name+'/_'+filename,content,'base64',(error)=>{
+            console.log(error);
+        });
+          uploadFile(filename,content,(err)=>{
             if (!err) {
                 obj.message.user=socket.userMail;
                 obj.message.content=filename;
