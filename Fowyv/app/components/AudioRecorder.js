@@ -39,9 +39,9 @@ export class AudioRecorder extends React.Component {
       .prepareRecordingAtPath(audioPath, {
         SampleRate: 22050,
         Channels: 1,
-        AudioQuality: 'Low',
+        AudioQuality: 'High',
+        OutputFormat: 'aac',
         AudioEncoding: 'aac',
-        IncludeBase64: true,
       })
       .then(a => {})
       .catch(c => {});
