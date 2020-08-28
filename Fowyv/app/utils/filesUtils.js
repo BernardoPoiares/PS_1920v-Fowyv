@@ -22,24 +22,29 @@ export const writeFile = (filename, content) => {
     });
 };
 
-export const readAudioFile = async (filepath, cb) => {
+export const readAudioFile = (filepath, cb) => {
   // create a path you want to write to
   // :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
   // but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
 
-  return await RNFS.readFile(filepath, 'base64');
+  return RNFS.readFile(filepath, 'base64')
+    .then(result => {
+      console.log('GOT RESULT', result);
+      cb(result);
+    })
+    .catch(err => {
+      console.log(err);
+    });
 };
 
-export const checkAudioFile = async (filename, dispatch) => {
+export const checkAudioFile = (filename, dispatch) => {
   const path = AudioUtils.DocumentDirectoryPath + '/' + filename;
-  if (RNFS.exists(path)) {
-    return true;
-  }
   dispatch(
     sendAudioMessageRequest({
       fileID: filename,
     }),
   );
+  return true;
 };
 
 export const getAudioFilePath = filename => {
