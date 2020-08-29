@@ -3,7 +3,6 @@ const BASE_URL = 'http://192.168.1.131:4000';
 import io from 'socket.io-client';
 
 import {writeFile, readAudioFile} from '../utils/filesUtils';
-import {Buffer} from 'buffer';
 
 export const createWebSocketClient = (dispatcher, token) => {
   try {
@@ -65,8 +64,14 @@ export const sendMessage = (socket, message) => {
   socket.emit('userMessage', JSON.stringify({message: message}));
 };
 
-export const getAudioMessage = (socket, id) => {
-  socket.emit('getUserAudioMessage', JSON.stringify({fileID: id}));
+export const sendGetAudioMessageRequest = async (socket, id) => {
+  return await new Promise(resolve => {
+    socket.emit(
+      'getAudioMessage',
+      JSON.stringify({fileID: id}),
+      (error, resp) => resolve({error: error, resp: resp}),
+    );
+  });
 };
 
 export const sendAudioMessage = (socket, message) => {

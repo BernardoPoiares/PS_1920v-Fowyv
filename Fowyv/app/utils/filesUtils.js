@@ -7,19 +7,23 @@ export const getFilesDir = () => {
   return RNFS.DocumentDirectoryPath;
 };
 
-export const writeFile = (filename, content) => {
+export const writeFile = async (filename, content) => {
   const path = AudioUtils.DocumentDirectoryPath + '/' + filename;
 
   const base64 = Buffer.from(content).toString('base64');
 
-  RNFS.writeFile(path, base64, 'base64')
+  return await RNFS.writeFile(
+    path,
+    base64,
+    'base64',
+  ); /*
     .then(success => {
       console.log(success);
       console.log('FILE WRITTEN!');
     })
     .catch(err => {
       console.log(err);
-    });
+    });*/
 };
 
 export const readAudioFile = (filepath, cb) => {
@@ -37,20 +41,24 @@ export const readAudioFile = (filepath, cb) => {
     });
 };
 
-export const checkAudioFile = (filename, dispatch) => {
+export const getAudioFilePath = async (filename, dispatch) => {
   const path = AudioUtils.DocumentDirectoryPath + '/' + filename;
-  dispatch(
+
+  if (await RNFS.exists(path)) {
+    return path;
+  } else {
+    if (await requestAudioFile(filename, dispatch)) {
+      return path;
+    }
+
+    return null;
+  }
+};
+
+export const requestAudioFile = async (filename, dispatch) => {
+  return await dispatch(
     sendAudioMessageRequest({
       fileID: filename,
     }),
   );
-  return true;
-};
-
-export const getAudioFilePath = filename => {
-  const path = AudioUtils.DocumentDirectoryPath + '/' + filename;
-  if (RNFS.exists(path)) {
-    return path;
-  }
-  return null;
 };

@@ -4,6 +4,7 @@ import {
   sendGetAudioMessageRequest,
   sendAudioMessage,
 } from '../../service/websocketsevents';
+import {writeFile} from '../../utils/filesUtils';
 import uuid from 'react-native-uuid';
 
 export const initialize = payload => {
@@ -134,9 +135,19 @@ export const sendAudioMessageRequest = payload => {
 
       dispatch({type: 'USER_MESSAGES_GETAUDIO_LOADING'});
 
-      sendGetAudioMessageRequest(connection, payload.fileID);
+      const resp = await sendGetAudioMessageRequest(connection, payload.fileID);
+      if (resp.error) {
+        dispatch({
+          type: 'USER_MESSAGES_GETAUDIO_FAIL',
+          payload: ex.responseBody,
+        });
+        return null;
+      }
+      await writeFile(payload.fileID, resp.resp);
 
       dispatch({type: 'USER_MESSAGES_GETAUDIO_SUCCESS'});
+
+      return true;
     } catch (ex) {
       console.log(ex);
       dispatch({
@@ -144,6 +155,8 @@ export const sendAudioMessageRequest = payload => {
         payload: ex.responseBody,
       });
     }
+
+    return false;
   };
 };
 

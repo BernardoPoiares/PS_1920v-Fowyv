@@ -9,9 +9,10 @@ export const AudioPlayer = {
       var sound = new Sound(audioPath, '', error => {
         if (error) {
           console.log('failed to load the sound', error);
+          return returnSound(null);
+        } else {
+          returnSound(sound);
         }
-
-        returnSound(sound);
       });
     });
   },

@@ -12,7 +12,7 @@ export class Message extends React.Component {
       return (
         <View>
           {this.props.message.type == 'AUDIO' ? (
-            <AudioMessage audioPath={this.props.message.content} />
+            <AudioMessage audioFilename={this.props.message.content} />
           ) : this.props.message.type == 'TEXT' ? (
             <TouchableOpacity
               style={StyleSheet.compose(
