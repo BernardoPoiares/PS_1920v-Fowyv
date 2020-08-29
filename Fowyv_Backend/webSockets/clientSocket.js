@@ -48,27 +48,23 @@ const sendAllMessages= (socket)=>{
 }
 
 const onGetAudioMessageRequest= (socket)=>{
-  return (req)=>{
-
+  return async (req,callback) => {
     try{
-
-      console.log(req);
       const obj=JSON.parse(req);
-
       if(obj.fileID){
-        const file = downloadFile(obj.fileID,function(err,data){
-          if (!err) {
-            
-              socket.emit("audioMessageReceived",data, (error)=>{
-                console.log(error)
-                deleteTmpFile(obj.fileID);
-              });
-          } else {
-              console.log(err);
-          }
-      });
+        const resp = await downloadFile(obj.fileID);
+        if (resp.error) {
+            console.log(err);
+            return callback(err);
+        }else{
+          return callback(null,resp.fileData);
+          /*socket.emit("audioMessageReceived",data, (error)=>{
+            console.log(error)
+            deleteTmpFile(obj.fileID);
+          });*/
+        }
       }
-
+      callback('FileID is missing'); 
     }catch(error){
       console.log(error);
     }

@@ -35,29 +35,33 @@ const uploadFile = (filename, fileContent, cb ) => {
     });
 };
 
-const downloadFile = (filename,cb)=>{
+const downloadFile = async (filename,cb)=>{
     
-    var options = {
-        Bucket    : process.env.AWS_BUCKET,
-        Key    : filename,
-    };
-    
+
+    /*
     let fileStream = s3.getObject(options).createReadStream();
     const path= directory.name+'/'+filename;
     var file = fs.createWriteStream(path);
     fileStream.pipe(file);
     
     fileStream.on("finish", ()=>{
-        fs.readFile(directory.name+'/'+filename,//(error,data)=>{
+        fs.readFile(directory.name+'/'+filename,
                 cb);
-            /*const path2= directory.name+"/_"+filename;
+    });*/
+    return await new Promise( (resolve)=>{
 
-            var file2 = fs.writeFile(path2,data,(e)=>{
-                console.log(e);
-            });
+        var options = {
+            Bucket    : process.env.AWS_BUCKET,
+            Key    : filename,
+        };
 
-        });*/
-    });
+        s3.getObject(options,(error,data)=>{
+            if(error)
+                return resolve({error:'Error getting the file'});
+            resolve({fileData:data.Body});
+        })
+        }
+    )
 
 };
 
