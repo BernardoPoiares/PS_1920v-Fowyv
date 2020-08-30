@@ -1,15 +1,9 @@
+import {runQuery,runTransaction} from '../db/dbClient.js'
+import {Collections} from "../config/dbSettings.config";
 
 const connectionsOpened=[];
-const messagesReceived=[{users : ["a@a.a","b@b.b"],messages : [{id:"12",user:'b@b.b',type:"TEXT", date:"15-08-2020", content:"Hello :)", state:"received"},{id:"12",user:'b@b.b',type:"AUDIO", date:"15-08-2020", content:"2644e2df-95d0-48f9-a8c1-02db6de8d92b.mp3", state:"received"}]}];
-import tmp from 'tmp';
-import fs from 'fs';
 
-
-
-const directory = tmp.dirSync();
-console.log('Dir: ', directory);
-
-import {downloadFile, deleteTmpFile, uploadFile} from "../filesStorage/fileStorageClient";
+import {downloadFile, uploadFile} from "../filesStorage/fileStorageClient";
 const { v4: uuidv4 } = require('uuid');
 
 const initializeSocketConnection = (socket)=>{
@@ -18,19 +12,43 @@ const initializeSocketConnection = (socket)=>{
     socket.on('disconnect', onDisconnected(socket))
     socket.on('userAudioMessage', onAudioMessageReceived(socket))
     connectionsOpened.push(socket);
-    sendAllMessages(socket);
+    sendUsersMatches(socket);
 }
 
-const onMessageReceived = (socket) => {
-  return (data)=>{
-    console.log(data);
-    const obj=JSON.parse(data);
-    obj.message.state="saved";
-    const interaction = messagesReceived.find(interaction=>interaction.users.includes(socket.userMail) && interaction.users.includes(obj.message.user) )
-    if(interaction){
-      obj.message.user=socket.userMail;
-      interaction.messages.push(obj.message);
-      socket.emit("messageReceived",obj.message);
+const onMessageReceived= (socket)=>{
+  return async (req)=>{
+    try{
+        console.log("onMessageReceived:request-"+ req);
+        const request=JSON.parse(req); 
+        validateMessageReq(request);
+
+        const otherUser = request.message.user;
+        request.message.state="saved";
+        request.message.user=socket.userMail;
+
+        const transactionResult = await runTransaction(async (db,opts) => {
+            
+            const match = await db.collection(Collections.UsersMatches).findOne({ emails: { $all:[socket.userMail,otherUser]}}, opts);
+
+            if(!match)
+              return {errorMessage:"Match not found."};
+
+            match.messages.push(request.message);
+            const newValues = { $set: {"messages":match.messages} };
+
+            return {errorMessage:"result-"+await db.collection(Collections.UsersMatches).updateOne({"_id": match._id}, newValues, opts )};
+
+        }); 
+        
+        if(transactionResult && transactionResult.errorMessage)
+          console.log("onMessageReceived:error-" + transactionResult.errorMessage);
+        else{
+          socket.emit("messageReceived",{id:request.message.id});  
+          console.log("onMessageReceived:received");
+        }
+
+    }catch(error){
+      console.log(error);
     }
   }
 }
@@ -42,70 +60,91 @@ const onDisconnected = (socket) => {
   }
 }
   
-const sendAllMessages= (socket)=>{
-    console.log("send messages");
-    socket.emit('receiveAllMessages',JSON.stringify(messagesReceived));
+const sendUsersMatches= async (socket)=>{
+    try{
+      console.log("onSendUsersMatches:sending");
+
+      const matches = await runQuery(async (db,opts) => {
+                    
+        const userMatches = await db.collection(Collections.UsersMatches).find({ emails: socket.userMail}, opts).toArray();;
+
+        return userMatches;
+      });
+
+        socket.emit('userMatches',JSON.stringify(matches));
+        console.log("onSendUsersMatches:sended");
+
+    }catch(error){
+      console.log("onSendUsersMatches:error-" + error);
+    }
+
 }
 
 const onGetAudioMessageRequest= (socket)=>{
-  return (req) => {
+  return async (req) => {
     try{
-      
-      console.log("onGetAudioMessageRequest:req-"+req);
-      const obj=JSON.parse(req);
-      if(obj.fileID){
-        console.log("onGetAudioMessageRequest:fileID-"+req);
-        /*const resp = await downloadFile(obj.fileID);        
-        console.log("onGetAudioMessageRequest:downloadFile_resp-"+resp);
-        if (resp.error) {
-            console.log(err);
-            return callback(err);
-        }else{
-          return callback(null,resp.fileData);*/
+      console.log("onGetAudioMessageRequest:request-" + req);  
+      const request=JSON.parse(req);  
+      validateDownloadAudioMessageReq(request);
 
-        downloadFile(obj.fileID,(error,fileData)=>{    
+      if(request.fileID){
+        downloadFile(request.fileID,(error,fileData)=>{    
           if(error){ 
-            console.log("onGetAudioMessageRequest:downloadFile_error-"+error);
+            console.log("onGetAudioMessageRequest:downloadFile_error-" + error);
           } else{
-            socket.emit("audioMessageReceived",JSON.stringify({filename:obj.fileID, content: fileData}));
-            console.log("onGetAudioMessageRequest:downloadFile_send");
+            socket.emit("audioMessageReceived",JSON.stringify({filename:request.fileID, content: fileData}));
+            console.log("onGetAudioMessageRequest:downloadFile_send");            
           }
         });
-          /*socket.emit("audioMessageReceived",data, (error)=>{
-            console.log(error)
-            deleteTmpFile(obj.fileID);
-          });*/
       }else
         console.log("onGetAudioMessageRequest:downloadFile_error- FileID is missing"); 
     }catch(error){
-      console.log("onGetAudioMessageRequest:error-"+error);
+      console.log("onGetAudioMessageRequest:error-" + error);
     }
   }
 }
 
 const onAudioMessageReceived= (socket)=>{
-  return (req)=>{
+  return async (req)=>{
     try{
-      const obj=JSON.parse(req);        
-        const interaction = messagesReceived.find(interaction=>interaction.users.includes(socket.userMail) && interaction.users.includes(obj.message.user) )
-        if(interaction){          
-          obj.message.state="saved";
-          const filename = uuidv4()+'.'+obj.message.content.replace(/^.*[\\\/]/, '').split('.')[1];
-          const content = Buffer.from(obj.content, 'base64');
-          uploadFile(filename,content,(err)=>{
-            if (!err) {
-                obj.message.user=socket.userMail;
-                obj.message.content=filename;
-                interaction.messages.push(obj.message);
-                socket.emit("audioUploaded",{id:obj.message.id,content:filename});
-                //deleteTmpFile(filename);
-            } else {
-                console.log(err);
-            }
+        const request=JSON.parse(req); 
+        console.log("onAudioMessageReceived:request-"+JSON.stringify(request.message));
+        validateUploadAudioMessageReq(request);
+        const filename = uuidv4()+'.'+request.message.content.replace(/^.*[\\\/]/, '').split('.')[1];
+        const content = Buffer.from(request.content, 'base64');
+
+        uploadFile(filename,content, async (error)=>{
+          if (error) {
+            console.log("onAudioMessageReceived:error-"+error);
+          }else{
+            
+              const otherUser = request.message.user;
+              request.message.user=socket.userMail;
+              request.message.content=filename;
+
+              const transactionResult = await runTransaction(async (db,opts) => {
+                  
+                  const match = await db.collection(Collections.UsersMatches).findOne({ emails: { $all:[socket.userMail,otherUser]}}, opts);
+
+                  if(!match)
+                    return {errorMessage:"Match not found."};
+
+                  match.messages.push(request.message);
+                  const newValues = { $set: {"messages":match.messages} };
+
+                  await db.collection(Collections.UsersMatches).updateOne({"_id": match._id}, newValues, opts );
+
+              }); 
+              
+              if(transactionResult && transactionResult.errorMessage)
+                console.log("onAudioMessageReceived:error-" + transactionResult.errorMessage);
+              else
+                socket.emit("audioUploaded",{id:request.message.id,content:filename});    
+                console.log("onAudioMessageReceived:audioUploaded");
+          } 
         });
-      }
     }catch(error){
-      console.log(error);
+      console.log("onAudioMessageReceived:error-" + error);
     }
   }
 }
@@ -113,3 +152,27 @@ const onAudioMessageReceived= (socket)=>{
 export {
   initializeSocketConnection
 };
+
+const validateMessageReq= (req) =>{
+  if(!req.message.id)
+    throw new Error("Missing message id");
+  if(!req.message.user)
+    throw new Error("Missing message user");
+  if(!req.message.type)
+    throw new Error("Missing message type");
+  if(!req.message.content)
+    throw new Error("Missing message content");
+  if(!req.message.state)
+    throw new Error("Missing message state");  
+}
+
+const validateUploadAudioMessageReq = (req)=>{
+  validateMessageReq(req);  
+  if(!req.content)
+    throw new Error("Missing content");
+}
+
+const validateDownloadAudioMessageReq = (req)=>{
+  if(!req.fileID)
+    throw new Error("Missing fileID");
+}

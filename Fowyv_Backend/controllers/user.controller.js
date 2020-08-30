@@ -47,9 +47,10 @@ exports.saveDetails = async (req, res) => {
                 
             Object.assign(userDetails,detailsValuesReq);
             
-            const newValues = { $set: {...userDetails} };
-
-            await collection.updateOne({email:userDetails.email}, newValues, opts );
+            const [_id,...newDetails]= userDetails
+            const newValues = { $set: {...newDetails} };
+            console.log(id);
+            await collection.updateOne({"_id": _id}, newValues, opts );
         });
 
         if(transactionResult && transactionResult.errorCode)

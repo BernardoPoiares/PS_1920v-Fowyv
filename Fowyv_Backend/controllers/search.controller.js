@@ -48,16 +48,17 @@ exports.setSearchSettings = async (req, res) => {
 
             const collection = db.collection(Collections.UsersSearchSettings);
 
-            let userSearchSettings= await collection.findOne({email:req.email},{...opts, projection : { _id : 0 }});
+            let userSearchSettings= await collection.findOne({email:req.email},opts);
 
             if(!userSearchSettings)
                 return {errorCode:404, errorMessage:"No search settings for user."};
 
             Object.assign(userSearchSettings,searchSettingsReq);
             
-            const newValues = { $set: {...userSearchSettings} };
-    
-            await collection.updateOne(({email:userSearchSettings.email}, newValues, opts));
+            const [_id,...newSettings]= userSearchSettings
+            const newValues = { $set: {...newSettings} };
+            console.log(_id);
+            await collection.updateOne(({"_id": _id},{email:userSearchSettings.email}, newValues, opts));
 
         }); 
 

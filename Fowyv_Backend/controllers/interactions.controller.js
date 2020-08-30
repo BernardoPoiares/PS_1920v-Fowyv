@@ -26,9 +26,9 @@ exports.likeUser = async (req, res) => {
                 return {errorCode:404, errorMessage:"User choices not found."};
 
             userChoices.likedUsers.push(userReq);
-            const newValues = { $set: {likedUsers:userChoices.likedUsers} };
+            const newValues = { $set: {"likedUsers":userChoices.likedUsers} };
 
-            await db.collection(Collections.UsersChoices).updateOne({email:userChoices.email}, newValues, opts )
+            await db.collection(Collections.UsersChoices).updateOne({"_id": userChoices._id}, newValues, opts )
 
             const otherUserChoices= await db.collection(Collections.UsersChoices).findOne({email:userReq.email}, opts);
 
@@ -41,7 +41,7 @@ exports.likeUser = async (req, res) => {
                     {
                         emails:[req.email,
                         userReq.email],
-                        historic:[]
+                        messages:[]
                     }, {}, opts);
 
         }); 
@@ -84,9 +84,9 @@ exports.dislikeUser = async (req, res) => {
 
             userChoices.dislikedUsers.push(userReq);
 
-            const newValues = { $set: {dislikedUsers:userChoices.dislikedUsers} };
+            const newValues = { $set: {"dislikedUsers":userChoices.dislikedUsers} };
 
-            await db.collection(Collections.UsersChoices).updateOne({email:userChoices.email}, newValues, opts )
+            await db.collection(Collections.UsersChoices).updateOne({"_id": userChoices._id}, newValues, opts )
 
         });
 
