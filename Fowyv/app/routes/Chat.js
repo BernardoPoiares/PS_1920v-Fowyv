@@ -22,13 +22,14 @@ class ChatComponent extends React.Component {
     this.state = {
       textMessage: '',
       user: props.route.params.userMatch,
-      match: props.matches
-        ? props.matches.find(
-            match =>
-              match.users.includes(this.props.authenticatedUser.email) &&
-              match.users.includes(props.route.params.userMatch),
-          )
-        : null,
+      match:
+        props.matches != undefined && props.matches != null
+          ? props.matches.find(
+              match =>
+                match.emails.includes(this.props.authenticatedUser.email) &&
+                match.emails.includes(props.route.params.userMatch),
+            )
+          : null,
     };
   }
 

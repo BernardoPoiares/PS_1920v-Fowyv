@@ -24,9 +24,8 @@ const subscribeEvents = (socket, dispatcher) => {
     console.log(messages);
   });
 
-  socket.on('receiveAllMessages', messages => {
+  socket.on('userMatches', messages => {
     const msgs = JSON.parse(messages);
-    console.log(msgs);
     dispatcher({
       type: 'USER_MESSAGES_GET_SUCCESS',
       payload: msgs,
