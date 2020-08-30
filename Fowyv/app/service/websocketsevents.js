@@ -1,4 +1,5 @@
-const BASE_URL = 'http://192.168.1.131:4000';
+//const BASE_URL = 'http://192.168.1.131:4000';
+const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 import io from 'socket.io-client';
 
@@ -64,14 +65,8 @@ export const sendMessage = (socket, message) => {
   socket.emit('userMessage', JSON.stringify({message: message}));
 };
 
-export const sendGetAudioMessageRequest = async (socket, id) => {
-  return await new Promise(resolve => {
-    socket.emit(
-      'getAudioMessage',
-      JSON.stringify({fileID: id}),
-      (error, resp) => resolve({error: error, resp: resp}),
-    );
-  });
+export const sendGetAudioMessageRequest = (socket, id) => {
+  socket.emit('getAudioMessage', JSON.stringify({fileID: id}));
 };
 
 export const sendAudioMessage = (socket, message) => {

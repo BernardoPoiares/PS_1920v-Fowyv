@@ -47,16 +47,13 @@ export const getAudioFilePath = async (filename, dispatch) => {
   if (await RNFS.exists(path)) {
     return path;
   } else {
-    if (await requestAudioFile(filename, dispatch)) {
-      return path;
-    }
-
+    requestAudioFile(filename, dispatch);
     return null;
   }
 };
 
-export const requestAudioFile = async (filename, dispatch) => {
-  return await dispatch(
+export const requestAudioFile = (filename, dispatch) => {
+  dispatch(
     sendAudioMessageRequest({
       fileID: filename,
     }),

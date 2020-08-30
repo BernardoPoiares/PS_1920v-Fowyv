@@ -133,30 +133,18 @@ export const sendAudioMessageRequest = payload => {
         },
       } = state;
 
-      dispatch({type: 'USER_MESSAGES_GETAUDIO_LOADING'});
+      dispatch({type: 'USER_MESSAGES_SENDAUDIOFILEREQUEST_LOADING'});
 
-      const resp = await sendGetAudioMessageRequest(connection, payload.fileID);
-      if (resp.error) {
-        dispatch({
-          type: 'USER_MESSAGES_GETAUDIO_FAIL',
-          payload: ex.responseBody,
-        });
-        return null;
-      }
-      await writeFile(payload.fileID, resp.resp);
+      sendGetAudioMessageRequest(connection, payload.fileID);
 
-      dispatch({type: 'USER_MESSAGES_GETAUDIO_SUCCESS'});
-
-      return true;
+      dispatch({type: 'USER_MESSAGES_SENDAUDIOFILEREQUEST_SUCCESS'});
     } catch (ex) {
       console.log(ex);
       dispatch({
-        type: 'USER_MESSAGES_GETAUDIO_FAIL',
+        type: 'USER_MESSAGES_SENDAUDIOFILEREQUEST_FAIL',
         payload: ex.responseBody,
       });
     }
-
-    return false;
   };
 };
 
