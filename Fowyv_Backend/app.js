@@ -26,7 +26,9 @@ require('./routes/search.routes')(app);
 require('./routes/interactions.routes')(app);
 
 const server = require("http").createServer(app);
-const io = require("socket.io").listen(server);
+const io = require("socket.io").listen(server,{
+  pingTimeout: 60000,
+});
 
 // set port, listen for requests
 const PORT = process.env.PORT || 4000;
@@ -36,6 +38,8 @@ server.listen(PORT, () => {
 
 //io.use(authUserWebSocket);
 io.use(authUserWebSocket);
+
+
 io.on("connection", (socket) => {
   initializeSocketConnection(socket);
   console.log("a user connected :D");

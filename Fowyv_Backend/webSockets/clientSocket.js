@@ -36,9 +36,9 @@ const onMessageReceived = (socket) => {
 }
   
 const onDisconnected = (socket) => {
-  return ()=>{
+  return (reason)=>{
     connectionsOpened.slice(connectionsOpened.indexOf(socket), 1);
-    console.log("client disconnected");
+    console.log("onDisconnected:reason-"+reason);
   }
 }
   
@@ -48,25 +48,37 @@ const sendAllMessages= (socket)=>{
 }
 
 const onGetAudioMessageRequest= (socket)=>{
-  return async (req,callback) => {
+  return (req) => {
     try{
+      
+      console.log("onGetAudioMessageRequest:req-"+req);
       const obj=JSON.parse(req);
       if(obj.fileID){
-        const resp = await downloadFile(obj.fileID);
+        console.log("onGetAudioMessageRequest:fileID-"+req);
+        /*const resp = await downloadFile(obj.fileID);        
+        console.log("onGetAudioMessageRequest:downloadFile_resp-"+resp);
         if (resp.error) {
             console.log(err);
             return callback(err);
         }else{
-          return callback(null,resp.fileData);
+          return callback(null,resp.fileData);*/
+
+        downloadFile(obj.fileID,(error,fileData)=>{    
+          if(error){ 
+            console.log("onGetAudioMessageRequest:downloadFile_error-"+error);
+          } else{
+            socket.emit("audioMessageReceived",JSON.stringify({filename:obj.fileID, content: fileData}));
+            console.log("onGetAudioMessageRequest:downloadFile_send");
+          }
+        });
           /*socket.emit("audioMessageReceived",data, (error)=>{
             console.log(error)
             deleteTmpFile(obj.fileID);
           });*/
-        }
-      }
-      callback('FileID is missing'); 
+      }else
+        console.log("onGetAudioMessageRequest:downloadFile_error- FileID is missing"); 
     }catch(error){
-      console.log(error);
+      console.log("onGetAudioMessageRequest:error-"+error);
     }
   }
 }
@@ -80,12 +92,6 @@ const onAudioMessageReceived= (socket)=>{
           obj.message.state="saved";
           const filename = uuidv4()+'.'+obj.message.content.replace(/^.*[\\\/]/, '').split('.')[1];
           const content = Buffer.from(obj.content, 'base64');
-          fs.writeFile(directory.name+'/'+filename,obj.content,'base64',(error)=>{
-              console.log(error);
-          });
-          fs.writeFile(directory.name+'/_'+filename,content,'base64',(error)=>{
-            console.log(error);
-        });
           uploadFile(filename,content,(err)=>{
             if (!err) {
                 obj.message.user=socket.userMail;

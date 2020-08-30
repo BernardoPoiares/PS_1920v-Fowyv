@@ -37,18 +37,18 @@ const uploadFile = (filename, fileContent, cb ) => {
 
 const downloadFile = async (filename,cb)=>{
     
+    var options = {
+        Bucket    : process.env.AWS_BUCKET,
+        Key    : filename,
+    };
 
-    /*
-    let fileStream = s3.getObject(options).createReadStream();
-    const path= directory.name+'/'+filename;
-    var file = fs.createWriteStream(path);
-    fileStream.pipe(file);
+    s3.getObject(options,(error,data)=>{
+        if(error)
+            return cb(error.message);
+        cb(null,data.Body);
+    })
     
-    fileStream.on("finish", ()=>{
-        fs.readFile(directory.name+'/'+filename,
-                cb);
-    });*/
-    return await new Promise( (resolve)=>{
+    /*return await new Promise( (resolve)=>{
 
         var options = {
             Bucket    : process.env.AWS_BUCKET,
@@ -61,7 +61,7 @@ const downloadFile = async (filename,cb)=>{
             resolve({fileData:data.Body});
         })
         }
-    )
+    )*/
 
 };
 
