@@ -8,14 +8,58 @@ client.connect(err => {
   client.close();
 });
 */
+import {Collections} from "../config/dbSettings.config";
 
 import mongodb from 'mongodb';
-
-const url = "mongodb+srv://Fowyv:FowyvPS1920v@fowyvcluster.4lr4a.azure.mongodb.net/db?retryWrites=true&w=majority";//"mongodb://localhost:27017/mydb";
+console.log(process.env.CUSTOMCONNSTR_MONGODB_CONNECTION_STRING)
+const url = process.env.CUSTOMCONNSTR_MONGODB_CONNECTION_STRING;//"mongodb+srv://Fowyv:FowyvPS1920v@fowyvcluster.4lr4a.azure.mongodb.net/db?retryWrites=true&w=majority";//"mongodb://localhost:27017/mydb";
 
 const connectDb = async () => {
   return mongodb.connect(url, {useNewUrlParser: true});
+  
 };
+
+const watchUsersMatches = async function () {
+  let connection = await connectDb();
+  const db = connection.db();
+  const usersMatches = db.collection(Collections.UsersMatches);
+  const changeStream = usersMatches.watch();
+  changeStream.on('change', next => {
+    if(next.operationType == "insert"){
+      console.log(next);
+    }
+    else if(next.operationType == "delete"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "replace"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "update"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "drop"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "rename"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "dropDatabase"){
+      console.log(next);
+    }
+    
+    else if(next.operationType == "invalidate"){
+      console.log(next);
+    }
+  });
+};
+
+watchUsersMatches();
+
 
 export async function runQuery (query){
   let connection = await connectDb();
