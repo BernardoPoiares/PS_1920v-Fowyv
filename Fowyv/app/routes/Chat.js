@@ -22,24 +22,19 @@ class ChatComponent extends React.Component {
     this.state = {
       textMessage: '',
       user: props.route.params.userMatch,
-      match:
-        props.matches != undefined && props.matches != null
-          ? props.matches.find(
-              match =>
-                match.emails.includes(this.props.authenticatedUser.email) &&
-                match.emails.includes(props.route.params.userMatch),
-            )
-          : null,
+      refresh: false,
     };
   }
 
   finishedRecording = async audioPath => {
-    this.props.dispatch(
-      sendAudioFile({
-        userEmail: this.state.user,
-        audioPath: audioPath,
-      }),
-    );
+    this.props
+      .dispatch(
+        sendAudioFile({
+          userEmail: this.state.user,
+          audioPath: audioPath,
+        }),
+      )
+      .then(this.setState({refresh: true}));
   };
 
   onTextMessageChanged = value => {
@@ -60,9 +55,9 @@ class ChatComponent extends React.Component {
 
   areMessagesToShow = () => {
     return (
-      this.state.match &&
-      this.state.match.messages !== undefined &&
-      this.state.match.messages.length > 0
+      this.props.match &&
+      this.props.match.messages !== undefined &&
+      this.props.match.messages.length > 0
     );
   };
 
@@ -73,7 +68,15 @@ class ChatComponent extends React.Component {
         <View style={chatStyle.chatContainer}>
           {this.areMessagesToShow() ? (
             <FlatList
-              data={this.state.match.messages}
+              extraData={this.state.refresh}
+              ref={ref => {
+                this.flatListRef = ref;
+              }}
+              keyExtractor={item => item.id}
+              onContentSizeChange={() => {
+                this.flatListRef.scrollToEnd({animation: true});
+              }}
+              data={this.props.match.messages}
               renderItem={({item}) => (
                 <Message
                   message={item}
@@ -91,16 +94,6 @@ class ChatComponent extends React.Component {
               name={'long-arrow-alt-up'}
               size={15}
               color={'darkorange'}
-              style={this.props.sendIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={chatStyle.sendContainer}
-            onPress={this.onSend2Pressed}>
-            <Icon
-              name={'long-arrow-alt-down'}
-              size={20}
-              color={'blue'}
               style={this.props.sendIcon}
             />
           </TouchableOpacity>
@@ -126,9 +119,16 @@ class ChatComponent extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({
-  authenticatedUser: state.authReducer.authenticateUser,
-  matches: state.messagesReducer.userMessages.matches,
+const mapStateToProps = (state, ownProps) => ({
+  match:
+    state.messagesReducer.userMessages.matches !== undefined &&
+    state.messagesReducer.userMessages.matches != null
+      ? state.messagesReducer.userMessages.matches.find(
+          mat =>
+            mat.emails.includes(state.authReducer.authenticateUser.email) &&
+            mat.emails.includes(ownProps.route.params.userMatch),
+        )
+      : null,
 });
 
 const mapDispatchToProps = dispatch => ({

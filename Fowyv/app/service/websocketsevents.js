@@ -1,9 +1,14 @@
-//const BASE_URL = 'http://192.168.1.131:4000';
-const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
+const BASE_URL = 'http://192.168.1.131:4000';
+//const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 import io from 'socket.io-client';
 
 import {writeFile, readAudioFile} from '../utils/filesUtils';
+
+import {
+  receiveMessage,
+  sendAudioMessageRequest,
+} from '../redux/actions/messages.actions';
 
 export const createWebSocketClient = (dispatcher, token) => {
   try {
@@ -54,6 +59,24 @@ const subscribeEvents = (socket, dispatcher) => {
         type: 'USER_MESSAGES_SENDAUDIO_SUCCESS',
         payload: fileResponse,
       });
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on('receiveMessage', message => {
+    try {
+      console.log('receivedMessage ' + message);
+      if (message.type) {
+        if (message.type === 'AUDIO') {
+          dispatcher(
+            sendAudioMessageRequest({
+              fileID: message.content,
+            }),
+          );
+        }
+        dispatcher(receiveMessage(message));
+      }
     } catch (error) {
       console.log(error);
     }

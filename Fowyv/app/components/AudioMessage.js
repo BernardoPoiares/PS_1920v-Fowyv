@@ -2,7 +2,7 @@ import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {getAudioFilePath} from './../utils/filesUtils';
+import {getAudioFilePath, requestAudioFile} from './../utils/filesUtils';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
 export class AudioMessageComponent extends React.Component {
@@ -15,18 +15,19 @@ export class AudioMessageComponent extends React.Component {
     };
   }
 
-  async componentDidMount() {
-    const audioPath = await getAudioFilePath(
-      this.props.audioFilename,
-      this.props.dispatch,
+  componentDidMount() {
+    AudioPlayer.createSound(
+      getAudioFilePath(this.props.audioFilename),
+      this.setSound,
     );
-    if (audioPath) {
-      AudioPlayer.createSound(audioPath, this.setSound);
-    }
   }
 
   setSound = sound => {
-    this.setState({hasAudio: true, sound: sound});
+    if (sound == null) {
+      requestAudioFile(this.props.audioFilename, this.props.dispatch);
+    } else {
+      this.setState({hasAudio: true, sound: sound});
+    }
   };
 
   chooseAudioIcon = () => {
@@ -47,13 +48,10 @@ export class AudioMessageComponent extends React.Component {
       }
       this.setState({isPlaying: !this.state.isPlaying});
     } else {
-      const audioPath = await getAudioFilePath(
-        this.props.audioFilename,
-        this.props.dispatch,
+      AudioPlayer.createSound(
+        getAudioFilePath(this.props.audioFilename),
+        this.setSound,
       );
-      if (audioPath) {
-        AudioPlayer.createSound(audioPath, this.setSound);
-      }
     }
   };
 

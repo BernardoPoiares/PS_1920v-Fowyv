@@ -41,21 +41,17 @@ export const readAudioFile = (filepath, cb) => {
     });
 };
 
-export const getAudioFilePath = async (filename, dispatch) => {
-  const path = AudioUtils.DocumentDirectoryPath + '/' + filename;
-
-  if (await RNFS.exists(path)) {
-    return path;
-  } else {
-    requestAudioFile(filename, dispatch);
-    return null;
-  }
+export const getAudioFilePath = filename => {
+  return AudioUtils.DocumentDirectoryPath + '/' + filename;
 };
 
-export const requestAudioFile = (filename, dispatch) => {
-  dispatch(
-    sendAudioMessageRequest({
-      fileID: filename,
-    }),
-  );
+export const requestAudioFile = async (filename, dispatch) => {
+  const fileExists = await RNFS.exists(getAudioFilePath(filename))
+  if (!fileExists) {
+    dispatch(
+      sendAudioMessageRequest({
+        fileID: filename,
+      }),
+    );
+  }
 };
