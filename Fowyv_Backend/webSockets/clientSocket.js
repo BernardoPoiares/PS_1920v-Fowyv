@@ -1,7 +1,75 @@
-import {runQuery,runTransaction} from '../db/dbClient.js'
+import {runQuery,runTransaction,createCollectionWatch} from '../db/dbClient.js'
 import {Collections} from "../config/dbSettings.config";
 
 const connectionsOpened=[];
+let userMatchesCollectionWatch= null;
+
+
+
+const createUserMatchesCollectionWatch = async () =>{
+  if(userMatchesCollectionWatch == null ){
+
+    const watch = await createCollectionWatch(Collections.UsersMatches);
+
+    watch.on('change', next => {
+      if(next.operationType == "insert"){
+        console.log(next);
+      }
+      else if(next.operationType == "delete"){
+        console.log(next);
+      }
+      
+      else if(next.operationType == "replace"){
+        console.log(next);
+      }
+      
+      else if(next.operationType == "update"){
+        try{
+            if(next.updateDescription && next.updateDescription.updatedFields && next.updateDescription.updatedFields.messages){
+              const lastMessage = next.updateDescription.updatedFields.messages.slice(-1)[0];
+              const otherUser = next.fullDocument.emails.find( user=> user != lastMessage.user);
+              const otherUserConnections = connectionsOpened.filter(connection=>{
+                return connection.userMail === otherUser
+              });
+              if(otherUserConnections.length>0){
+                delete lastMessage.id;
+                otherUserConnections.forEach( socket=> sendMessageToUser(socket,lastMessage));
+              }
+            }
+
+        }catch(error){
+          console.log(error);
+        }
+      }
+      
+      else if(next.operationType == "drop"){
+        console.log(next);
+      }
+      
+      else if(next.operationType == "rename"){
+        console.log(next);
+      }
+      
+      else if(next.operationType == "dropDatabase"){
+        console.log(next);
+      }
+      
+      else if(next.operationType == "invalidate"){
+        console.log(next);
+      }
+    });
+
+    userMatchesCollectionWatch = watch;
+
+  }
+}
+
+const UpdateUserMatchesCollectionWatch= () =>{
+  if(connectionsOpened.length == 0 && userMatchesCollectionWatch){
+    userMatchesCollectionWatch.close();
+    userMatchesCollectionWatch=null;
+  }
+}
 
 import {downloadFile, uploadFile} from "../filesStorage/fileStorageClient";
 const { v4: uuidv4 } = require('uuid');
@@ -13,6 +81,7 @@ const initializeSocketConnection = (socket)=>{
     socket.on('userAudioMessage', onAudioMessageReceived(socket))
     connectionsOpened.push(socket);
     sendUsersMatches(socket);
+    createUserMatchesCollectionWatch();
 }
 
 const onMessageReceived= (socket)=>{
@@ -56,6 +125,7 @@ const onMessageReceived= (socket)=>{
 const onDisconnected = (socket) => {
   return (reason)=>{
     connectionsOpened.slice(connectionsOpened.indexOf(socket), 1);
+    UpdateUserMatchesCollectionWatch();
     console.log("onDisconnected:reason-"+reason);
   }
 }
@@ -104,7 +174,7 @@ const onGetAudioMessageRequest= (socket)=>{
   }
 }
 
-const onAudioMessageReceived= (socket)=>{
+const onAudioMessageReceived = (socket)=>{
   return async (req)=>{
     try{
         const request=JSON.parse(req); 
@@ -146,6 +216,16 @@ const onAudioMessageReceived= (socket)=>{
     }catch(error){
       console.log("onAudioMessageReceived:error-" + error);
     }
+  }
+}
+
+const sendMessageToUser = (socket, message) =>{
+  try{
+    console.log("onSendMessageToUser:user-"+socket.userMail);  
+    socket.emit("receiveMessage",message);    
+    console.log("onSendMessageToUser:sended");
+  }catch(error){
+    console.log("onSendMessageToUser:error-" + error);
   }
 }
 
