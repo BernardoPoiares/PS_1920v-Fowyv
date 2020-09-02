@@ -6,19 +6,18 @@ import {Match} from '../components/Match.js';
 import Carousel from 'react-native-anchor-carousel';
 import {searchUserMatches} from '../redux/actions/userMatches.actions.js';
 
-const {windowHeight} = Dimensions.get('window').height;
-
 export class MatchLobbyComponent extends React.Component {
   constructor(props) {
     super(props);
   }
-  onMatchPressed = email => {
+  onMatchPressed = (email, name) => {
     return () => {
       this.props.navigation.navigate('ChatStack', {
         screen: 'Chat',
         params: {
           userMatch: email,
         },
+        userName: name,
       });
     };
   };
@@ -44,7 +43,7 @@ export class MatchLobbyComponent extends React.Component {
               data={this.props.userMatches}
               renderItem={({item}) => (
                 <Match
-                  onPress={this.onMatchPressed}
+                  onPress={this.onMatchPressed(item.email, item.name)}
                   navigation={this.props.navigation}
                   iconSize={130}
                   size={400}
@@ -76,7 +75,7 @@ export class MatchLobbyComponent extends React.Component {
               data={this.props.userMatches}
               renderItem={({item}, index, separators) => (
                 <Match
-                  onPress={this.onMatchPressed(item.email)}
+                  onPress={this.onMatchPressed(item.email, item.name)}
                   iconSize={80}
                   size={200}
                   name={item.name}

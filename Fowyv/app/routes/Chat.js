@@ -21,7 +21,7 @@ class ChatComponent extends React.Component {
     super(props);
     this.state = {
       textMessage: '',
-      user: props.route.params.userMatch,
+      userEmail: props.route.params.userMatch,
       refresh: false,
     };
   }
@@ -30,7 +30,7 @@ class ChatComponent extends React.Component {
     this.props
       .dispatch(
         sendAudioFile({
-          userEmail: this.state.user,
+          userEmail: this.state.userEmail,
           audioPath: audioPath,
         }),
       )
@@ -45,7 +45,7 @@ class ChatComponent extends React.Component {
     if (this.state.textMessage.length > 0) {
       this.props.dispatch(
         sendTextMessage({
-          userEmail: this.state.user,
+          userEmail: this.state.userEmail,
           message: this.state.textMessage,
         }),
       );
@@ -80,7 +80,7 @@ class ChatComponent extends React.Component {
               renderItem={({item}) => (
                 <Message
                   message={item}
-                  rightModeLayout={this.state.user !== item.user}
+                  rightModeLayout={this.state.userEmail !== item.user}
                 />
               )}
             />

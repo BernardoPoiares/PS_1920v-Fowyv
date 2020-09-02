@@ -107,6 +107,41 @@ const userMessages = (state = {}, action) => {
         connection: state.connection,
       };
     }
+    case 'DELETE_USER_MATCH_LOADING': {
+      return {
+        isLoading: true,
+        isError: false,
+        isSuccess: false,
+        errors: action.payload,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    }
+    case 'DELETE_USER_MATCH_SUCCESS': {
+      const matches = state.matches.filter(
+        match =>
+          match.emails.includes(payload.user) &&
+          match.emails.includes(payload.matchUser),
+      );
+      return {
+        isLoading: false,
+        isError: false,
+        isSuccess: true,
+        errors: null,
+        matches: matches,
+        connection: state.connection,
+      };
+    }
+    case 'DELETE_USER_MATCH_FAIL': {
+      return {
+        isLoading: false,
+        isError: true,
+        isSuccess: false,
+        errors: action.payload,
+        matches: state.matches,
+        connection: state.connection,
+      };
+    }
     default:
       return state;
   }

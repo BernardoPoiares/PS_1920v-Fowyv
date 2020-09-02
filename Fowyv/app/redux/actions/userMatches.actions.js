@@ -25,3 +25,35 @@ export const searchUserMatches = payload => {
     }
   };
 };
+
+export const deleteUserMatch = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authenticateUser: {email, token},
+        },
+      } = state;
+      dispatch({type: 'DELETE_USER_MATCH_LOADING'});
+      const response = await fetchApi(
+        '/api/user/match',
+        'DELETE',
+        {email: payload.userEmail},
+        200,
+        token,
+      );
+      if (response.success) {
+        dispatch({
+          type: 'DELETE_USER_MATCH_SUCCESS',
+          payload: {user: email, matchUser: payload.userEmail},
+        });
+        return true;
+      } else {
+        throw response;
+      }
+    } catch (ex) {
+      dispatch({type: 'DELETE_USER_MATCH_FAIL', payload: ex.responseBody});
+    }
+  };
+};
