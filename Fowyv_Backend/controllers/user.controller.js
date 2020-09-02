@@ -47,9 +47,8 @@ exports.saveDetails = async (req, res) => {
                 
             Object.assign(userDetails,detailsValuesReq);
             
-            const [_id,...newDetails]= userDetails
+            const {_id,...newDetails}= userDetails
             const newValues = { $set: {...newDetails} };
-            console.log(id);
             await collection.updateOne({"_id": _id}, newValues, opts );
         });
 
@@ -94,7 +93,7 @@ exports.setProfile = async (req, res) => {
                 await usersDetailsCollection.insertOne(userDetails, {}, opts);
             }else{
                 ({...userDetails} = profileValuesReq);
-                await usersDetailsCollection.replaceOne(({email:userDetails.email}, userDetails, opts));
+                await usersDetailsCollection.replaceOne({email:userDetails.email}, userDetails, opts);
             }
 
             const audioFilesCollection = db.collection(Collections.AudioFiles);
@@ -107,7 +106,7 @@ exports.setProfile = async (req, res) => {
                 await audioFilesCollection.insertOne(audioFile, {}, opts);
             }else{
                 ({...audioFile} = profileValuesReq.audioFile);
-                await audioFilesCollection.replaceOne(({email:userDetails.email}, audioFile, opts));
+                await audioFilesCollection.replaceOne({email:userDetails.email}, audioFile, opts);
             }
         
         });

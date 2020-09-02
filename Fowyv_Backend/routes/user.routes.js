@@ -45,4 +45,12 @@ module.exports = (app)=> {
     ],
     userMatchesController.getMatches
   );
+
+  app.delete(
+    "/api/user/match",
+    [
+        authMiddleware.verifyToken
+    ],
+    userMatchesController.deleteMatch
+  );
 };

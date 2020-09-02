@@ -55,10 +55,10 @@ exports.setSearchSettings = async (req, res) => {
 
             Object.assign(userSearchSettings,searchSettingsReq);
             
-            const [_id,...newSettings]= userSearchSettings
+            const {_id,...newSettings}= userSearchSettings
             const newValues = { $set: {...newSettings} };
-            console.log(_id);
-            await collection.updateOne(({"_id": _id},{email:userSearchSettings.email}, newValues, opts));
+            
+            await collection.updateOne({"_id": _id}, newValues, opts);
 
         }); 
 

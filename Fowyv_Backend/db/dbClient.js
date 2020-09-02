@@ -1,8 +1,7 @@
 import mongodb from 'mongodb';
-import {Collections} from "../config/dbSettings.config";
 
 
-const url = process.env.CUSTOMCONNSTR_MONGODB_CONNECTION_STRING;
+const url = "mongodb+srv://Fowyv:FowyvPS1920v@fowyvcluster.4lr4a.azure.mongodb.net/db?retryWrites=true&w=majority";//"mongodb://localhost:27017/mydb";//process.env.CUSTOMCONNSTR_MONGODB_CONNECTION_STRING;
 
 const connectDb = async () => {
   return mongodb.connect(url, {useNewUrlParser: true});
