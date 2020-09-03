@@ -1,6 +1,9 @@
 import {runQuery,runTransaction,createCollectionWatch} from '../db/dbClient.js'
 import {Collections} from "../config/dbSettings.config";
 
+import {downloadFile, uploadFile} from "../filesStorage/fileStorageClient";
+const { v4: uuidv4 } = require('uuid');
+
 const connectionsOpened=[];
 let userMatchesCollectionWatch= null;
 
@@ -70,9 +73,6 @@ const UpdateUserMatchesCollectionWatch= () =>{
     userMatchesCollectionWatch=null;
   }
 }
-
-import {downloadFile, uploadFile} from "../filesStorage/fileStorageClient";
-const { v4: uuidv4 } = require('uuid');
 
 const initializeSocketConnection = (socket)=>{
     socket.on('userMessage',onMessageReceived(socket))

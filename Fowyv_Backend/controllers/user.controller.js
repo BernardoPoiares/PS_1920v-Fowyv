@@ -1,6 +1,9 @@
 import {Collections} from "../config/dbSettings.config";
 import appSettings from "../config/appSettings.config";
 import {runQuery, runTransaction} from '../db/dbClient.js'
+import {uploadFile} from "../filesStorage/fileStorageClient";
+
+const { v4: uuidv4 } = require('uuid');
 
 exports.getDetails = async (req, res) => {
 
@@ -8,7 +11,7 @@ exports.getDetails = async (req, res) => {
 
         const details = await runQuery(async (db,opts) => {
     
-            return await db.collection(Collections.UsersDetails).findOne({email: req.email}, {}, opts);
+            return await db.collection(Collections.UsersDetails).findOne({email: req.email}, opts);
     
         });
     
@@ -76,57 +79,71 @@ exports.setProfile = async (req, res) => {
         else if(profileValuesReq.validationErrorMessage)
             return res.status(404).send(profileValuesReq.validationErrorMessage);   
 
-        await runTransaction(async (db,opts) => {
-            
-            const usersDetailsCollection = db.collection(Collections.UsersDetails);
+        const filename = uuidv4()+'.'+profileValuesReq.fileType;
+        const content = Buffer.from(req.body.content, 'base64');
 
-            let userDetails= await usersDetailsCollection.findOne({email:req.email}, opts);
+        uploadFile(filename,content, async (error)=>{
+            if (error) {
+                console.log(error);
+                return res.status(404).send("Error uploading file");   
+            }else {   
+                await runTransaction(async (db,opts) => {
+                    
+                    const usersDetailsCollection = db.collection(Collections.UsersDetails);
 
-            if(!userDetails){
-                userDetails = { 
-                    email:req.email,
-                    name:profileValuesReq.name,
-                    gender:"female",
-                    age:profileValuesReq.date,
-                    icon:profileValuesReq.icon
-                };
-                await usersDetailsCollection.insertOne(userDetails, {}, opts);
-            }else{
-                ({...userDetails} = profileValuesReq);
-                await usersDetailsCollection.replaceOne({email:userDetails.email}, userDetails, opts);
+                    let userDetails= await usersDetailsCollection.findOne({email:req.email}, opts);
+
+                    if(!userDetails){
+                        userDetails = { 
+                            email:req.email,
+                            name:profileValuesReq.name,
+                            gender:profileValuesReq.gender,
+                            age:profileValuesReq.date,
+                            icon:profileValuesReq.icon,
+                            audioFile:filename,
+                        };
+                        await usersDetailsCollection.insertOne(userDetails, {}, opts);
+                    }else{
+                        ({...userDetails} = profileValuesReq);
+                        await usersDetailsCollection.replaceOne({email:userDetails.email}, userDetails, opts);
+                    }
+                }); 
+                res.type('json');
+                res.status(200).json({audioFile:filename});
             }
-
-            const audioFilesCollection = db.collection(Collections.AudioFiles);
-
-            let audioFile= await audioFilesCollection.findOne({email:req.email}, opts);
-
-            if(!audioFile){
-                audioFile = { email:req.email, language:null, path:null};
-                ({...audioFile} = profileValuesReq.audioFile);
-                await audioFilesCollection.insertOne(audioFile, {}, opts);
-            }else{
-                ({...audioFile} = profileValuesReq.audioFile);
-                await audioFilesCollection.replaceOne({email:userDetails.email}, audioFile, opts);
-            }
-        
         });
 
-        res.status(200).send();
-
       }catch(error){
+        console.log(error)
         res.status(500).send({ message: error });
         return;
       }
     
 }
 
-
 const getProfileValuesFromReq= (req) =>{
     let ret = getDetailsValuesFromReq(req);
 
     if(!ret.validationErrorMessage){
-        if(req.audioFile)
-            ret.audioFile = req.audioFile;
+        if(req.gender){
+            if(!appSettings.genders.includes(req.gender)){
+                ret.validationErrorMessage = "Gender not valid."
+            }else{
+                ret.gender = req.gender;
+            }
+        }else{
+            ret.validationErrorMessage = "Gender not Found."
+            return ret;
+        }
+        if(req.fileType){
+            ret.fileType = req.fileType;
+        }else{
+            ret.validationErrorMessage = "FileType not Found."
+            return ret;
+        }if(!req.content){
+            ret.validationErrorMessage = "Content not found."
+            return ret;
+        }
     }
 
     return ret;
