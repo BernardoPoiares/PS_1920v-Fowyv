@@ -39,13 +39,15 @@ const AccountSettings = ({name, age}) => {
   );
 };
 
-const PersonalAudio = () => {
+const PersonalAudio = ({audioFile, onAudioFileRecorded}) => {
   return (
     <View style={settingsStyle.container}>
       <Text style={settingsStyle.containerHeader}>Personal Audio</Text>
       <PersonalAudioContainer
         propsStyle={personalAudioStyle}
         iconColor="white"
+        onAudioFileRecorded={onAudioFileRecorded}
+        audioFilename={audioFile}
       />
     </View>
   );
@@ -131,6 +133,13 @@ const AppSettings = ({
 };
 
 class SettingsComponent extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      modalVisible: false,
+      audioFilename: this.props.getUser.userDetails.audioFile,
+    };
+  }
   UNSAFE_componentWillMount() {
     this.props.dispatch(
       getSearchSettings({token: this.props.authenticatedUser.token}),
@@ -170,6 +179,10 @@ class SettingsComponent extends React.Component {
     };
   };
 
+  onAudioFileRecorded = audioPath => {
+    this.setState({audioFilename: audioPath});
+  };
+
   onLanguagesChanged = () => {};
 
   render() {
@@ -181,7 +194,10 @@ class SettingsComponent extends React.Component {
               name={this.props.getUser.userDetails.name}
               age={GetAge(this.props.getUser.userDetails.age)}
             />
-            <PersonalAudio />
+            <PersonalAudio
+              audioFile={this.state.audioFilename}
+              onAudioFileRecorded={this.onAudioFileRecorded}
+            />
             <AppSettings
               minSearchAge={this.props.searchSettings.minSearchAge}
               maxSearchAge={this.props.searchSettings.maxSearchAge}

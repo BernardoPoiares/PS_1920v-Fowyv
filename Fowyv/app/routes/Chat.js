@@ -106,7 +106,6 @@ class ChatComponent extends React.Component {
           />
           <View style={chatStyle.microphoneContainer}>
             <AudioRecorder
-              audioPath={this.state.audioPath}
               finishedRecording={this.finishedRecording}
               iconSize={15}
               iconColor={'white'}

@@ -2,17 +2,74 @@ import React from 'react';
 
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {PersonalAudioRecorder} from '../components/PersonalAudioRecorder';
+import {getAudioFilePath, requestAudioFile} from './../utils/filesUtils';
 
-export class PersonalAudioContainer extends React.Component {
+import {PersonalAudioRecorder} from '../components/PersonalAudioRecorder';
+import {connect} from 'react-redux';
+
+import {AudioPlayer} from '../utils/AudioPlayer.js';
+
+class PersonalAudioContainerComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {modalVisible: false};
+    this.state = {
+      modalVisible: false,
+      sound: null, 
+      audioFilename: props.audioFilename,
+    };
   }
+
+  componentDidMount() {
+    if (this.state.audioFilename !== null) {
+      AudioPlayer.createSound(
+        getAudioFilePath(this.state.audioFilename),
+        this.setSound,
+      );
+    }
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextProps.audioFilename !== this.props.audioFilename) {
+      AudioPlayer.createSound(
+        getAudioFilePath(nextProps.audioFilename),
+        this.setSound,
+      );
+    }
+  }
+
+  setSound = sound => {
+    if (sound == null) {
+      requestAudioFile(this.state.audioFilename, this.props.dispatch);
+    } else {
+      this.setState({hasAudio: true, sound: sound});
+    }
+  };
 
   onRecordPersonalAudioPressed = () => {
     this.setState({modalVisible: !this.state.modalVisible});
   };
+
+  audioPlayingEnded = () => {
+    this.setState({isPlaying: false});
+  };
+
+  onAudioIconPressed = () => {
+    if (this.state.sound !== null) {
+      if (!this.state.isPlaying) {
+        AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
+      } else {
+        AudioPlayer.pauseAudio(this.state.sound);
+        this.setState({isPlaying: false});
+      }
+      this.setState({isPlaying: !this.state.isPlaying});
+    } else if (this.state.audioFilename !== null) {
+      AudioPlayer.createSound(
+        getAudioFilePath(this.state.audioFilename),
+        this.setSound,
+      );
+    }
+  };
+
   render() {
     return (
       <View>
@@ -22,7 +79,9 @@ export class PersonalAudioContainer extends React.Component {
           audioFileRecorded={this.props.onAudioFileRecorded}
         />
         <View style={personalAudioContainerStyle.container}>
-          <TouchableOpacity style={personalAudioContainerStyle.iconContainer}>
+          <TouchableOpacity
+            style={personalAudioContainerStyle.iconContainer}
+            onPress={this.onAudioIconPressed}>
             <Icon
               name="md-play-circle"
               size={60}
@@ -38,19 +97,20 @@ export class PersonalAudioContainer extends React.Component {
               onPress={this.onRecordPersonalAudioPressed}>
               <Text>Record new audio</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={StyleSheet.compose(
-                personalAudioContainerStyle.formButton,
-                this.props.propsStyle.formButton,
-              )}>
-              <Text>Change Icon</Text>
-            </TouchableOpacity>
           </View>
         </View>
       </View>
     );
   }
 }
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const PersonalAudioContainer = connect(
+  null,
+  mapDispatchToProps,
+)(PersonalAudioContainerComponent);
 
 const personalAudioContainerStyle = StyleSheet.create({
   container: {

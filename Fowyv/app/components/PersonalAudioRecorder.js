@@ -10,29 +10,23 @@ import {
   StatusBar,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {Dropdown} from 'react-native-material-dropdown';
 import {AudioUtils} from 'react-native-audio';
+import uuid from 'react-native-uuid';
+
 import {AudioRecorder} from '../utils/AudioRecorder.js';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
-
-const languages = [
-  {
-    value: 'English',
-  },
-];
 
 export class PersonalAudioRecorder extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      audioPath: AudioUtils.DocumentDirectoryPath + '/test.aac',
+      audioPath: null,
       hasAudio: false,
       sound: null,
       isPlaying: false,
       recorder: new AudioRecorder(
-        AudioUtils.DocumentDirectoryPath + '/test.aac',
+        AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac',
       ),
-      language: null,
     };
   }
 
@@ -45,6 +39,7 @@ export class PersonalAudioRecorder extends React.Component {
   };
 
   finishedRecording = async audioPath => {
+    this.setState({audioPath: audioPath});
     AudioPlayer.createSound(audioPath, this.setSound);
   };
 
@@ -90,12 +85,8 @@ export class PersonalAudioRecorder extends React.Component {
     }
   };
 
-  onLanguageChanged = value => {
-    this.setState({language: value});
-  };
-
   onSavePressed = () => {
-    this.props.audioFileRecorded(this.state.audioPath, this.state.language);
+    this.props.audioFileRecorded(this.state.audioPath.replace(/^.*[\\\/]/, ''));
     this.props.goBack();
   };
 
@@ -150,12 +141,6 @@ export class PersonalAudioRecorder extends React.Component {
                   <Text>Erase</Text>
                 </TouchableOpacity>
               </View>
-              <Dropdown
-                label="language"
-                containerStyle={personalAudioRecorderStyle.dropdown}
-                data={languages}
-                onChangeText={this.onLanguageChanged}
-              />
             </View>
             <View style={personalAudioRecorderStyle.buttonsContainer}>
               <TouchableOpacity

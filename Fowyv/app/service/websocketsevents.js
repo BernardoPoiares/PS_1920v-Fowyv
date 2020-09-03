@@ -91,12 +91,12 @@ export const sendGetAudioMessageRequest = (socket, id) => {
   socket.emit('getAudioMessage', JSON.stringify({fileID: id}));
 };
 
-export const sendAudioMessage = (socket, message) => {
-  readAudioFile(message.content, data => {
-    //const dataBuffer = Buffer.from(data).toString('base64');
+export const sendAudioMessage = async (socket, message) => {
+  const data = await readAudioFile(message.content);
+  if (data) {
     socket.emit(
       'userAudioMessage',
       JSON.stringify({message: message, content: data}),
     );
-  });
+  }
 };

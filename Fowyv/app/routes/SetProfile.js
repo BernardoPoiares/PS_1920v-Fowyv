@@ -30,13 +30,11 @@ class SetProfileComponent extends React.Component {
   onSetProfile = () => {
     this.props.dispatch(
       saveUserDetails({
-        userDetails: {
-          name: this.state.name,
-          date: this.state.date,
-          icon: this.state.icon,
-          audioFile: this.state.audioFile,
-        },
-        token: this.props.authenticatedUser.token,
+        name: this.state.name,
+        date: this.state.date,
+        icon: this.state.icon,
+        gender: 'female',
+        audioFile: this.state.audioFile,
       }),
     );
   };
@@ -45,8 +43,8 @@ class SetProfileComponent extends React.Component {
     this.setState({name: value});
   };
 
-  onAudioFileRecorded = (audioPath, language) => {
-    this.setState({audioFile: {audioPath: audioPath, language: language}});
+  onAudioFileRecorded = audioPath => {
+    this.setState({audioFile: audioPath});
   };
 
   render() {
@@ -90,6 +88,7 @@ class SetProfileComponent extends React.Component {
               propsStyle={personalAudioStyle}
               iconColor="darkorange"
               onAudioFileRecorded={this.onAudioFileRecorded}
+              audioFilename={this.state.audioFile}
             />
             <TouchableOpacity
               style={loginStyle.playContainer}
