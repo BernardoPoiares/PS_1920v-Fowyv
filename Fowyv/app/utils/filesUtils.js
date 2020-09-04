@@ -38,6 +38,15 @@ export const getAudioFilePath = filename => {
   return AudioUtils.DocumentDirectoryPath + '/' + filename;
 };
 
+export const getLocalAudioFilePath = async (filename, promiseRequest) => {
+  const audioPath = getAudioFilePath(filename);
+  if (!(await RNFS.exists(audioPath))) {
+    return await promiseRequest().then(success => (success ? audioPath : null));
+  }else{
+    return audioPath;
+  }
+};
+
 export const requestAudioFile = async (filename, dispatch) => {
   const fileExists = await RNFS.exists(getAudioFilePath(filename));
   if (!fileExists) {

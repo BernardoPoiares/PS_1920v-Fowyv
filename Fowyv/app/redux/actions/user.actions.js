@@ -1,5 +1,5 @@
 import {fetchApi} from '../../service/api';
-import {readAudioFile} from '../../utils/filesUtils';
+import {writeFile, readAudioFile} from '../../utils/filesUtils';
 
 export const saveUserDetails = payload => {
   return async (dispatch, getState) => {
@@ -67,5 +67,41 @@ export const getUserDetails = payload => {
     } catch (ex) {
       dispatch({type: 'GET_USER_FAIL', payload: ex.responseBody});
     }
+  };
+};
+
+export const getUserPersonalAudio = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
+      dispatch({type: 'GET_USER_PERSONALAUDIO_LOADING'});
+      const response = await fetchApi(
+        '/api/user/personalAudio?audioFile=' + payload.audioFile,
+        'GET',
+        null,
+        200,
+        token,
+      );
+
+      if (response.success) {
+        const ret = await writeFile(
+          payload.audioFile,
+          response.responseBody.content,
+        );
+        dispatch({type: 'GET_USER_PERSONALAUDIO_SUCCESS'});
+        return true;
+      } else {
+        throw response;
+      }
+    } catch (ex) {
+      console.log(ex);
+      dispatch({type: 'GET_USER_PERSONALAUDIO_FAIL', payload: ex.responseBody});
+    }
+    return false;
   };
 };

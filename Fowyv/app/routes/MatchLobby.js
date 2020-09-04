@@ -81,7 +81,7 @@ export class MatchLobbyComponent extends React.Component {
                   name={item.name}
                 />
               )}
-              itemWidth={Dimensions.get('window').width / 3}
+              itemWidth={Dimensions.get('window').width / 2}
               containerWidth={Dimensions.get('window').width}
               separatorWidth={15}
               inActiveOpacity={0.6}

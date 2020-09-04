@@ -141,6 +141,7 @@ export class ListenLobbyComponent extends React.Component {
               <ListenUser
                 name={this.props.usersFound[0].name}
                 age={GetAge(this.props.usersFound[0].age)}
+                audioFile={this.props.usersFound[0].audioFile}
               />
             </Animated.View>
           </View>

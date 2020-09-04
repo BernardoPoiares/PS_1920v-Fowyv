@@ -2,7 +2,13 @@ import React from 'react';
 
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {getAudioFilePath, requestAudioFile} from './../utils/filesUtils';
+import {
+  getAudioFilePath,
+  getLocalAudioFilePath,
+  requestAudioFile,
+} from './../utils/filesUtils';
+
+import {getUserPersonalAudio} from '../redux/actions/user.actions';
 
 import {PersonalAudioRecorder} from '../components/PersonalAudioRecorder';
 import {connect} from 'react-redux';
@@ -14,17 +20,26 @@ class PersonalAudioContainerComponent extends React.Component {
     super(props);
     this.state = {
       modalVisible: false,
-      sound: null, 
+      sound: null,
       audioFilename: props.audioFilename,
     };
   }
 
-  componentDidMount() {
+  getPersonalAudio = async () => {
+    return await this.props.dispatch(
+      getUserPersonalAudio({audioFile: this.state.audioFilename}),
+    );
+  };
+
+  async componentDidMount() {
     if (this.state.audioFilename !== null) {
-      AudioPlayer.createSound(
-        getAudioFilePath(this.state.audioFilename),
-        this.setSound,
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
       );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
     }
   }
 
@@ -53,7 +68,7 @@ class PersonalAudioContainerComponent extends React.Component {
     this.setState({isPlaying: false});
   };
 
-  onAudioIconPressed = () => {
+  onAudioIconPressed = async () => {
     if (this.state.sound !== null) {
       if (!this.state.isPlaying) {
         AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
@@ -63,10 +78,13 @@ class PersonalAudioContainerComponent extends React.Component {
       }
       this.setState({isPlaying: !this.state.isPlaying});
     } else if (this.state.audioFilename !== null) {
-      AudioPlayer.createSound(
-        getAudioFilePath(this.state.audioFilename),
-        this.setSound,
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
       );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
     }
   };
 

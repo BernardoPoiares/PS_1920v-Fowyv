@@ -112,7 +112,7 @@ export const sendAudioFile = payload => {
         user: payload.userEmail,
         type: 'AUDIO',
         date: '15-08-2020',
-        content: payload.audioPath,
+        content: filename,
         state: 'sended',
       });
 

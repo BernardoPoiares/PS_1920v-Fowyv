@@ -7,25 +7,46 @@ import {
   Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {connect} from 'react-redux';
+import {getUserPersonalAudio} from '../redux/actions/user.actions';
+import {getLocalAudioFilePath, requestAudioFile} from './../utils/filesUtils';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
-export class ListenUser extends React.Component {
+export class ListenUserComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      audioPath: 'testsound.aac',
       hasAudio: false,
       sound: null,
       isPlaying: false,
+      audioFilename: props.audioFile,
     };
   }
 
-  componentDidMount() {
-    AudioPlayer.createSound(this.state.audioPath, this.setSound);
+  getPersonalAudio = async () => {
+    return await this.props.dispatch(
+      getUserPersonalAudio({audioFile: this.state.audioFilename}),
+    );
+  };
+
+  async componentDidMount() {
+    if (this.state.audioFilename !== null) {
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
+      );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
+    }
   }
 
   setSound = sound => {
-    this.setState({hasAudio: true, sound: sound});
+    if (sound == null) {
+      requestAudioFile(this.state.audioFilename, this.props.dispatch);
+    } else {
+      this.setState({hasAudio: true, sound: sound});
+    }
   };
 
   chooseAudioIcon = () => {
@@ -36,7 +57,7 @@ export class ListenUser extends React.Component {
     this.setState({isPlaying: false});
   };
 
-  onAudioIconPressed = () => {
+  onAudioIconPressed = async () => {
     if (this.state.sound !== null) {
       if (!this.state.isPlaying) {
         AudioPlayer.playAudio(this.state.sound, this.audioPlayingEnded);
@@ -45,6 +66,14 @@ export class ListenUser extends React.Component {
         this.setState({isPlaying: false});
       }
       this.setState({isPlaying: !this.state.isPlaying});
+    } else if (this.state.audioFilename !== null) {
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
+      );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
     }
   };
 
@@ -61,6 +90,15 @@ export class ListenUser extends React.Component {
   }
 }
 
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const ListenUser = connect(
+  null,
+  mapDispatchToProps,
+)(ListenUserComponent);
+
 const listenUserStyle = StyleSheet.create({
   Container: {
     flex: 1,
@@ -68,8 +106,8 @@ const listenUserStyle = StyleSheet.create({
     alignItems: 'center',
     width: Math.round(Dimensions.get('window').width),
     backgroundColor: 'darkorange',
-    resizeMode: "cover",
-    borderRadius: 20
+    resizeMode: 'cover',
+    borderRadius: 20,
   },
   Logo: {width: 200, height: 200, resizeMode: 'contain'},
   Name: {
