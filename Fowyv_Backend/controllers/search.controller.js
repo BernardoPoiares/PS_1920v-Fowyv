@@ -94,7 +94,7 @@ exports.searchUsers = async (req, res) => {
 
             let usersSearchResult = await db.collection(Collections.UsersDetails).find(query).toArray();
 
-            if(!usersSearchResult)
+            if(usersSearchResult)
                 usersSearchResult = usersSearchResult.filter(user => 
                     userChoices.dislikedUsers.find(userDis=>userDis.email == user.email) == undefined 
                     && userChoices.likedUsers.find(userlik=>userlik.email == user.email) == undefined  

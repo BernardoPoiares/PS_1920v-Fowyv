@@ -46,12 +46,13 @@ exports.likeUser = async (req, res) => {
 
         }); 
         
-        if(transactionResult.errorCode)
+        if(transactionResult && transactionResult.errorCode)
             return res.status(transactionResult.errorCode).send(transactionResult.errorMessage);
 
         return res.status(200).send();
 
     }catch(error){
+        console.log(error);
         res.status(500).send({ message: error });
         return;
     }
@@ -95,7 +96,8 @@ exports.dislikeUser = async (req, res) => {
 
         return res.status(200).send();
 
-    }catch(error){
+    }catch(error){        
+        console.log(error);
         res.status(500).send({ message: error });
         return;
     }

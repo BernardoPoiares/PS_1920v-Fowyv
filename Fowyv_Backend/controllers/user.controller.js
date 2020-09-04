@@ -1,7 +1,7 @@
 import {Collections} from "../config/dbSettings.config";
 import appSettings from "../config/appSettings.config";
 import {runQuery, runTransaction} from '../db/dbClient.js'
-import {uploadFile} from "../filesStorage/fileStorageClient";
+import {uploadFile,downloadFile} from "../filesStorage/fileStorageClient";
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -61,6 +61,32 @@ exports.saveDetails = async (req, res) => {
         res.status(200).send();
 
       }catch(error){
+        res.status(500).send({ message: error });
+        return;
+      }
+    
+}
+
+exports.getPersonalAudio = async (req, res) => {
+    
+    try{
+        
+        const audioFile = req.query.audioFile;
+        if(!audioFile)
+            return res.status(404).send("AudioFile not found.");   
+
+        downloadFile(audioFile, async (error,data)=>{
+            if (error) {
+                console.log(error);
+                return res.status(404).send("Error uploading file");   
+            }else {
+                res.type('json');
+                res.status(200).json({content:data});
+            }                
+        });
+
+      }catch(error){
+        console.log(error)
         res.status(500).send({ message: error });
         return;
       }

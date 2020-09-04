@@ -53,4 +53,12 @@ module.exports = (app)=> {
     ],
     userMatchesController.deleteMatch
   );
+
+  app.get(
+    "/api/user/personalAudio",    
+    [
+      authMiddleware.verifyToken
+    ],
+    controller.getPersonalAudio
+  )
 };
