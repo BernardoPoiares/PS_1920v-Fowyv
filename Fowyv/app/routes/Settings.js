@@ -19,12 +19,6 @@ import {
 } from '../redux/actions/searchSettings.actions';
 import {GetAge} from '../utils/DatesUtil';
 
-const DATA = [
-  {
-    language: 'English',
-  },
-];
-
 const Genders = [{gender: 'male'}, {gender: 'female'}];
 
 const AccountSettings = ({name, age}) => {
@@ -61,7 +55,6 @@ const AppSettings = ({
   onLogoutPressed,
   onAgeRangeChanged,
   onGendersChanged,
-  onLanguagesChanged,
 }) => {
   return (
     <View style={settingsStyle.container}>
@@ -95,26 +88,6 @@ const AppSettings = ({
               <CheckBox
                 value={genders != null ? genders.includes(item.gender) : false}
                 onValueChange={onGendersChanged(item.gender)}
-              />
-            </View>
-          )}
-        />
-        <Text style={appSettingsStyle.Header}>Languages</Text>
-        <FlatList
-          data={DATA}
-          renderItem={({item}) => (
-            <View style={appSettingsStyle.FlatListContainer}>
-              <Text
-                style={{
-                  fontSize: 20,
-                  color: 'white',
-                }}>
-                {item.language}
-              </Text>
-              <CheckBox
-                value={
-                  languages != null ? languages.includes(item.language) : false
-                }
               />
             </View>
           )}
@@ -183,7 +156,10 @@ class SettingsComponent extends React.Component {
     this.setState({audioFilename: audioPath});
   };
 
-  onLanguagesChanged = () => {};
+  onBackPressed = async () => {
+    await this.props.dispatch.dispatch(logoutUser());
+    this.props.navigation.goBack(null);
+  };
 
   render() {
     return (
@@ -206,7 +182,6 @@ class SettingsComponent extends React.Component {
               onAgeRangeChanged={this.onAgeRangeChanged}
               onLogoutPressed={this.onLogoutPressed}
               onGendersChanged={this.onGendersChanged}
-              onLanguagesChanged={this.onLanguagesChanged}
             />
           </ScrollView>
         ) : null}
@@ -233,6 +208,7 @@ export const Settings = connect(
 const settingsStyle = StyleSheet.create({
   view: {
     flex: 1,
+    justifyContent: 'center',
     backgroundColor: 'darkorange',
   },
   scrollView: {
@@ -240,7 +216,7 @@ const settingsStyle = StyleSheet.create({
     marginLeft: '5%',
     marginRight: '5%',
   },
-  container: {flex: 1, marginTop: '5%'},
+  container: {marginTop: '5%'},
   containerHeader: {
     fontSize: 20,
     color: 'white',

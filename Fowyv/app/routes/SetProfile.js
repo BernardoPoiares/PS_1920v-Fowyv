@@ -7,22 +7,34 @@ import {
   Dimensions,
   TextInput,
 } from 'react-native';
-import routes from 'res/routes';
 
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 
 import DatePicker from 'react-native-datepicker';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {saveUserDetails} from '../redux/actions/user.actions';
+import {Dropdown} from 'react-native-material-dropdown';
 import {connect} from 'react-redux';
+import {logoutUser} from '../redux/actions/auth.actions';
+
+const Genders = [
+  {
+    value: 'male',
+  },
+  {
+    value: 'female',
+  },
+];
 
 class SetProfileComponent extends React.Component {
   constructor(props) {
     super(props);
+    let minimumAge = new Date();
+    minimumAge.setFullYear(minimumAge.getFullYear() - 18);
     this.state = {
       name: null,
-      date: '2002-06-22',
-      icon: 'play',
+      date: minimumAge,
+      gender: null,
       audioFile: null,
     };
   }
@@ -32,11 +44,14 @@ class SetProfileComponent extends React.Component {
       saveUserDetails({
         name: this.state.name,
         date: this.state.date,
-        icon: this.state.icon,
-        gender: 'female',
+        gender: this.state.gender,
         audioFile: this.state.audioFile,
       }),
     );
+  };
+
+  onBackPressed = () => {
+    this.props.dispatch(logoutUser());
   };
 
   onNameChanged = value => {
@@ -47,18 +62,28 @@ class SetProfileComponent extends React.Component {
     this.setState({audioFile: audioPath});
   };
 
+  onGenderChanged = value => {
+    this.setState({gender: value});
+  };
+
   render() {
     return (
-      <View style={loginStyle.view}>
-        <Text style={loginStyle.header}>Set Profile</Text>
-        <View style={loginStyle.container}>
-          <View style={loginStyle.formContainer}>
-            <Text style={loginStyle.formHeader}>Name</Text>
+      <View style={setProfileStyle.view}>
+        <Text style={setProfileStyle.header}>Set Profile</Text>
+        <View style={setProfileStyle.container}>
+          <View style={setProfileStyle.formContainer}>
+            <Text style={setProfileStyle.formHeader}>Name</Text>
             <TextInput
-              style={loginStyle.textInput}
+              style={setProfileStyle.textInput}
               onChangeText={this.onNameChanged}
             />
-            <Text style={loginStyle.formHeader}>Age</Text>
+            <Dropdown
+              label="Gender"
+              containerStyle={setProfileStyle.dropdown}
+              data={Genders}
+              onChangeText={this.onGenderChanged}
+            />
+            <Text style={setProfileStyle.formHeader}>Age</Text>
             <DatePicker
               style={{width: '100%'}}
               date={this.state.date}
@@ -91,12 +116,18 @@ class SetProfileComponent extends React.Component {
               audioFilename={this.state.audioFile}
             />
             <TouchableOpacity
-              style={loginStyle.playContainer}
+              style={setProfileStyle.playContainer}
               onPress={this.onSetProfile}>
-              <Text style={loginStyle.playHeader}>Play</Text>
-              <Icon name={this.state.icon} size={30} color="black" />
+              <Text style={setProfileStyle.playHeader}>Play</Text>
+              <Icon name="play" size={30} color="black" />
             </TouchableOpacity>
           </View>
+          <TouchableOpacity
+            style={setProfileStyle.backContainer}
+            onPress={this.onBackPressed}>
+            <Icon name="backward" size={30} color="white" />
+            <Text style={setProfileStyle.backHeader}>Back</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
@@ -116,7 +147,7 @@ export const SetProfile = connect(
   mapDispatchToProps,
 )(SetProfileComponent);
 
-const loginStyle = StyleSheet.create({
+const setProfileStyle = StyleSheet.create({
   view: {
     flex: 1,
     justifyContent: 'center',
@@ -128,7 +159,7 @@ const loginStyle = StyleSheet.create({
     alignItems: 'center',
   },
   formContainer: {
-    height: 300,
+    height: 350,
     width: (Dimensions.get('window').width / 3) * 2,
     justifyContent: 'center',
     alignItems: 'center',
@@ -168,6 +199,21 @@ const loginStyle = StyleSheet.create({
     color: 'black',
     fontSize: 30,
     marginRight: 5,
+  },
+  dropdown: {
+    width: 120,
+  },
+  backContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    margin: 5,
+  },
+  backHeader: {
+    color: 'white',
+    fontSize: 30,
+    marginLeft: 5,
   },
 });
 

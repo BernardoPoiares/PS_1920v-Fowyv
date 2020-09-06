@@ -24,14 +24,27 @@ export class PersonalAudioRecorder extends React.Component {
       hasAudio: false,
       sound: null,
       isPlaying: false,
+      isRecording: false,
       recorder: new AudioRecorder(
         AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac',
       ),
     };
   }
 
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.modalVisible && !this.state.recorder) {
+      this.clearState();
+      this.setState({
+        recorder: new AudioRecorder(
+          AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac',
+        ),
+      });
+    }
+    return true;
+  }
+
   onErasePressed = () => {
-    this.setState({hasAudio: false, sound: null});
+    this.clearState();
   };
 
   setSound = sound => {
@@ -56,7 +69,7 @@ export class PersonalAudioRecorder extends React.Component {
   };
 
   chooseAudioRecorderIcon = () => {
-    return this.state.recorder.isRecording ? 'ios-square' : 'md-microphone';
+    return this.state.isRecording ? 'ios-square' : 'md-microphone';
   };
 
   audioPlayingEnded = () => {
@@ -65,11 +78,13 @@ export class PersonalAudioRecorder extends React.Component {
 
   onAudioRecorderIconPressed = () => {
     if (this.state.recorder.isRecording) {
-      this.state.recorder
-        .stopRecording()
-        .then(audioPath => this.finishedRecording(audioPath));
+      this.state.recorder.stopRecording().then(audioPath => {
+        this.finishedRecording(audioPath);
+        this.setState({isRecording: false});
+      });
     } else {
       this.state.recorder.startRecording();
+      this.setState({isRecording: true});
     }
   };
 
@@ -84,10 +99,37 @@ export class PersonalAudioRecorder extends React.Component {
       this.setState({isPlaying: !this.state.isPlaying});
     }
   };
+  onBackPressed = () => {
+    this.clearState();
+    this.props.goBack();
+  };
 
   onSavePressed = () => {
     this.props.audioFileRecorded(this.state.audioPath.replace(/^.*[\\\/]/, ''));
+    this.setState({
+      recorder: new AudioRecorder(
+        AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac',
+      ),
+    }),
+      this.clearState();
     this.props.goBack();
+  };
+
+  componentWillUnmount() {
+    this.clearState();
+  }
+  clearState = () => {
+    if (this.state.sound) {
+      this.state.sound.release();
+    }
+    this.setState({
+      audioPath: null,
+      hasAudio: false,
+      sound: null,
+      isPlaying: false,
+      isRecording: false,
+      recorder: null,
+    });
   };
 
   render() {
@@ -145,7 +187,7 @@ export class PersonalAudioRecorder extends React.Component {
             <View style={personalAudioRecorderStyle.buttonsContainer}>
               <TouchableOpacity
                 style={personalAudioRecorderStyle.bottomButton}
-                onPress={this.props.goBack}>
+                onPress={this.onBackPressed}>
                 <Text>Back</Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -206,9 +248,6 @@ const personalAudioRecorderStyle = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'moccasin',
-  },
-  dropdown: {
-    width: 120,
   },
   bottomButton: {
     borderWidth: 1,

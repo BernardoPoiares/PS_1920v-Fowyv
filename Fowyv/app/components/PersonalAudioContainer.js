@@ -52,6 +52,13 @@ class PersonalAudioContainerComponent extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    if (this.state.sound) {
+      this.state.sound.release();
+    }
+  }
+
+
   setSound = sound => {
     if (sound == null) {
       requestAudioFile(this.state.audioFilename, this.props.dispatch);

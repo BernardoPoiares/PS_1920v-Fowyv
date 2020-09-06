@@ -22,6 +22,7 @@ export const loginUser = payload => {
         throw response;
       }
     } catch (ex) {
+      console.log(ex);
       dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
     }
   };

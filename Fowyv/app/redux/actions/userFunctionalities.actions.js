@@ -1,15 +1,21 @@
 import {fetchApi} from '../../service/api';
 
-export const searchUsers = payload => {
-  return async dispatch => {
+export const searchUsers = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
       dispatch({type: 'GET_SEARCH_USERS_LOADING'});
       const response = await fetchApi(
         '/api/search/users',
         'GET',
         null,
         200,
-        payload.token,
+        token,
       );
 
       if (response.success) {
@@ -30,13 +36,18 @@ export const likedUser = payload => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
       dispatch({type: 'LIKED_USER_LOADING'});
       const response = await fetchApi(
         '/api/interaction/like',
         'POST',
         {email: payload.user},
         200,
-        payload.token,
+        token,
       );
 
       if (response.success) {
@@ -57,13 +68,18 @@ export const dislikedUser = payload => {
   return async (dispatch, getState) => {
     const state = getState();
     try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
       dispatch({type: 'DISLIKED_USER_LOADING'});
       const response = await fetchApi(
         '/api/interaction/dislike',
         'POST',
         {email: payload.user},
         200,
-        payload.token,
+        token,
       );
 
       if (response.success) {

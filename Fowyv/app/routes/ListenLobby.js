@@ -25,7 +25,15 @@ export class ListenLobbyComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      currentIndex: 0,
+      currentUser:
+        this.props.usersFound !== undefined && this.props.usersFound.length > 0
+          ? {
+              email: props.usersFound[0].email,
+              name: props.usersFound[0].name,
+              age: props.usersFound[0].age,
+              audioFile: props.usersFound[0].audioFile,
+            }
+          : null,
     };
     this.position = new Animated.ValueXY();
 
@@ -65,15 +73,15 @@ export class ListenLobbyComponent extends React.Component {
         if (gestureState.dx > 100) {
           Animated.spring(this.position, {
             toValue: {x: WINDOW_WIDTH + 100, y: gestureState.dy},
-          }).start(() => {
-            this.onSwipeRight();
+          }).start(async () => {
+            await this.onSwipeRight();
             this.position.setValue({x: 0, y: 0});
           });
         } else if (gestureState.dx < -100) {
           Animated.spring(this.position, {
             toValue: {x: -WINDOW_WIDTH - 100, y: gestureState.dy},
-          }).start(() => {
-            this.onSwipeLeft();
+          }).start(async () => {
+            await this.onSwipeLeft();
             this.position.setValue({x: 0, y: 0});
           });
         } else {
@@ -84,32 +92,81 @@ export class ListenLobbyComponent extends React.Component {
         }
       },
     });
-    this.props.dispatch(
-      searchUsers({token: this.props.authenticatedUser.token}),
-    );
   }
 
-  onSwipeRight = () => {
-    this.props.dispatch(
+  shouldComponentUpdate(nextProps, nextState) {
+    if (
+      nextProps.usersFound === undefined ||
+      nextProps.usersFound === null ||
+      (nextProps.usersFound && nextProps.usersFound.length <= 0)
+    ) {
+      this.props.dispatch(
+        searchUsers({token: this.props.authenticatedUser.token}),
+      );
+    } else {
+      if (
+        nextState.currentUser === null ||
+        (nextState.currentUser &&
+          nextProps.usersFound[0].email !== nextState.currentUser.email)
+      ) {
+        this.setState({
+          currentUser: {
+            email: nextProps.usersFound[0].email,
+            name: nextProps.usersFound[0].name,
+            age: nextProps.usersFound[0].age,
+            audioFile: nextProps.usersFound[0].audioFile,
+          },
+        });
+      }
+    }
+    return true;
+  }
+
+  componentDidMount() {
+    if (
+      this.props.usersFound === undefined ||
+      this.props.usersFound === null ||
+      (this.props.usersFound && this.props.usersFound.length <= 0)
+    ) {
+      this.props.dispatch(
+        searchUsers({token: this.props.authenticatedUser.token}),
+      );
+    } else {
+      if (
+        this.state.currentUser === null ||
+        (this.state.currentUser &&
+          this.props.usersFound[0].email !== this.state.currentUser.email)
+      ) {
+        this.setState({
+          currentUser: {
+            email: this.props.usersFound[0].email,
+            name: this.props.usersFound[0].name,
+            age: this.props.usersFound[0].age,
+            audioFile: this.props.usersFound[0].audioFile,
+          },
+        });
+      }
+    }
+  }
+
+  onSwipeRight = async () => {
+    await this.props.dispatch(
       likedUser({
         token: this.props.authenticatedUser.token,
         user: this.props.usersFound[0].email,
       }),
     );
   };
-  onSwipeLeft = () => {
-    this.props.dispatch(
+  onSwipeLeft = async () => {
+    await this.props.dispatch(
       dislikedUser({
-        token: this.props.authenticatedUser.token,
         user: this.props.usersFound[0].email,
       }),
     );
   };
 
   areMoreUsers = () => {
-    return (
-      this.props.usersFound != undefined && this.props.usersFound.length > 0
-    );
+    return this.state.currentUser !== null;
   };
 
   render() {
@@ -139,9 +196,9 @@ export class ListenLobbyComponent extends React.Component {
               {...this.PanResponder.panHandlers}
               style={[this.rotateAndTranslate]}>
               <ListenUser
-                name={this.props.usersFound[0].name}
-                age={GetAge(this.props.usersFound[0].age)}
-                audioFile={this.props.usersFound[0].audioFile}
+                name={this.state.currentUser.name}
+                age={GetAge(this.state.currentUser.age)}
+                audioFile={this.state.currentUser.audioFile}
               />
             </Animated.View>
           </View>

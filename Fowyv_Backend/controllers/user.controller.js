@@ -125,7 +125,6 @@ exports.setProfile = async (req, res) => {
                             name:profileValuesReq.name,
                             gender:profileValuesReq.gender,
                             age:profileValuesReq.date,
-                            icon:profileValuesReq.icon,
                             audioFile:filename,
                         };
                         await usersDetailsCollection.insertOne(userDetails, {}, opts);

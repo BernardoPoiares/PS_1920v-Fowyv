@@ -3,6 +3,7 @@ import {
   TouchableOpacity,
   View,
   TextInput,
+  Text,
   StyleSheet,
   FlatList,
   StatusBar,
@@ -23,6 +24,7 @@ class ChatComponent extends React.Component {
       textMessage: '',
       userEmail: props.route.params.userMatch,
       refresh: false,
+      length: props.messagesLength,
     };
   }
 
@@ -118,17 +120,23 @@ class ChatComponent extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => ({
-  match:
+const mapStateToProps = (state, ownProps) => {
+  if (
     state.messagesReducer.userMessages.matches !== undefined &&
     state.messagesReducer.userMessages.matches != null
-      ? state.messagesReducer.userMessages.matches.find(
-          mat =>
-            mat.emails.includes(state.authReducer.authenticateUser.email) &&
-            mat.emails.includes(ownProps.route.params.userMatch),
-        )
-      : null,
-});
+  ) {
+    const match = state.messagesReducer.userMessages.matches.find(
+      mat =>
+        mat.emails.includes(state.authReducer.authenticateUser.email) &&
+        mat.emails.includes(ownProps.route.params.userMatch),
+    );
+    return {
+      match: match,
+      messagesLength: match.messages.length,
+    };
+  }
+  return {match: null, messagesLength: 0};
+};
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
