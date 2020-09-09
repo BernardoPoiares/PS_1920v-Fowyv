@@ -4,6 +4,7 @@ const getUser = (state = {}, action) => {
   switch (action.type) {
     case 'GET_USER_LOADING':
       return {
+        ...state,
         isLoading: true,
         isError: false,
         isSuccess: false,
@@ -12,6 +13,7 @@ const getUser = (state = {}, action) => {
       };
     case 'GET_USER_SUCCESS':
       return {
+        ...state,
         isLoading: false,
         isError: false,
         isSuccess: true,
@@ -20,6 +22,7 @@ const getUser = (state = {}, action) => {
       };
     case 'GET_USER_FAIL':
       return {
+        ...state,
         isLoading: false,
         isError: true,
         isSuccess: false,

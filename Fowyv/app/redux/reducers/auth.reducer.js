@@ -4,6 +4,7 @@ const authenticateUser = (state = {}, action) => {
   switch (action.type) {
     case 'AUTHENTICATE_USER_LOADING':
       return {
+        ...state,
         isLoading: true,
         isError: false,
         isSuccess: false,
@@ -13,6 +14,7 @@ const authenticateUser = (state = {}, action) => {
       };
     case 'AUTHENTICATE_USER_SUCCESS':
       return {
+        ...state,
         isLoading: false,
         isError: false,
         isSuccess: true,
@@ -23,6 +25,7 @@ const authenticateUser = (state = {}, action) => {
       };
     case 'AUTHENTICATE_USER_FAIL':
       return {
+        ...state,
         isLoading: false,
         isError: true,
         isSuccess: false,
@@ -32,15 +35,16 @@ const authenticateUser = (state = {}, action) => {
       };
     case 'LOGOUT_USER_LOADING':
       return {
+        ...state,
         isLoading: true,
         isError: false,
         isSuccess: false,
         errors: null,
-        token: state.token,
         isLoggedIn: true,
       };
     case 'LOGOUT_USER_SUCCESS':
       return {
+        ...state,
         isLoading: false,
         isError: false,
         isSuccess: true,
@@ -50,11 +54,11 @@ const authenticateUser = (state = {}, action) => {
       };
     case 'LOGOUT_USER_FAIL':
       return {
+        ...state,
         isLoading: false,
         isError: true,
         isSuccess: false,
         errors: action.payload,
-        token: state.token,
         isLoggedIn: true,
       };
     default:

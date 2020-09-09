@@ -22,10 +22,20 @@ export class MatchLobbyComponent extends React.Component {
     };
   };
 
-  UNSAFE_componentWillMount() {
-    this.props.dispatch(
-      searchUserMatches({token: this.props.authenticatedUser.token}),
-    );
+  componentDidMount() {
+    const {navigation} = this.props;
+
+    this.focusListener = navigation.addListener('focus', () => {
+      this.props.dispatch(
+        searchUserMatches({token: this.props.authenticatedUser.token}),
+      );
+    });
+  }
+
+  componentWillUnmount() {
+    if (this.focusListener != null && this.focusListener.remove) {
+      this.focusListener.remove();
+    }
   }
 
   areMatches = () => {

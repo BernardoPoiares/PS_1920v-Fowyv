@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.1.97:4000';
+const BASE_URL = 'http://192.168.1.131:4000';
 //const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 export const api = async (url, method, body = null, headers = {}) => {
@@ -52,6 +52,11 @@ export const fetchApi = async (
     }
 
     const response = await api(url, method, body, headers);
+    console.log(response);
+
+    console.log(response.status);
+
+    console.log(response.headers.get('Content-Type'));
     if (response.status === statusCode) {
       result.success = true;
       if (response.headers.get('Content-Type')) {

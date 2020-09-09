@@ -25,7 +25,17 @@ class ChatComponent extends React.Component {
       userEmail: props.route.params.userMatch,
       refresh: false,
       length: props.messagesLength,
+      match: props.match,
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.match === null) {
+      this.props.navigation.navigate('MainStack', {
+        screen: 'MatchLobby',
+      });
+    }
+    return true;
   }
 
   finishedRecording = async audioPath => {
@@ -57,9 +67,9 @@ class ChatComponent extends React.Component {
 
   areMessagesToShow = () => {
     return (
-      this.props.match &&
-      this.props.match.messages !== undefined &&
-      this.props.match.messages.length > 0
+      this.state.match &&
+      this.state.match.messages !== undefined &&
+      this.state.match.messages.length > 0
     );
   };
 
@@ -78,7 +88,7 @@ class ChatComponent extends React.Component {
               onContentSizeChange={() => {
                 this.flatListRef.scrollToEnd({animation: true});
               }}
-              data={this.props.match.messages}
+              data={this.state.match.messages}
               renderItem={({item}) => (
                 <Message
                   message={item}
@@ -96,7 +106,7 @@ class ChatComponent extends React.Component {
               name={'long-arrow-alt-up'}
               size={15}
               color={'darkorange'}
-              style={this.props.sendIcon}
+              style={this.state.sendIcon}
             />
           </TouchableOpacity>
           <TextInput

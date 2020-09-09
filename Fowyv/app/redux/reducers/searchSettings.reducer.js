@@ -4,6 +4,7 @@ const searchSettings = (state = {}, action) => {
   switch (action.type) {
     case 'GET_SEARCH_SETTINGS_LOADING':
       return {
+        ...state,
         isLoading: true,
         isError: false,
         isSuccess: false,
@@ -15,6 +16,7 @@ const searchSettings = (state = {}, action) => {
       };
     case 'GET_SEARCH_SETTINGS_SUCCESS':
       return {
+        ...state,
         isLoading: false,
         isError: false,
         isSuccess: true,
@@ -26,6 +28,7 @@ const searchSettings = (state = {}, action) => {
       };
     case 'GET_SEARCH_SETTINGS_FAIL':
       return {
+        ...state,
         isLoading: false,
         isError: true,
         isSuccess: false,
@@ -37,36 +40,27 @@ const searchSettings = (state = {}, action) => {
       };
     case 'SET_SEARCH_SETTINGS_LOADING':
       return {
+        ...state,
         isLoading: true,
         isError: false,
         isSuccess: false,
         errors: null,
-        minSearchAge: state.minSearchAge,
-        maxSearchAge: state.maxSearchAge,
-        searchGenders: state.searchGenders,
-        languages: state.languages,
       };
     case 'SET_SEARCH_SETTINGS_SUCCESS':
       return {
+        ...state,
         isLoading: false,
         isError: false,
         isSuccess: true,
-        minSearchAge: state.minSearchAge,
-        maxSearchAge: state.maxSearchAge,
-        searchGenders: state.searchGenders,
-        languages: state.languages,
         ...action.payload,
       };
     case 'SET_SEARCH_SETTINGS_FAIL':
       return {
+        ...state,
         isLoading: false,
         isError: true,
         isSuccess: false,
         errors: action.payload,
-        minSearchAge: state.minSearchAge,
-        maxSearchAge: state.maxSearchAge,
-        searchGenders: state.searchGenders,
-        languages: state.payload.languages,
       };
     default:
       return state;

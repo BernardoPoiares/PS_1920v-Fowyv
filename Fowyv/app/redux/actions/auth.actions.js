@@ -38,18 +38,7 @@ export const logoutUser = payload => {
         },
       } = state;
       dispatch({type: 'LOGOUT_USER_LOADING'});
-      const response = await fetchApi(
-        '/api/auth/signout',
-        'POST',
-        null,
-        200,
-        token,
-      );
-      if (response.success) {
-        dispatch({type: 'LOGOUT_USER_SUCCESS'});
-      } else {
-        throw response;
-      }
+      dispatch({type: 'LOGOUT_USER_SUCCESS'});
     } catch (ex) {
       dispatch({type: 'LOGOUT_USER_FAIL', payload: ex.responseBody});
     }

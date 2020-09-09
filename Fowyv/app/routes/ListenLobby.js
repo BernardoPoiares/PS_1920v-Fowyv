@@ -29,7 +29,7 @@ export class ListenLobbyComponent extends React.Component {
         this.props.usersFound !== undefined && this.props.usersFound.length > 0
           ? {
               email: props.usersFound[0].email,
-              name: props.usersFound[0].name,
+              name: props.usersFound[0].name + ' ',
               age: props.usersFound[0].age,
               audioFile: props.usersFound[0].audioFile,
             }
@@ -61,9 +61,6 @@ export class ListenLobbyComponent extends React.Component {
       outputRange: [1, 0, 0],
       extrapolate: 'clamp',
     });
-  }
-
-  UNSAFE_componentWillMount() {
     this.PanResponder = PanResponder.create({
       onStartShouldSetPanResponder: (evt, gestureState) => true,
       onPanResponderMove: (evt, gestureState) => {
@@ -94,58 +91,53 @@ export class ListenLobbyComponent extends React.Component {
     });
   }
 
+  componentDidMount() {
+    const {navigation} = this.props;
+
+    this.focusListener = navigation.addListener('focus', () => {
+      if (
+        this.props.usersFound === undefined ||
+        this.props.usersFound === null ||
+        (this.props.usersFound && this.props.usersFound.length <= 0)
+      ) {
+        this.props.dispatch(
+          searchUsers({token: this.props.authenticatedUser.token}),
+        );
+      }
+    });
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     if (
-      nextProps.usersFound === undefined ||
-      nextProps.usersFound === null ||
-      (nextProps.usersFound && nextProps.usersFound.length <= 0)
-    ) {
-      this.props.dispatch(
-        searchUsers({token: this.props.authenticatedUser.token}),
-      );
-    } else {
-      if (
-        nextState.currentUser === null ||
+      nextProps.usersFound &&
+      nextProps.usersFound.length > 0 &&
+      (nextState.currentUser === null ||
         (nextState.currentUser &&
-          nextProps.usersFound[0].email !== nextState.currentUser.email)
-      ) {
-        this.setState({
-          currentUser: {
-            email: nextProps.usersFound[0].email,
-            name: nextProps.usersFound[0].name,
-            age: nextProps.usersFound[0].age,
-            audioFile: nextProps.usersFound[0].audioFile,
-          },
-        });
-      }
+          nextProps.usersFound[0].email !== nextState.currentUser.email))
+    ) {
+      this.setState({
+        currentUser: {
+          email: nextProps.usersFound[0].email,
+          name: nextProps.usersFound[0].name + ' ',
+          age: nextProps.usersFound[0].age,
+          audioFile: nextProps.usersFound[0].audioFile,
+        },
+      });
+    } else if (
+      nextState.currentUser !== null &&
+      (!nextProps.usersFound ||
+        (nextProps.usersFound && nextProps.usersFound.length <= 0))
+    ) {
+      this.setState({
+        currentUser: null,
+      });
     }
     return true;
   }
 
-  componentDidMount() {
-    if (
-      this.props.usersFound === undefined ||
-      this.props.usersFound === null ||
-      (this.props.usersFound && this.props.usersFound.length <= 0)
-    ) {
-      this.props.dispatch(
-        searchUsers({token: this.props.authenticatedUser.token}),
-      );
-    } else {
-      if (
-        this.state.currentUser === null ||
-        (this.state.currentUser &&
-          this.props.usersFound[0].email !== this.state.currentUser.email)
-      ) {
-        this.setState({
-          currentUser: {
-            email: this.props.usersFound[0].email,
-            name: this.props.usersFound[0].name,
-            age: this.props.usersFound[0].age,
-            audioFile: this.props.usersFound[0].audioFile,
-          },
-        });
-      }
+  componentWillUnmount() {
+    if (this.focusListener != null && this.focusListener.remove) {
+      this.focusListener.remove();
     }
   }
 

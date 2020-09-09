@@ -21,7 +21,9 @@ class ChatStackNav extends React.Component {
   }
 
   onBackPressed = () => {
-    this.props.navigation.goBack();
+    this.props.navigation.navigate('MainStack', {
+      screen: 'MatchLobby',
+    });
   };
 
   onSettingsPressed = () => {
@@ -35,20 +37,17 @@ class ChatStackNav extends React.Component {
     this.setState({showSettings: true});
   };
 
-  onDeleteMatch = () => {
-    this.props
-      .dispatch(
-        deleteUserMatch({
-          userEmail: this.state.userEmail,
-        }),
-      )
-      .then(success => {
-        if (success) {
-          this.onBackPressed();
-        } else {
-          this.hideMenu();
-        }
-      });
+  onDeleteMatch = async () => {
+    const deleteMatchResult = await this.props.dispatch(
+      deleteUserMatch({
+        userEmail: this.state.userEmail,
+      }),
+    );
+    if (deleteMatchResult) {
+      this.onBackPressed();
+    } else {
+      this.hideMenu();
+    }
   };
 
   render() {
@@ -61,7 +60,7 @@ class ChatStackNav extends React.Component {
             headerTitle: () => {
               return (
                 <Text style={chatStackStyle.userName}>
-                  {this.props.route.params.userName}
+                  {this.props.route.params.userName + ' '}
                 </Text>
               );
             },
