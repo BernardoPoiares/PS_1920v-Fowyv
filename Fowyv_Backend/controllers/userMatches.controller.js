@@ -53,7 +53,7 @@ exports.deleteMatch = async (req, res) => {
         if(matchesDetails && matchesDetails.errorCode)
             return res.status(matchesDetails.errorCode).send(matchesDetails.errorMessage);
 
-        res.status(200).json();
+        res.status(200).send();
 
     }catch(error){
         res.status(500).send({ message: error });
