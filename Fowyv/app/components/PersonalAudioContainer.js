@@ -43,13 +43,15 @@ class PersonalAudioContainerComponent extends React.Component {
     }
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps, nextState) {
     if (nextProps.audioFilename !== this.props.audioFilename) {
       AudioPlayer.createSound(
         getAudioFilePath(nextProps.audioFilename),
         this.setSound,
       );
+      this.setState({audioFilename: nextProps.audioFilename});
     }
+    return true;
   }
 
   componentWillUnmount() {
@@ -58,10 +60,15 @@ class PersonalAudioContainerComponent extends React.Component {
     }
   }
 
-
-  setSound = sound => {
+  setSound = async sound => {
     if (sound == null) {
-      requestAudioFile(this.state.audioFilename, this.props.dispatch);
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
+      );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
     } else {
       this.setState({hasAudio: true, sound: sound});
     }

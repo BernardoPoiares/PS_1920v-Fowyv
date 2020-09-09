@@ -9,7 +9,11 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {connect} from 'react-redux';
 import {getUserPersonalAudio} from '../redux/actions/user.actions';
-import {getLocalAudioFilePath, requestAudioFile} from './../utils/filesUtils';
+import {
+  getAudioFilePath,
+  getLocalAudioFilePath,
+  requestAudioFile,
+} from './../utils/filesUtils';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
 export class ListenUserComponent extends React.Component {
@@ -21,6 +25,17 @@ export class ListenUserComponent extends React.Component {
       isPlaying: false,
       audioFilename: props.audioFile,
     };
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    if (nextProps.audioFile !== this.state.audioFilename) {
+      AudioPlayer.createSound(
+        getAudioFilePath(nextProps.audioFile),
+        this.setSound,
+      );
+      this.setState({audioFilename: nextProps.audioFile});
+    }
+    return true;
   }
 
   getPersonalAudio = async () => {
@@ -47,10 +62,15 @@ export class ListenUserComponent extends React.Component {
     }
   }
 
-
-  setSound = sound => {
+  setSound = async sound => {
     if (sound == null) {
-      requestAudioFile(this.state.audioFilename, this.props.dispatch);
+      let audioPath = await getLocalAudioFilePath(
+        this.state.audioFilename,
+        this.getPersonalAudio,
+      );
+      if (audioPath) {
+        AudioPlayer.createSound(audioPath, this.setSound);
+      }
     } else {
       this.setState({hasAudio: true, sound: sound});
     }
