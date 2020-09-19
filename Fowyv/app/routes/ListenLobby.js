@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 import {connect} from 'react-redux';
 import {ListenUser} from '../components/ListenUser';
+import {ModalMatchMessage} from '../components/ModalMatchMessage';
 import {ListenLobbyIcon} from '../components/ListenLobbyIcon';
 import {searchUsers} from '../redux/actions/userFunctionalities.actions.js';
 import {
@@ -146,6 +147,7 @@ export class ListenLobbyComponent extends React.Component {
       likedUser({
         token: this.props.authenticatedUser.token,
         user: this.props.usersFound[0].email,
+        userName: this.props.usersFound[0].name,
       }),
     );
   };
@@ -164,6 +166,7 @@ export class ListenLobbyComponent extends React.Component {
   render() {
     return (
       <View style={listenLobbyStyle.View}>
+        <ModalMatchMessage modalVisible={true} />
         {this.areMoreUsers() ? (
           <View>
             <ListenLobbyIcon

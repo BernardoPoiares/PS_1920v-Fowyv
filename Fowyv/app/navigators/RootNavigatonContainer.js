@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -11,6 +11,7 @@ import {SetProfile} from '../routes/SetProfile.js';
 import {Loader} from '../components/Loader';
 import {connect} from 'react-redux';
 import {getUserDetails} from '../redux/actions/user.actions';
+import {ModalMessage} from '../components/ModalMessage.js';
 
 const RootStack = createStackNavigator();
 const MainStack = createStackNavigator();
@@ -29,6 +30,7 @@ class RootContainer extends React.Component {
     return (
       <View style={{flex: 1}}>
         {this.props.authenticateUser.isLoading && <Loader />}
+        <ModalMessage modalVisible={true} />
         <NavigationContainer>
           {this.props.authenticateUser.isLoggedIn !== true ? (
             <RootStack.Navigator screenOptions={{headerShown: false}}>

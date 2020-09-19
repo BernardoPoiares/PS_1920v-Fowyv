@@ -51,9 +51,16 @@ export const likedUser = payload => {
       );
 
       if (response.success) {
+        let match = null;
+        if (response.responseBody && response.responseBody.match) {
+          match = {email: payload.user, userName: payload.userName};
+        }
         dispatch({
           type: 'LIKED_USER_SUCCESS',
-          payload: state.userFunctionalities.searchUsers.users.slice(1),
+          payload: {
+            users: state.userFunctionalities.searchUsers.users.slice(1),
+            match: match,
+          },
         });
       } else {
         throw response;
@@ -92,6 +99,16 @@ export const dislikedUser = payload => {
       }
     } catch (ex) {
       dispatch({type: 'DISLIKED_USER_FAIL', payload: ex.responseBody});
+    }
+  };
+};
+
+export const clearMatch = () => {
+  return dispatch => {
+    try {
+      dispatch({type: 'CLEAR_MATCH'});
+    } catch (ex) {
+      dispatch({type: 'CLEAR_MATCH_FAIL', payload: ex.responseBody});
     }
   };
 };
