@@ -104,11 +104,7 @@ export const dislikedUser = payload => {
 };
 
 export const clearMatch = () => {
-  return dispatch => {
-    try {
-      dispatch({type: 'CLEAR_MATCH'});
-    } catch (ex) {
-      dispatch({type: 'CLEAR_MATCH_FAIL', payload: ex.responseBody});
-    }
+  return async dispatch => {
+    dispatch({type: 'CLEAR_MATCH'});
   };
 };

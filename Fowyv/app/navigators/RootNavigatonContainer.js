@@ -29,8 +29,8 @@ class RootContainer extends React.Component {
   render() {
     return (
       <View style={{flex: 1}}>
-        {this.props.authenticateUser.isLoading && <Loader />}
-        <ModalMessage modalVisible={true} />
+        <Loader />
+        <ModalMessage />
         <NavigationContainer>
           {this.props.authenticateUser.isLoggedIn !== true ? (
             <RootStack.Navigator screenOptions={{headerShown: false}}>

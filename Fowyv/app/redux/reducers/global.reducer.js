@@ -1,10 +1,11 @@
 import {combineReducers} from 'redux';
 
-const globalReducer = (state = {}, action) => {
+const globalState = (state = {}, action) => {
   switch (action.type) {
     case 'GLOBAL_STATE_ERROR':
       return {
         ...state,
+        loading: false,
         error: action.payload,
       };
     case 'GLOBAL_STATE_CLEAR_ERROR':
@@ -12,9 +13,19 @@ const globalReducer = (state = {}, action) => {
         ...state,
         error: null,
       };
+    case 'GLOBAL_STATE_LOADING':
+      return {
+        ...state,
+        loading: true,
+      };
+    case 'GLOBAL_STATE_CLEAR_LOADING':
+      return {
+        ...state,
+        loading: false,
+      };
     default:
       return state;
   }
 };
 
-export default combineReducers({globalReducer});
+export default combineReducers({globalState});

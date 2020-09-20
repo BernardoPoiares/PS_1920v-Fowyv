@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
-import {clearMatch} from '../redux/actions/auth.actions';
+import {clearMatch} from '../redux/actions/userFunctionalities.actions';
 
 class ModalMatchMessageComponent extends React.Component {
   constructor(props) {
@@ -33,39 +33,43 @@ class ModalMatchMessageComponent extends React.Component {
   };
 
   render() {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={this.props.match != null}
-        statusBarTranslucent={true}>
-        <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
-        <View style={personalAudioRecorderStyle.view}>
-          <View style={personalAudioRecorderStyle.container}>
-            <View style={personalAudioRecorderStyle.recorderContainer}>
-              <Text style={personalAudioRecorderStyle.matchMessage}>
-                You matched!
-              </Text>
-              <Text style={personalAudioRecorderStyle.matchMessage}>
-                {this.props.match.userName} wants to know you better too
-              </Text>
-            </View>
-            <View style={personalAudioRecorderStyle.buttonsContainer}>
-              <TouchableOpacity
-                style={personalAudioRecorderStyle.bottomButton}
-                onPress={this.onBackPressed}>
-                <Text>Back</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={personalAudioRecorderStyle.bottomButton}
-                onPress={this.onChatPressed}>
-                <Text>Talk more</Text>
-              </TouchableOpacity>
+    if (this.props.match != null) {
+      return (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.props.match != null}
+          statusBarTranslucent={true}>
+          <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
+          <View style={personalAudioRecorderStyle.view}>
+            <View style={personalAudioRecorderStyle.container}>
+              <View style={personalAudioRecorderStyle.matchMessageContainer}>
+                <Text style={personalAudioRecorderStyle.matchHeaderMessage}>
+                  You matched! {' '}
+                </Text>
+                <Text style={personalAudioRecorderStyle.matchMessage}>
+                  {this.props.match.name} wants to know you better too{' '}
+                </Text>
+              </View>
+              <View style={personalAudioRecorderStyle.buttonsContainer}>
+                <TouchableOpacity
+                  style={personalAudioRecorderStyle.bottomButton}
+                  onPress={this.onBackPressed}>
+                  <Text>Back</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={personalAudioRecorderStyle.bottomButton}
+                  onPress={this.onChatPressed}>
+                  <Text>Talk more</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    );
+        </Modal>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
@@ -107,26 +111,17 @@ const personalAudioRecorderStyle = StyleSheet.create({
   containerHeader: {
     backgroundColor: 'white',
   },
-  recorderContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-
+  matchMessageContainer: {
     alignItems: 'center',
   },
-  recorderSemiContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    margin: 10,
-  },
-  iconContainer: {alignSelf: 'center'},
-  eraseButton: {
-    borderWidth: 1,
-    padding: 5,
-    margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'moccasin',
+  matchHeaderMessage: {fontSize: 40, fontWeight: 'bold', color: 'black'},
+  matchMessage: {
+    fontSize: 20,
+    color: 'black',
+    marginTop: 20,
+    marginBottom: 20,
+    paddingLeft: 50,
+    paddingRight: 50,
   },
   bottomButton: {
     borderWidth: 1,

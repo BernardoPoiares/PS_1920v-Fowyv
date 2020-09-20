@@ -9,9 +9,9 @@ import {
   StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
-import clearError from '../redux/actions/'
+import clearError from '../redux/actions/global.actions';
 
-export class ModalMessageComponent extends React.Component {
+class ModalMessageComponent extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -25,7 +25,10 @@ export class ModalMessageComponent extends React.Component {
       <Modal
         animationType="slide"
         transparent={true}
-        visible={this.props.errorMessage != null}
+        visible={
+          this.props.errorMessage != null &&
+          this.props.errorMessage !== undefined
+        }
         statusBarTranslucent={true}>
         <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
         <View style={modalMessageStyle.view}>
@@ -50,14 +53,14 @@ export class ModalMessageComponent extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  errorMessage: state.globalReducer.error,
+  errorMessage: state.globalReducer.globalState.error,
 });
 
 const mapDispatchToProps = dispatch => ({
   dispatch,
 });
 
-export const ModalMatchMessage = connect(
+export const ModalMessage = connect(
   mapStateToProps,
   mapDispatchToProps,
 )(ModalMessageComponent);

@@ -166,7 +166,7 @@ export class ListenLobbyComponent extends React.Component {
   render() {
     return (
       <View style={listenLobbyStyle.View}>
-        <ModalMatchMessage modalVisible={true} />
+        <ModalMatchMessage navigation={this.props.navigation} />
         {this.areMoreUsers() ? (
           <View>
             <ListenLobbyIcon

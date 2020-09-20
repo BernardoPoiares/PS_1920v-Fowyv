@@ -5,7 +5,7 @@ import {initialize} from './messages.actions';
 export const loginUser = payload => {
   return async dispatch => {
     try {
-      dispatch({type: 'AUTHENTICATE_USER_LOADING'});
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
       const response = await fetchApi('/api/auth/signin', 'POST', payload, 200);
 
       if (response.success) {
@@ -15,6 +15,8 @@ export const loginUser = payload => {
               type: 'AUTHENTICATE_USER_SUCCESS',
               email: payload.email,
               token: response.responseBody.token,
+            }).then(() => {
+              dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
             });
           }),
         );
@@ -53,19 +55,28 @@ export const logoutUser = payload => {
 export const createUser = payload => {
   return async dispatch => {
     try {
-      dispatch({type: 'AUTHENTICATE_USER_LOADING'});
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
       const response = await fetchApi('/api/auth/signup', 'POST', payload, 200);
       if (response.success) {
         dispatch({
           type: 'AUTHENTICATE_USER_SUCCESS',
           token: response.responseBody.token,
+        }).then(() => {
+          dispatch({
+            type: 'GLOBAL_STATE_CLEAR_LOADING',
+          });
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      console.log(ex);
-      dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
