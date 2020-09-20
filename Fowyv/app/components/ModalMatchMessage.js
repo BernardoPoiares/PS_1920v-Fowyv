@@ -17,30 +17,6 @@ class ModalMatchMessageComponent extends React.Component {
   }
 
   onBackPressed = () => {
-    this.clearState();
-    this.props.goBack();
-  };
-
-  onChatPressed = () => {};
-
-  componentWillUnmount() {
-    this.clearState();
-  }
-  clearState = () => {
-    if (this.state.sound) {
-      this.state.sound.release();
-    }
-    this.setState({
-      audioPath: null,
-      hasAudio: false,
-      sound: null,
-      isPlaying: false,
-      isRecording: false,
-      recorder: null,
-    });
-  };
-
-  onBackPressed = () => {
     this.props.dispatch(clearMatch());
   };
 

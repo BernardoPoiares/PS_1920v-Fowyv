@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 
+import globalReducer from './global.reducer.js';
 import authReducer from './auth.reducer.js';
 import userReducer from './user.reducer.js';
 import searchSettingsReducer from './searchSettings.reducer.js';
@@ -14,6 +15,7 @@ const reducers = {
   userFunctionalities,
   userMatches,
   messagesReducer,
+  globalReducer,
 };
 
 const appReducer = combineReducers(reducers);

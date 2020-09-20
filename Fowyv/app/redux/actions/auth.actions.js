@@ -19,11 +19,16 @@ export const loginUser = payload => {
           }),
         );
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      console.log(ex);
-      dispatch({type: 'AUTHENTICATE_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };

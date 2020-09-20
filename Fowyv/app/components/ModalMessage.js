@@ -8,33 +8,38 @@ import {
   Modal,
   StatusBar,
 } from 'react-native';
+import {connect} from 'react-redux';
+import clearError from '../redux/actions/'
 
-export class ModalMessage extends React.Component {
+export class ModalMessageComponent extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      message: null,
-    };
   }
+
+  onOkPressed = () => {
+    this.props.dispatch(clearError());
+  };
 
   render() {
     return (
       <Modal
         animationType="slide"
         transparent={true}
-        visible={this.props.modalVisible}
+        visible={this.props.errorMessage != null}
         statusBarTranslucent={true}>
         <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
         <View style={modalMessageStyle.view}>
           <View style={modalMessageStyle.container}>
-            <View style={modalMessageStyle.viewContainer}>
-              <View style={modalMessageStyle.messageContainer}>
-                <Text style={modalMessageStyle.message}>Hello</Text>
-              </View>
+            <View style={modalMessageStyle.recorderContainer}>
+              <Text style={modalMessageStyle.matchMessage}>
+                {this.props.errorMessage}
+              </Text>
+            </View>
+            <View style={modalMessageStyle.buttonsContainer}>
               <TouchableOpacity
-                style={modalMessageStyle.eraseButton}
-                onPress={this.onErasePressed}>
-                <Text>Erase</Text>
+                style={modalMessageStyle.bottomButton}
+                onPress={this.onOkPressed}>
+                <Text>Ok</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -43,6 +48,19 @@ export class ModalMessage extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  errorMessage: state.globalReducer.error,
+});
+
+const mapDispatchToProps = dispatch => ({
+  dispatch,
+});
+
+export const ModalMatchMessage = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ModalMessageComponent);
 
 const modalMessageStyle = StyleSheet.create({
   view: {
