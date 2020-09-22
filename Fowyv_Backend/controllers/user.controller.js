@@ -67,6 +67,53 @@ exports.saveDetails = async (req, res) => {
     
 }
 
+exports.savePersonalAudio = async (req, res) => {
+    
+    try{
+        
+        const personalAudioValuesReq = getPersonalAudioValuesFromReq(req.body);
+
+        if(Object.keys(personalAudioValuesReq).length === 0 && personalAudioValuesReq.constructor === Object)
+            res.status(404).json({ message:"Not a valid audio request."});   
+
+        else if(personalAudioValuesReq.validationErrorMessage)
+            return res.status(404).json({ message:profileValuesReq.validationErrorMessage});   
+
+        const filename = uuidv4()+'.'+personalAudioValuesReq.fileType;
+        const content = Buffer.from(req.body.content, 'base64');
+
+        uploadFile(filename,content, async (error)=>{
+            if (error) {
+                console.log(error);
+                return res.status(404).json({ message:"Error uploading file"});   
+            }else {   
+                const transactionResult = await runTransaction(async (db,opts) => {
+                    
+                    const usersDetailsCollection = db.collection(Collections.UsersDetails);
+
+                    let userDetails= await usersDetailsCollection.findOne({email:req.email}, opts);
+
+                    if(!userDetails){
+                            return {errorCode:404, errorMessage:"User not found."};
+                    }else{
+                        const newValues = { $set: {"audioFile":filename} };
+                        await usersDetailsCollection.updateOne({"_id": userDetails._id}, newValues, opts )
+                    }
+                }); 
+                
+                if(transactionResult && transactionResult.errorCode)
+                    return res.status(transactionResult.errorCode).json({ message:transactionResult.errorMessage});
+
+                res.status(200).send();
+            }
+        });
+
+      }catch(error){
+        res.status(500).json({ message: error });
+        return;
+      }
+}
+
 exports.getPersonalAudio = async (req, res) => {
     
     try{
@@ -86,7 +133,6 @@ exports.getPersonalAudio = async (req, res) => {
         });
 
       }catch(error){
-        console.log(error)
         res.status(500).json({ message: error });
         return;
       }
@@ -169,6 +215,22 @@ const getProfileValuesFromReq= (req) =>{
             ret.validationErrorMessage = "Content not found."
             return ret;
         }
+    }
+
+    return ret;
+}
+
+const getPersonalAudioValuesFromReq= (req) =>{
+    let ret = {};
+
+    if(req.fileType){
+        ret.fileType = req.fileType;
+    }else{
+        ret.validationErrorMessage = "FileType not Found."
+        return ret;
+    }if(!req.content){
+        ret.validationErrorMessage = "Content not found."
+        return ret;
     }
 
     return ret;

@@ -59,4 +59,12 @@ module.exports = (app)=> {
     ],
     controller.getPersonalAudio
   )
+
+  app.post(
+    "/api/user/personalAudio",
+    [
+      authMiddleware.verifyToken
+    ],
+    controller.savePersonalAudio
+  )
 };
