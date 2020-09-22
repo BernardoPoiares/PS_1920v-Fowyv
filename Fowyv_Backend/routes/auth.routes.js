@@ -1,4 +1,4 @@
-import { authMiddleware,signUpMiddleware } from "../middlewares";
+import { authMiddleware } from "../middlewares";
 import controller from "../controllers/auth.controller";
 
 module.exports = function(app) {
@@ -11,11 +11,7 @@ module.exports = function(app) {
   });
 
   app.post(
-    "/api/auth/signup",
-    [
-        signUpMiddleware.checkDuplicateEmail
-    ],
-    controller.signup
+    "/api/auth/signup", controller.signup
   );
 
   app.post("/api/auth/signin", controller.signin);

@@ -25,6 +25,22 @@ require('./routes/user.routes')(app);
 require('./routes/search.routes')(app);
 require('./routes/interactions.routes')(app);
 
+app.use((req, res, next) => {
+  const error = new Error("Not found");
+  error.status = 404;
+  next(error);
+});
+
+// error handler middleware
+app.use((error, req, res, next) => {
+  res.status(error.status || 500).json({
+    error: {
+      status: error.status || 500,
+      message: error.message || 'Internal Server Error',
+    },
+  });
+});
+
 const server = require("http").createServer(app);
 const io = require("socket.io").listen(server,{
   pingTimeout: 60000,

@@ -1,4 +1,4 @@
-import { userDetailsMiddleware,authMiddleware } from "../middlewares";
+import { authMiddleware } from "../middlewares";
 import controller from "../controllers/user.controller";
 import userMatchesController from "../controllers/userMatches.controller";
 
@@ -23,8 +23,7 @@ module.exports = (app)=> {
   app.post(
     "/api/user/details",
     [
-        authMiddleware.verifyToken,
-        userDetailsMiddleware.verifyDetails
+        authMiddleware.verifyToken
     ],
     controller.saveDetails
   );
@@ -32,8 +31,7 @@ module.exports = (app)=> {
   app.post(
     "/api/user/profile",
     [
-        authMiddleware.verifyToken,
-        userDetailsMiddleware.verifyDetails
+        authMiddleware.verifyToken
     ],
     controller.setProfile
   );

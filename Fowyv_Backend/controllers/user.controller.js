@@ -16,12 +16,12 @@ exports.getDetails = async (req, res) => {
         });
     
         if(!details)
-            return res.status(404).send({ message: "User not found." });
+            return res.status(404).json({ message: "User not found." });
     
         res.status(200).json(details);
     
       }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
       }
 
@@ -34,10 +34,10 @@ exports.saveDetails = async (req, res) => {
         const detailsValuesReq = getDetailsValuesFromReq(req.body);
 
         if(Object.keys(detailsValuesReq).length === 0 && detailsValuesReq.constructor === Object)
-            res.status(404).send("No valid search settings on request.");   
+            res.status(404).json({ message:"No valid search settings on request."});   
 
         else if(searchSettingsReq.validationErrorMessage)
-            return res.status(404).send(searchSettingsReq.validationErrorMessage);   
+            return res.status(404).json({ message:searchSettingsReq.validationErrorMessage});   
 
         const transactionResult = await runTransaction(async (db,opts) => {
             
@@ -56,12 +56,12 @@ exports.saveDetails = async (req, res) => {
         });
 
         if(transactionResult && transactionResult.errorCode)
-            return res.status(transactionResult.errorCode).send(transactionResult.errorMessage);
+            return res.status(transactionResult.errorCode).json({ message:transactionResult.errorMessage});
 
         res.status(200).send();
 
       }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
       }
     
@@ -73,12 +73,12 @@ exports.getPersonalAudio = async (req, res) => {
         
         const audioFile = req.query.audioFile;
         if(!audioFile)
-            return res.status(404).send("AudioFile not found.");   
+            return res.status(404).json({ message:"AudioFile not found."});   
 
         downloadFile(audioFile, async (error,data)=>{
             if (error) {
                 console.log(error);
-                return res.status(404).send("Error uploading file");   
+                return res.status(404).json({ message:"Error uploading file"});   
             }else {
                 res.type('json');
                 res.status(200).json({content:data});
@@ -87,7 +87,7 @@ exports.getPersonalAudio = async (req, res) => {
 
       }catch(error){
         console.log(error)
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
       }
     
@@ -100,10 +100,10 @@ exports.setProfile = async (req, res) => {
         const profileValuesReq = getProfileValuesFromReq(req.body);
 
         if(Object.keys(profileValuesReq).length === 0 && profileValuesReq.constructor === Object)
-            res.status(404).send("No valid profile values on request.");   
+            res.status(404).json({ message:"No valid profile values on request."});   
 
         else if(profileValuesReq.validationErrorMessage)
-            return res.status(404).send(profileValuesReq.validationErrorMessage);   
+            return res.status(404).json({ message:profileValuesReq.validationErrorMessage});   
 
         const filename = uuidv4()+'.'+profileValuesReq.fileType;
         const content = Buffer.from(req.body.content, 'base64');
@@ -111,7 +111,7 @@ exports.setProfile = async (req, res) => {
         uploadFile(filename,content, async (error)=>{
             if (error) {
                 console.log(error);
-                return res.status(404).send("Error uploading file");   
+                return res.status(404).json({ message:"Error uploading file"});   
             }else {   
                 await runTransaction(async (db,opts) => {
                     
@@ -140,7 +140,7 @@ exports.setProfile = async (req, res) => {
 
       }catch(error){
         console.log(error)
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
       }
     

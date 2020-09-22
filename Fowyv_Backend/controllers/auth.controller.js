@@ -49,7 +49,7 @@ exports.signup = async (req, res) => {
     });
 
   }catch(error){
-    res.status(500).send({ message: error });
+    res.status(500).json({ message: error });
     return;
   }
 
@@ -66,7 +66,7 @@ exports.signin = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(404).send({ message: "User not found." });
+      return res.status(401).json({ message: "User or password incorrect" });
     }
 
     var passwordIsValid = bcrypt.compareSync(
@@ -75,9 +75,8 @@ exports.signin = async (req, res) => {
     );
 
     if (!passwordIsValid) {
-      return res.status(401).send({
-        token: null,
-        message: "Invalid Password!"
+      return res.status(401).json({
+        message: "User or password incorrect"
       });
     }
 
@@ -91,7 +90,7 @@ exports.signin = async (req, res) => {
     });
 
   }catch(error){
-    res.status(500).send({ message: error });
+    res.status(500).json({ message: error });
     return;
   }
 

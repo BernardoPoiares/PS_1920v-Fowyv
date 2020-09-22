@@ -25,12 +25,12 @@ exports.getMatches = async (req, res) => {
         }); 
 
         if(matchesDetails && matchesDetails.errorCode)
-            return res.status(matchesDetails.errorCode).send(matchesDetails.errorMessage);
+            return res.status(matchesDetails.errorCode).json({ message:matchesDetails.errorMessage});
 
         res.status(200).json(matchesDetails);
 
     }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
     }
     
@@ -42,7 +42,7 @@ exports.deleteMatch = async (req, res) => {
         const userMatch = getUserFromReq(req.body);
 
         if(Object.keys(userMatch).length === 0 && userMatch.constructor === Object)
-            return res.status(404).send("No valid email on request.");   
+            return res.status(404).json({ message:"No valid email on request."});   
 
         const matchesDetails = await runQuery(async (db,opts) => {
 
@@ -51,12 +51,12 @@ exports.deleteMatch = async (req, res) => {
         }); 
 
         if(matchesDetails && matchesDetails.errorCode)
-            return res.status(matchesDetails.errorCode).send(matchesDetails.errorMessage);
+            return res.status(matchesDetails.errorCode).json({ message:matchesDetails.errorMessage});
 
         res.status(200).send();
 
     }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
     }
     

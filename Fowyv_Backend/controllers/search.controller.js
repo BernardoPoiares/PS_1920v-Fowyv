@@ -21,12 +21,12 @@ exports.getSearchSettings = async (req, res) => {
         }); 
         
         if(searchSettings && searchSettings.errorCode)
-            return res.status(searchSettings.errorCode).send(searchSettings.errorMessage);
+            return res.status(searchSettings.errorCode).json({ message:searchSettings.errorMessage});
 
         return res.status(200).json(searchSettings);
 
     }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
     }
 
@@ -39,10 +39,10 @@ exports.setSearchSettings = async (req, res) => {
         const searchSettingsReq = getSearchSettingsFromReq(req.body);
 
         if(Object.keys(searchSettingsReq).length === 0 && searchSettingsReq.constructor === Object)
-            return res.status(404).send("No valid search settings on request.");  
+            return res.status(404).json({ message:"No valid search settings on request."});  
 
         else if(searchSettingsReq.validationErrorMessage)
-            return res.status(404).send(searchSettingsReq.validationErrorMessage);   
+            return res.status(404).json({ message:searchSettingsReq.validationErrorMessage});   
 
         const transactionReturn = await runTransaction(async (db,opts) => {
 
@@ -63,12 +63,12 @@ exports.setSearchSettings = async (req, res) => {
         }); 
 
         if(transactionReturn.errorCode)
-            return res.status(transactionReturn.errorCode).send(transactionReturn.errorMessage);
+            return res.status(transactionReturn.errorCode).json({ message:transactionReturn.errorMessage});
 
         res.status(200).send();
 
     }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
     }
 
@@ -107,13 +107,13 @@ exports.searchUsers = async (req, res) => {
 
 
         if(searchResult.errorCode)
-            return res.status(searchResult.errorCode).send(searchResult.errorMessage);
+            return res.status(searchResult.errorCode).json({ message:searchResult.errorMessage});
 
 
         res.status(200).send(searchResult);
 
     }catch(error){
-        res.status(500).send({ message: error });
+        res.status(500).json({ message: error });
         return;
     }
 
