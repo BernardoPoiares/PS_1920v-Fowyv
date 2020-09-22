@@ -23,10 +23,16 @@ export const getSearchSettings = payload => {
           },
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'GET_SEARCH_SETTINGS_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -49,10 +55,16 @@ export const setSearchSettings = payload => {
           payload: payload.settings,
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'SET_SEARCH_SETTINGS_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };

@@ -21,13 +21,14 @@ class ModalMatchMessageComponent extends React.Component {
   };
 
   onChatPressed = () => {
+    const {name, email} = this.props.match;
     this.props.dispatch(clearMatch()).then(() =>
       this.props.navigation.navigate('ChatStack', {
         screen: 'Chat',
         params: {
-          userMatch: this.props.match.email,
+          userMatch: email,
         },
-        userName: this.props.match.name,
+        userName: name,
       }),
     );
   };
@@ -48,7 +49,7 @@ class ModalMatchMessageComponent extends React.Component {
                   You matched! {' '}
                 </Text>
                 <Text style={personalAudioRecorderStyle.matchMessage}>
-                  {this.props.match.name} wants to know you better too{' '}
+                  {this.props.match.name} wants to know you better too {' '}
                 </Text>
               </View>
               <View style={personalAudioRecorderStyle.buttonsContainer}>

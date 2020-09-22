@@ -15,9 +15,8 @@ export const loginUser = payload => {
               type: 'AUTHENTICATE_USER_SUCCESS',
               email: payload.email,
               token: response.responseBody.token,
-            }).then(() => {
-              dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
             });
+            dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
           }),
         );
       } else {
@@ -61,11 +60,8 @@ export const createUser = payload => {
         dispatch({
           type: 'AUTHENTICATE_USER_SUCCESS',
           token: response.responseBody.token,
-        }).then(() => {
-          dispatch({
-            type: 'GLOBAL_STATE_CLEAR_LOADING',
-          });
         });
+        dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
       } else {
         dispatch({
           type: 'GLOBAL_STATE_ERROR',

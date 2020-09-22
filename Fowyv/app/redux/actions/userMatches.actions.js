@@ -18,10 +18,16 @@ export const searchUserMatches = payload => {
           payload: response.responseBody,
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'GET_USER_MATCHES_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -50,10 +56,16 @@ export const deleteUserMatch = payload => {
         });
         return true;
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'DELETE_USER_MATCH_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };

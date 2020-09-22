@@ -9,7 +9,7 @@ import {
   StatusBar,
 } from 'react-native';
 import {connect} from 'react-redux';
-import clearError from '../redux/actions/global.actions';
+import {clearError} from '../redux/actions/global.actions';
 
 class ModalMessageComponent extends React.Component {
   constructor(props) {
@@ -21,39 +21,41 @@ class ModalMessageComponent extends React.Component {
   };
 
   render() {
-    return (
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={
-          this.props.errorMessage != null &&
-          this.props.errorMessage !== undefined
-        }
-        statusBarTranslucent={true}>
-        <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
-        <View style={modalMessageStyle.view}>
-          <View style={modalMessageStyle.container}>
-            <View style={modalMessageStyle.recorderContainer}>
-              <Text style={modalMessageStyle.matchMessage}>
-                {this.props.errorMessage}
-              </Text>
-            </View>
-            <View style={modalMessageStyle.buttonsContainer}>
-              <TouchableOpacity
-                style={modalMessageStyle.bottomButton}
-                onPress={this.onOkPressed}>
-                <Text>Ok</Text>
-              </TouchableOpacity>
+    if (this.props.error != null) {
+      return (
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.props.error != null}
+          statusBarTranslucent={true}>
+          <StatusBar backgroundColor="rgba(0,0,0,0.5)" />
+          <View style={modalMessageStyle.view}>
+            <View style={modalMessageStyle.container}>
+              <View style={modalMessageStyle.messageContainer}>
+                <Text style={modalMessageStyle.messageHeader}>Error </Text>
+                <Text style={modalMessageStyle.message}>
+                  {this.props.error.message}
+                </Text>
+              </View>
+              <View style={modalMessageStyle.buttonsContainer}>
+                <TouchableOpacity
+                  style={modalMessageStyle.bottomButton}
+                  onPress={this.onOkPressed}>
+                  <Text>Ok</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    );
+        </Modal>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
 const mapStateToProps = state => ({
-  errorMessage: state.globalReducer.globalState.error,
+  error: state.globalReducer.globalState.error,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -90,25 +92,20 @@ const modalMessageStyle = StyleSheet.create({
   containerHeader: {
     backgroundColor: 'white',
   },
-  viewContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
   messageContainer: {
-    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'center',
     margin: 10,
   },
-  iconContainer: {alignSelf: 'center'},
-  eraseButton: {
-    borderWidth: 1,
-    padding: 5,
-    margin: 5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'moccasin',
+  messageHeader: {
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: 'black',
+    alignSelf: 'center',
+  },
+  message: {
+    fontSize: 20,
+    color: 'black',
   },
   bottomButton: {
     borderWidth: 1,

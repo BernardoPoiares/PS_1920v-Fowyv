@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.1.131:4000';
+const BASE_URL = 'http://192.168.1.173:4000';
 //const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 export const api = async (url, method, body = null, headers = {}) => {
@@ -17,33 +17,22 @@ export const api = async (url, method, body = null, headers = {}) => {
     }
 
     const fetchPromise = fetch(endPoint, fetchParams);
-    const timeOutPromise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        reject('Request Timeout');
-      }, 100000);
-    });
+    const timeOutPromise = new Promise((resolve, reject) =>
+      setTimeout(() => reject(new Error('Request Timeout')), 30000),
+    );
 
     const response = await Promise.race([fetchPromise, timeOutPromise]);
 
     return response;
   } catch (e) {
-    console.log(e);
     throw new Error(e);
   }
 };
 
-export const fetchApi = async (
-  url,
-  method,
-  body,
-  statusCode,
-  token = null,
-  loaders = false,
-) => {
+export const fetchApi = async (url, method, body, statusCode, token = null) => {
   try {
     const headers = {};
     const result = {
-      token: null,
       success: false,
       responseBody: null,
     };
@@ -52,16 +41,12 @@ export const fetchApi = async (
     }
 
     const response = await api(url, method, body, headers);
-    console.log(response);
 
-    console.log(response.status);
-
-    console.log(response.headers.get('Content-Type'));
     if (response.status === statusCode) {
       result.success = true;
-      if (response.headers.get('Content-Type')) {
-        result.responseBody = await response.json();
-      }
+    }
+    if (response.headers.get('Content-Type')) {
+      result.responseBody = await response.json();
     }
 
     return result;

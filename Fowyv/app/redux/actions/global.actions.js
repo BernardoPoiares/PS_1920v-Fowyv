@@ -1,5 +1,5 @@
 export const clearError = () => {
-  return dispatch => {
+  return async dispatch => {
     dispatch({type: 'GLOBAL_STATE_CLEAR_ERROR'});
   };
 };

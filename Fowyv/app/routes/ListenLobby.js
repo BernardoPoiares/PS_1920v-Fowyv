@@ -96,15 +96,9 @@ export class ListenLobbyComponent extends React.Component {
     const {navigation} = this.props;
 
     this.focusListener = navigation.addListener('focus', () => {
-      if (
-        this.props.usersFound === undefined ||
-        this.props.usersFound === null ||
-        (this.props.usersFound && this.props.usersFound.length <= 0)
-      ) {
-        this.props.dispatch(
-          searchUsers({token: this.props.authenticatedUser.token}),
-        );
-      }
+      this.props.dispatch(
+        searchUsers({token: this.props.authenticatedUser.token}),
+      );
     });
   }
 

@@ -24,10 +24,16 @@ export const searchUsers = () => {
           payload: response.responseBody,
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'GET_SEARCH_USERS_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -53,7 +59,7 @@ export const likedUser = payload => {
       if (response.success) {
         let match = null;
         if (response.responseBody && response.responseBody.match) {
-          match = {email: payload.user, userName: payload.userName};
+          match = {email: payload.user, name: payload.userName};
         }
         dispatch({
           type: 'LIKED_USER_SUCCESS',
@@ -63,10 +69,16 @@ export const likedUser = payload => {
           },
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'LIKED_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -95,10 +107,16 @@ export const dislikedUser = payload => {
           payload: state.userFunctionalities.searchUsers.users.slice(1),
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'DISLIKED_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };

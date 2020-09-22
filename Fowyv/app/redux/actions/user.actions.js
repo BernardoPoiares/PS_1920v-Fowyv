@@ -10,7 +10,7 @@ export const saveUserDetails = payload => {
           authenticateUser: {token},
         },
       } = state;
-      dispatch({type: 'GET_USER_LOADING'});
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
       const {audioFile, ...details} = payload;
       const audioFileData = await readAudioFile(audioFile);
       if (audioFileData) {
@@ -31,15 +31,23 @@ export const saveUserDetails = payload => {
             type: 'GET_USER_SUCCESS',
             payload: {audioFile: response.responseBody.audioFile, ...details},
           });
+          dispatch({
+            type: 'GLOBAL_STATE_CLEAR_LOADING',
+          });
         } else {
-          throw response;
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
         }
       } else {
-        throw 'Error Getting AudioFile';
+        throw new Error('Error Getting AudioFile');
       }
     } catch (ex) {
-      console.log(ex);
-      dispatch({type: 'GET_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -62,10 +70,16 @@ export const getUserDetails = payload => {
           payload: response.responseBody,
         });
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      dispatch({type: 'GET_USER_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
   };
 };
@@ -96,11 +110,16 @@ export const getUserPersonalAudio = payload => {
         dispatch({type: 'GET_USER_PERSONALAUDIO_SUCCESS'});
         return true;
       } else {
-        throw response;
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
       }
     } catch (ex) {
-      console.log(ex);
-      dispatch({type: 'GET_USER_PERSONALAUDIO_FAIL', payload: ex.responseBody});
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
     }
     return false;
   };
