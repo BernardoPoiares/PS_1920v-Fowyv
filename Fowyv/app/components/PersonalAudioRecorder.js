@@ -45,6 +45,11 @@ export class PersonalAudioRecorder extends React.Component {
 
   onErasePressed = () => {
     this.clearState();
+    this.setState({
+      recorder: new AudioRecorder(
+        AudioUtils.DocumentDirectoryPath + '/' + uuid.v4() + '.aac',
+      ),
+    });
   };
 
   setSound = sound => {

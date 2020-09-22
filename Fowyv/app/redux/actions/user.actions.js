@@ -124,3 +124,49 @@ export const getUserPersonalAudio = payload => {
     return false;
   };
 };
+
+export const savePersonalAudio = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
+      const {audioFile} = payload;
+      const audioFileData = await readAudioFile(audioFile);
+      if (audioFileData) {
+        const response = await fetchApi(
+          '/api/user/personalAudio',
+          'POST',
+          {
+            fileType: audioFile.replace(/^.*[\\\/]/, '').split('.')[1],
+            content: audioFileData
+          },
+          200,
+          token,
+        );
+
+        if (response.success) {
+          dispatch({
+            type: 'GLOBAL_STATE_CLEAR_LOADING',
+          });
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
+      } else {
+        throw new Error('Error getting audio file');
+      }
+    } catch (ex) {
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
+    }
+  };
+};

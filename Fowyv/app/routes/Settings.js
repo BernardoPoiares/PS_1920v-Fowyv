@@ -17,6 +17,8 @@ import {
   getSearchSettings,
   setSearchSettings,
 } from '../redux/actions/searchSettings.actions';
+import {savePersonalAudio} from '../redux/actions/user.actions';
+
 import {GetAge} from '../utils/DatesUtil';
 
 const Genders = [{gender: 'male'}, {gender: 'female'}];
@@ -153,7 +155,15 @@ class SettingsComponent extends React.Component {
   };
 
   onAudioFileRecorded = audioPath => {
-    this.setState({audioFilename: audioPath});
+    this.props
+      .dispatch(
+        savePersonalAudio({
+          audioFile: audioPath,
+        }),
+      )
+      .then(() => {
+        this.setState({audioFilename: audioPath});
+      });
   };
 
   onBackPressed = async () => {
