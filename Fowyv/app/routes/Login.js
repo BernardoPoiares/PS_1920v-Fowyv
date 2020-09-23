@@ -9,6 +9,7 @@ import {
 import routes from 'res/routes';
 import {FieldValidator} from '../utils/FieldValidator';
 import {connect} from 'react-redux';
+import {setError} from '../redux/actions/global.actions';
 import {loginUser} from '../redux/actions/auth.actions';
 
 class LoginComponent extends React.Component {
@@ -19,7 +20,16 @@ class LoginComponent extends React.Component {
       password: '',
     };
   }
+
   onLoginPressed = () => {
+    let error = FieldValidator.EmailValidator(this.state.email);
+    if (error) {
+      return this.props.dispatch(setError(new Error(error)));
+    }
+    error = FieldValidator.PasswordValidator(this.state.password);
+    if (error) {
+      return this.props.dispatch(setError(new Error(error)));
+    }
     this.props.dispatch(
       loginUser({email: this.state.email, password: this.state.password}),
     );
@@ -51,28 +61,32 @@ class LoginComponent extends React.Component {
   }
 
   buildErrorMsg = msg => {
-    return <TextInput style={loginStyle.inputError} value={msg} />;
+    return <Text style={loginStyle.inputError}>{msg}</Text>;
   };
 
   render() {
     return (
       <View style={loginStyle.view}>
-        <Text style={loginStyle.header}>FOWYV{' '}</Text>
+        <Text style={loginStyle.header}>FOWYV </Text>
         <View style={loginStyle.container}>
-          <Text style={loginStyle.formHeader}>Email</Text>
-          <TextInput
-            onChangeText={this.onEmailChanged}
-            style={loginStyle.textInput}
-            value={this.state.email}
-          />
-          {this.getEmailError()}
-          <Text style={loginStyle.formHeader}>Password</Text>
-          <TextInput
-            onChangeText={this.onPasswordChanged}
-            secureTextEntry={true}
-            style={loginStyle.textInput}
-          />
-          {this.getPasswordError()}
+          <View style={loginStyle.formContainer}>
+            <Text style={loginStyle.formHeader}>Email</Text>
+            <TextInput
+              onChangeText={this.onEmailChanged}
+              style={loginStyle.textInput}
+              value={this.state.email}
+            />
+            {this.state.email !== '' ? this.getEmailError() : null}
+          </View>
+          <View style={loginStyle.formContainer}>
+            <Text style={loginStyle.formHeader}>Password</Text>
+            <TextInput
+              onChangeText={this.onPasswordChanged}
+              secureTextEntry={true}
+              style={loginStyle.textInput}
+            />
+            {this.state.password !== '' ? this.getPasswordError() : null}
+          </View>
           <TouchableOpacity
             style={loginStyle.formButton}
             onPress={this.onLoginPressed}>
@@ -110,10 +124,15 @@ const loginStyle = StyleSheet.create({
   },
   container: {
     width: '66.7%',
-    height: '50%',
+    minHeight: '40%',
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+  },
+  formContainer: {
+    alignItems: 'center',
+    width: '100%',
+    margin: 10,
   },
   header: {
     fontSize: 50,
@@ -139,13 +158,13 @@ const loginStyle = StyleSheet.create({
   },
   forgotPassword: {
     textDecorationLine: 'underline',
+    margin: 10,
   },
   newAccount: {
     color: 'white',
   },
   inputError: {
     color: 'red',
-    width: '80%',
     fontSize: 12,
   },
 });

@@ -4,6 +4,7 @@ import {TextInput} from 'react-native-gesture-handler';
 import {FieldValidator} from '../utils/FieldValidator';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {createUser} from '../redux/actions/auth.actions';
+import {setError} from '../redux/actions/global.actions';
 import {connect} from 'react-redux';
 
 class NewAccountComponent extends React.Component {
@@ -17,13 +18,31 @@ class NewAccountComponent extends React.Component {
   }
 
   onCreateAccountPressed = () => {
-    this.props.dispatch(
-      createUser({
-        email: this.state.email,
-        password: this.state.password,
-        confirmPassword: this.state.confirmPassword,
-      }),
-    );
+    let error = FieldValidator.EmailValidator(this.state.email);
+    if (error) {
+      return this.props.dispatch(setError(new Error(error)));
+    }
+
+    error = FieldValidator.PasswordValidator(this.state.password);
+    if (error) {
+      return this.props.dispatch(setError(new Error(error)));
+    }
+
+    error = FieldValidator.PasswordValidator(this.state.confirmPassword);
+    if (error) {
+      return this.props.dispatch(setError(new Error('Confirm ' + error)));
+    }
+
+    if (this.state.password === this.state.confirmPassword) {
+      this.props.dispatch(
+        createUser({
+          email: this.state.email,
+          password: this.state.password,
+        }),
+      );
+    } else {
+      this.props.dispatch(setError(new Error('Passwords are not the same')));
+    }
   };
   onBackPressed = () => {
     this.props.navigation.goBack(null);
@@ -38,7 +57,7 @@ class NewAccountComponent extends React.Component {
   };
 
   onPasswordConfirmChanged = value => {
-    this.setState({passwordConfirm: value});
+    this.setState({confirmPassword: value});
   };
 
   getEmailError() {
@@ -56,55 +75,61 @@ class NewAccountComponent extends React.Component {
   }
 
   getPasswordConfirmError() {
-    const msg = FieldValidator.PasswordValidator(this.state.passwordConfirm);
+    const msg = FieldValidator.PasswordValidator(this.state.confirmPassword);
     if (msg != null) {
-      return this.buildErrorMsg(msg);
+      return this.buildErrorMsg('Confirm ' + msg);
     }
   }
 
   buildErrorMsg = msg => {
-    return <Text style={loginStyle.inputError}>{msg}</Text>;
+    return <Text style={newAccountStyle.inputError}>{msg}</Text>;
   };
 
   render() {
     return (
-      <View style={loginStyle.view}>
-        <Text style={loginStyle.header}>Create an account</Text>
-        <View style={loginStyle.container}>
-          <View style={loginStyle.formContainer}>
-            <Text style={loginStyle.formHeader}>Email</Text>
+      <View style={newAccountStyle.view}>
+        <Text style={newAccountStyle.header}>Create an account</Text>
+        <View style={newAccountStyle.container}>
+          <View style={newAccountStyle.formContainer}>
+            <Text style={newAccountStyle.formHeader}>Email</Text>
             <TextInput
-              style={loginStyle.textInput}
+              style={newAccountStyle.textInput}
               onChangeText={this.onEmailChanged}
             />
-            {this.getEmailError()}
-            <Text style={loginStyle.formHeader}>Password</Text>
+            {this.state.email !== '' ? this.getEmailError() : null}
+          </View>
+          <View style={newAccountStyle.formContainer}>
+            <Text style={newAccountStyle.formHeader}>Password</Text>
             <TextInput
               secureTextEntry={true}
-              style={loginStyle.textInput}
+              style={newAccountStyle.textInput}
               onChangeText={this.onPasswordChanged}
             />
-            {this.getPasswordError()}
-            <Text style={loginStyle.formHeader}>Confirm Password</Text>
+            {this.state.password !== '' ? this.getPasswordError() : null}
+          </View>
+          <View style={newAccountStyle.formContainer}>
+            <Text style={newAccountStyle.formHeader}>Confirm Password</Text>
             <TextInput
               secureTextEntry={true}
-              style={loginStyle.textInput}
+              style={newAccountStyle.textInput}
               onChangeText={this.onPasswordConfirmChanged}
             />
-            {this.getPasswordConfirmError()}
-            <TouchableOpacity
-              style={loginStyle.formButton}
-              onPress={this.onCreateAccountPressed}>
-              <Text>Create account</Text>
-            </TouchableOpacity>
+            {this.state.confirmPassword !== ''
+              ? this.getPasswordConfirmError()
+              : null}
           </View>
           <TouchableOpacity
-            style={loginStyle.backContainer}
-            onPress={this.onBackPressed}>
-            <Icon name="backward" size={30} color="white" />
-            <Text style={loginStyle.backHeader}>Back</Text>
+            style={newAccountStyle.formButton}
+            onPress={this.onCreateAccountPressed}>
+            <Text>Create account</Text>
           </TouchableOpacity>
         </View>
+        <TouchableOpacity
+          style={newAccountStyle.backContainer}
+          onPress={this.onBackPressed}>
+          <Icon name="backward" size={30} color="white" />
+          <Text style={newAccountStyle.backHeader}>Back</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -123,7 +148,7 @@ export const NewAccount = connect(
   mapDispatchToProps,
 )(NewAccountComponent);
 
-const loginStyle = StyleSheet.create({
+const newAccountStyle = StyleSheet.create({
   view: {
     flex: 1,
     justifyContent: 'center',
@@ -135,12 +160,12 @@ const loginStyle = StyleSheet.create({
     minHeight: '40%',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'white',
   },
   formContainer: {
     width: '100%',
-    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'white',
+    margin: 10,
   },
   header: {
     fontSize: 20,
@@ -160,9 +185,9 @@ const loginStyle = StyleSheet.create({
     backgroundColor: 'darkorange',
     borderWidth: 1,
     padding: 5,
+    margin: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 15,
   },
   backContainer: {
     flexDirection: 'row',
