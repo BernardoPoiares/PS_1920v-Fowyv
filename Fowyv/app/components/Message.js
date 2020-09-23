@@ -11,20 +11,38 @@ export class Message extends React.Component {
     if (this.props.message) {
       return (
         <View>
-          {this.props.message.type == 'AUDIO' ? (
-            <AudioMessage audioFilename={this.props.message.content} />
-          ) : this.props.message.type == 'TEXT' ? (
-            <TouchableOpacity
+          {this.props.message.type === 'AUDIO' ? (
+            <View
+              style={StyleSheet.compose(
+                messageStyle.audioContainer,
+                this.props.rightModeLayout
+                  ? messageStyle.rightModeAudio
+                  : messageStyle.leftModeAudio,
+              )}>
+              <AudioMessage audioFilename={this.props.message.content} />
+              <Text style={messageStyle.date}>{this.props.message.date}</Text>
+            </View>
+          ) : this.props.message.type === 'TEXT' ? (
+            <View
               style={StyleSheet.compose(
                 messageStyle.container,
                 this.props.rightModeLayout
-                  ? messageStyle.rightMode
-                  : messageStyle.leftMode,
+                  ? messageStyle.rightModeTextContainer
+                  : messageStyle.leftModeTextContainer,
               )}>
-              <Text style={messageStyle.text}>
-                {this.props.message.content}
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                style={StyleSheet.compose(
+                  messageStyle.textContainer,
+                  this.props.rightModeLayout
+                    ? messageStyle.rightModeText
+                    : messageStyle.leftModeText,
+                )}>
+                <Text style={messageStyle.text}>
+                  {this.props.message.content}
+                </Text>
+              </TouchableOpacity>
+              <Text style={messageStyle.date}>{this.props.message.date}</Text>
+            </View>
           ) : null}
         </View>
       );
@@ -35,27 +53,46 @@ export class Message extends React.Component {
 
 const messageStyle = StyleSheet.create({
   container: {
-    fontSize: 20,
-    alignItems: 'flex-start',
-    backgroundColor: 'darkorange',
-    borderWidth: 1,
     margin: 15,
-    marginLeft: 20,
-    marginRight: 20,
+  },
+  textContainer: {
+    fontSize: 20,
+    borderWidth: 1,
     borderRadius: 20,
-    opacity: 0.7,
+    marginBottom: 5,
   },
-  leftMode: {
-    marginRight: 50,
+  leftModeTextContainer: {
+    alignItems: 'flex-start',
   },
-  rightMode: {
-    marginLeft: 50,
+  leftModeText: {
+    backgroundColor: 'darkorange',
+  },
+  rightModeTextContainer: {
+    alignItems: 'flex-end',
+  },
+  rightModeText: {
     backgroundColor: 'yellow',
+  },
+  audioContainer: {
+    alignItems: 'flex-start',
+    margin: 15,
+  },
+  leftModeAudio: {
+    alignItems: 'flex-start',
+  },
+  rightModeAudio: {
+    alignItems: 'flex-end',
   },
   text: {
     fontSize: 15,
     justifyContent: 'center',
     color: 'black',
     margin: 10,
+  },
+  date: {
+    fontSize: 10,
+    justifyContent: 'center',
+    color: 'black',
+    opacity: 0.5,
   },
 });

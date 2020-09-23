@@ -5,7 +5,6 @@ import {
   FlatList,
   TouchableOpacity,
   Text,
-  TextInput,
   StyleSheet,
 } from 'react-native';
 import CheckBox from '@react-native-community/checkbox';

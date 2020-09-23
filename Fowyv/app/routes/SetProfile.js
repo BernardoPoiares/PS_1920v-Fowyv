@@ -173,6 +173,8 @@ const setProfileStyle = StyleSheet.create({
     fontSize: 20,
   },
   textInput: {
+    padding: 0,
+    paddingLeft: 5,
     backgroundColor: 'moccasin',
     width: '80%',
     height: 35,

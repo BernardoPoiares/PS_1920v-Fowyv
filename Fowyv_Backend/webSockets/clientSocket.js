@@ -101,7 +101,7 @@ const onMessageReceived= (socket)=>{
 
             if(!match)
               return {errorMessage:"Match not found."};
-
+            request.message.date = new Date().toLocaleString("en-GB");
             match.messages.push(request.message);
             const newValues = { $set: {"messages":match.messages} };
 

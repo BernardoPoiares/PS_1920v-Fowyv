@@ -175,6 +175,8 @@ const chatStyle = StyleSheet.create({
     backgroundColor: 'darkorange',
   },
   messageInput: {
+    padding: 0,
+    paddingLeft: 5,
     width: '65%',
     backgroundColor: 'white',
     borderRadius: 10,

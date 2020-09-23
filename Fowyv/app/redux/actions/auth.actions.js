@@ -1,6 +1,5 @@
 import {fetchApi} from '../../service/api';
 import {getUserDetails} from './user.actions';
-import {initialize} from './messages.actions';
 
 export const loginUser = payload => {
   return async dispatch => {
@@ -9,16 +8,14 @@ export const loginUser = payload => {
       const response = await fetchApi('/api/auth/signin', 'POST', payload, 200);
 
       if (response.success) {
-        dispatch(getUserDetails({token: response.responseBody.token})).then(
-          dispatch(initialize(response.responseBody.token)).then(() => {
-            dispatch({
-              type: 'AUTHENTICATE_USER_SUCCESS',
-              email: payload.email,
-              token: response.responseBody.token,
-            });
-            dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
-          }),
-        );
+        dispatch({
+          type: 'AUTHENTICATE_USER_SUCCESS',
+          email: payload.email,
+          token: response.responseBody.token,
+        });
+        dispatch(getUserDetails()).then(() => {
+          dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
+        });
       } else {
         dispatch({
           type: 'GLOBAL_STATE_ERROR',

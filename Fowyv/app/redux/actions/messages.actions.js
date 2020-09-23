@@ -7,11 +7,17 @@ import {
 import {writeFile} from '../../utils/filesUtils';
 import uuid from 'react-native-uuid';
 
-export const initialize = payload => {
-  return async dispatch => {
+export const initialize = () => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
       dispatch({type: 'USER_MESSAGES_CONNECTION_LOADING'});
-      const socket = createWebSocketClient(dispatch, payload);
+      const socket = createWebSocketClient(dispatch, token);
       dispatch({
         type: 'USER_MESSAGES_CONNECTION_SUCCESS',
         payload: socket,
@@ -43,6 +49,7 @@ export const sendTextMessage = payload => {
         email,
         transID,
         'TEXT',
+        new Date().toLocaleString('en-GB'),
         payload.message,
         'sended',
         payload.userEmail,
@@ -58,7 +65,7 @@ export const sendTextMessage = payload => {
         id: transID,
         user: payload.userEmail,
         type: 'TEXT',
-        date: '15-08-2020',
+        date: new Date().toLocaleString('en-GB'),
         content: payload.message,
         state: 'sended',
       });
@@ -96,6 +103,7 @@ export const sendAudioFile = payload => {
         email,
         transID,
         'AUDIO',
+        new Date().toLocaleString('en-GB'),
         filename,
         'sended',
         payload.userEmail,
@@ -111,7 +119,7 @@ export const sendAudioFile = payload => {
         id: transID,
         user: payload.userEmail,
         type: 'AUDIO',
-        date: '15-08-2020',
+        date: new Date().toLocaleString('en-GB'),
         content: filename,
         state: 'sended',
       });
@@ -170,6 +178,7 @@ export const receiveMessage = payload => {
         payload.user,
         payload.id,
         payload.type,
+        payload.date,
         payload.content,
         payload.state,
         email,
@@ -195,6 +204,7 @@ const addMessageToConversation = (
   user,
   transId,
   type,
+  date,
   message,
   state,
   userToSend,
@@ -204,7 +214,7 @@ const addMessageToConversation = (
       id: transId,
       user: user,
       type: type,
-      date: '15-08-2020',
+      date: date,
       content: message,
       state: state,
     };

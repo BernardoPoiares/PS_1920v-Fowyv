@@ -19,8 +19,10 @@ export const createWebSocketClient = (dispatcher, token) => {
     subscribeEvents(socket, dispatcher);
     return socket;
   } catch (ex) {
-    console.log(ex);
-    throw ex;
+    dispatcher({
+      type: 'GLOBAL_STATE_ERROR',
+      payload: ex,
+    });
   }
 };
 

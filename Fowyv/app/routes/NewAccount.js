@@ -150,6 +150,8 @@ const loginStyle = StyleSheet.create({
     fontSize: 20,
   },
   textInput: {
+    padding: 0,
+    paddingLeft: 5,
     backgroundColor: 'moccasin',
     width: '70%',
     height: 35,

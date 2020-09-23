@@ -1,5 +1,6 @@
 import {fetchApi} from '../../service/api';
 import {writeFile, readAudioFile} from '../../utils/filesUtils';
+import {initialize} from './messages.actions';
 
 export const saveUserDetails = payload => {
   return async (dispatch, getState) => {
@@ -53,15 +54,21 @@ export const saveUserDetails = payload => {
 };
 
 export const getUserDetails = payload => {
-  return async dispatch => {
+  return async (dispatch, getState) => {
+    const state = getState();
     try {
-      dispatch({type: 'GET_USER_LOADING'});
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
       const response = await fetchApi(
         '/api/user/details',
         'GET',
         null,
         200,
-        payload.token,
+        token,
       );
 
       if (response.success) {
@@ -69,6 +76,11 @@ export const getUserDetails = payload => {
           type: 'GET_USER_SUCCESS',
           payload: response.responseBody,
         });
+        dispatch(initialize()).then(() =>
+          dispatch({
+            type: 'GLOBAL_STATE_CLEAR_LOADING',
+          }),
+        );
       } else {
         dispatch({
           type: 'GLOBAL_STATE_ERROR',
@@ -143,7 +155,7 @@ export const savePersonalAudio = payload => {
           'POST',
           {
             fileType: audioFile.replace(/^.*[\\\/]/, '').split('.')[1],
-            content: audioFileData
+            content: audioFileData,
           },
           200,
           token,

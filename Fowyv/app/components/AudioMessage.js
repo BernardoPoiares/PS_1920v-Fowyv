@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {TouchableOpacity, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getAudioFilePath, requestAudioFile} from './../utils/filesUtils';
@@ -27,7 +27,6 @@ export class AudioMessageComponent extends React.Component {
       this.state.sound.release();
     }
   }
-
 
   setSound = sound => {
     if (sound == null) {
@@ -65,7 +64,7 @@ export class AudioMessageComponent extends React.Component {
   render() {
     return (
       <TouchableOpacity onPress={this.onAudioIconPressed}>
-        <Icon name="md-play-circle" size={30} color="darkorange" />
+        <Icon name={this.chooseAudioIcon()} size={60} color="darkorange" />
       </TouchableOpacity>
     );
   }
