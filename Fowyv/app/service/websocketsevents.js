@@ -9,6 +9,7 @@ import {
   receiveMessage,
   sendAudioMessageRequest,
 } from '../redux/actions/messages.actions';
+import {logoutUser} from './auth.actions';
 
 export const createWebSocketClient = (dispatcher, token) => {
   try {
@@ -82,6 +83,10 @@ const subscribeEvents = (socket, dispatcher) => {
     } catch (error) {
       console.log(error);
     }
+  });
+
+  socket.on('tokenExpired', () => {
+    dispatcher(logoutUser());
   });
 };
 
