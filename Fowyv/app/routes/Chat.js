@@ -73,6 +73,19 @@ class ChatComponent extends React.Component {
     );
   };
 
+  showTextInput = () => {
+    const audioMessages = this.state.match.messages.filter(
+      message => message.type === 'AUDIO',
+    );
+    return (
+      audioMessages.length > 0 &&
+      audioMessages.filter(message => message.user === this.state.userEmail)
+        .length > 3 &&
+      audioMessages.filter(message => message.user !== this.state.userEmail)
+        .length > 3
+    );
+  };
+
   render() {
     return (
       <View style={chatStyle.container}>
@@ -99,23 +112,27 @@ class ChatComponent extends React.Component {
           ) : null}
         </View>
         <View style={chatStyle.interactionContainer}>
-          <TouchableOpacity
-            style={chatStyle.sendContainer}
-            onPress={this.onSendPressed}>
-            <Icon
-              name={'long-arrow-alt-up'}
-              size={15}
-              color={'darkorange'}
-              style={this.state.sendIcon}
-            />
-          </TouchableOpacity>
-          <TextInput
-            style={chatStyle.messageInput}
-            multiline
-            numberOfLines={4}
-            value={this.state.textMessage}
-            onChangeText={this.onTextMessageChanged}
-          />
+          {this.showTextInput() ? (
+            <View>
+              <TouchableOpacity
+                style={chatStyle.sendContainer}
+                onPress={this.onSendPressed}>
+                <Icon
+                  name={'long-arrow-alt-up'}
+                  size={15}
+                  color={'darkorange'}
+                  style={this.state.sendIcon}
+                />
+              </TouchableOpacity>
+              <TextInput
+                style={chatStyle.messageInput}
+                multiline
+                numberOfLines={4}
+                value={this.state.textMessage}
+                onChangeText={this.onTextMessageChanged}
+              />
+            </View>
+          ) : null}
           <View style={chatStyle.microphoneContainer}>
             <AudioRecorder
               finishedRecording={this.finishedRecording}
