@@ -199,6 +199,29 @@ export const receiveMessage = payload => {
   };
 };
 
+export const newMatch = payload => {
+  return async (dispatch, getState) => {
+    const state = getState();
+    try {
+      const {
+        messagesReducer: {
+          userMessages: {matches},
+        },
+      } = state;
+
+      matches.push(payload);
+
+      dispatch({type: 'USER_MESSAGES_NEW_MATCH', payload: matches});
+    } catch (ex) {
+      console.log(ex);
+      dispatch({
+        type: 'USER_MESSAGES_SEND_FAIL',
+        payload: ex.responseBody,
+      });
+    }
+  };
+};
+
 const addMessageToConversation = (
   matches,
   user,

@@ -55,6 +55,7 @@ const userMessages = (state = {}, action) => {
       };
     case 'USER_MESSAGES_SENDAUDIO_LOADING':
     case 'USER_MESSAGES_RECEIVE_SUCCESS':
+    case 'USER_MESSAGES_NEW_MATCH':
     case 'USER_MESSAGES_SEND_LOADING':
       return {
         ...state,
