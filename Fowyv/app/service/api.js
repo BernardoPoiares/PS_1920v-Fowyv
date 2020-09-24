@@ -34,6 +34,7 @@ export const fetchApi = async (url, method, body, statusCode, token = null) => {
     const headers = {};
     const result = {
       success: false,
+      status: 0,
       responseBody: null,
     };
     if (token) {
@@ -41,7 +42,7 @@ export const fetchApi = async (url, method, body, statusCode, token = null) => {
     }
 
     const response = await api(url, method, body, headers);
-
+    result.status = response.status;
     if (response.status === statusCode) {
       result.success = true;
     }

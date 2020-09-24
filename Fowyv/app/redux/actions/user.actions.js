@@ -1,6 +1,7 @@
 import {fetchApi} from '../../service/api';
 import {writeFile, readAudioFile} from '../../utils/filesUtils';
 import {initialize} from './messages.actions';
+import {logoutUser} from './auth.actions';
 
 export const saveUserDetails = payload => {
   return async (dispatch, getState) => {
@@ -36,10 +37,14 @@ export const saveUserDetails = payload => {
             type: 'GLOBAL_STATE_CLEAR_LOADING',
           });
         } else {
-          dispatch({
-            type: 'GLOBAL_STATE_ERROR',
-            payload: response.responseBody,
-          });
+          if (response.status === 401) {
+            dispatch(logoutUser());
+          } else {
+            dispatch({
+              type: 'GLOBAL_STATE_ERROR',
+              payload: response.responseBody,
+            });
+          }
         }
       } else {
         throw new Error('Error Getting AudioFile');
@@ -82,10 +87,14 @@ export const getUserDetails = payload => {
           }),
         );
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
@@ -122,10 +131,14 @@ export const getUserPersonalAudio = payload => {
         dispatch({type: 'GET_USER_PERSONALAUDIO_SUCCESS'});
         return true;
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
@@ -166,10 +179,14 @@ export const savePersonalAudio = payload => {
             type: 'GLOBAL_STATE_CLEAR_LOADING',
           });
         } else {
-          dispatch({
-            type: 'GLOBAL_STATE_ERROR',
-            payload: response.responseBody,
-          });
+          if (response.status === 401) {
+            dispatch(logoutUser());
+          } else {
+            dispatch({
+              type: 'GLOBAL_STATE_ERROR',
+              payload: response.responseBody,
+            });
+          }
         }
       } else {
         throw new Error('Error getting audio file');

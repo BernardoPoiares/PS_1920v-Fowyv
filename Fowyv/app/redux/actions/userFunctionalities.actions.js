@@ -1,4 +1,5 @@
 import {fetchApi} from '../../service/api';
+import {logoutUser} from './auth.actions';
 
 export const searchUsers = () => {
   return async (dispatch, getState) => {
@@ -24,10 +25,14 @@ export const searchUsers = () => {
           payload: response.responseBody,
         });
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
@@ -69,10 +74,14 @@ export const likedUser = payload => {
           },
         });
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
@@ -107,10 +116,14 @@ export const dislikedUser = payload => {
           payload: state.userFunctionalities.searchUsers.users.slice(1),
         });
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({

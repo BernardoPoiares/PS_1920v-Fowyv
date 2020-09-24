@@ -1,4 +1,5 @@
 import {fetchApi} from '../../service/api';
+import {logoutUser} from './auth.actions';
 
 export const searchUserMatches = payload => {
   return async dispatch => {
@@ -18,10 +19,14 @@ export const searchUserMatches = payload => {
           payload: response.responseBody,
         });
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
@@ -56,10 +61,14 @@ export const deleteUserMatch = payload => {
         });
         return true;
       } else {
-        dispatch({
-          type: 'GLOBAL_STATE_ERROR',
-          payload: response.responseBody,
-        });
+        if (response.status === 401) {
+          dispatch(logoutUser());
+        } else {
+          dispatch({
+            type: 'GLOBAL_STATE_ERROR',
+            payload: response.responseBody,
+          });
+        }
       }
     } catch (ex) {
       dispatch({
