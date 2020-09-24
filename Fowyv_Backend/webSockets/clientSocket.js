@@ -16,7 +16,20 @@ const createUserMatchesCollectionWatch = async () =>{
 
     watch.on('change', next => {
       if(next.operationType == "insert"){
-        console.log(next);
+        try{
+          if(next.updateDescription && next.updateDescription.updatedFields && next.updateDescription.updatedFields.messages){
+            const lastMessage = next.updateDescription.updatedFields.messages.slice(-1)[0];
+            const otherUser = next.fullDocument.emails.find( user=> user != lastMessage.user);
+            const otherUserConnections = connectionsOpened.filter(connection=>{
+              return connection.userMail === otherUser
+            });
+            if(otherUserConnections.length>0){
+              otherUserConnections.forEach( socket=> sendNewMatchToUser(socket,lastMessage));
+            }
+          }
+      }catch(error){
+        console.log(error);
+      }
       }
       else if(next.operationType == "delete"){
         console.log(next);
@@ -226,6 +239,16 @@ const sendMessageToUser = (socket, message) =>{
     console.log("onSendMessageToUser:sended");
   }catch(error){
     console.log("onSendMessageToUser:error-" + error);
+  }
+}
+
+const sendNewMatchToUser = (socket, match) =>{
+  try{
+    console.log("onSendNewMatchToUser:user-"+socket.userMail);  
+    socket.emit("newMatch",match);    
+    console.log("onSendNewMatchToUser:sended");
+  }catch(error){
+    console.log("onSendNewMatchToUser:error-" + error);
   }
 }
 

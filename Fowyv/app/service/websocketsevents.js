@@ -8,8 +8,9 @@ import {writeFile, readAudioFile} from '../utils/filesUtils';
 import {
   receiveMessage,
   sendAudioMessageRequest,
+  newMatch,
 } from '../redux/actions/messages.actions';
-import {logoutUser} from './auth.actions';
+import {logoutUser} from '../redux/actions/auth.actions';
 
 export const createWebSocketClient = (dispatcher, token) => {
   try {
@@ -80,6 +81,15 @@ const subscribeEvents = (socket, dispatcher) => {
         }
         dispatcher(receiveMessage(message));
       }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  socket.on('newMatch', match => {
+    try {
+      const matchObj = JSON.parse(match);
+      dispatcher(newMatch(matchObj));
     } catch (error) {
       console.log(error);
     }
