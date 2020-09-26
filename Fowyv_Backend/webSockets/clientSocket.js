@@ -4,7 +4,7 @@ import {Collections} from "../config/dbSettings.config";
 import {downloadFile, uploadFile} from "../filesStorage/fileStorageClient";
 const { v4: uuidv4 } = require('uuid');
 
-const connectionsOpened=[];
+let connectionsOpened=[];
 let userMatchesCollectionWatch= null;
 
 
@@ -17,19 +17,18 @@ const createUserMatchesCollectionWatch = async () =>{
     watch.on('change', next => {
       if(next.operationType == "insert"){
         try{
-          if(next.updateDescription && next.updateDescription.updatedFields && next.updateDescription.updatedFields.messages){
-            const lastMessage = next.updateDescription.updatedFields.messages.slice(-1)[0];
-            const otherUser = next.fullDocument.emails.find( user=> user != lastMessage.user);
-            const otherUserConnections = connectionsOpened.filter(connection=>{
-              return connection.userMail === otherUser
+          if(next.fullDocument && next.fullDocument.emails){
+            const usersConnections = connectionsOpened.filter(connection=>{
+              return next.fullDocument.emails.includes(connection.userMail)
             });
-            if(otherUserConnections.length>0){
-              otherUserConnections.forEach( socket=> sendNewMatchToUser(socket,lastMessage));
+            if(usersConnections.length>0){
+              delete next.fullDocument.id;
+              usersConnections.forEach( socket=> sendNewMatchToUser(socket,next.fullDocument));
             }
           }
-      }catch(error){
-        console.log(error);
-      }
+        }catch(error){
+          console.log(error);
+        }
       }
       else if(next.operationType == "delete"){
         console.log(next);
@@ -137,7 +136,10 @@ const onMessageReceived= (socket)=>{
   
 const onDisconnected = (socket) => {
   return (reason)=>{
-    connectionsOpened.slice(connectionsOpened.indexOf(socket), 1);
+    const userConnectionsOpened = connectionsOpened.filter(connection=>{
+      return connection.userMail !== socket.userMail
+    });
+    connectionsOpened=userConnectionsOpened;
     UpdateUserMatchesCollectionWatch();
     console.log("onDisconnected:reason-"+reason);
   }
