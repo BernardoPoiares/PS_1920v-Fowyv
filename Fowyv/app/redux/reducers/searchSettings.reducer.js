@@ -12,7 +12,6 @@ const searchSettings = (state = {}, action) => {
         minSearchAge: null,
         maxSearchAge: null,
         searchGenders: null,
-        languages: null,
       };
     case 'GET_SEARCH_SETTINGS_SUCCESS':
       return {
@@ -24,7 +23,6 @@ const searchSettings = (state = {}, action) => {
         minSearchAge: action.payload.minSearchAge,
         maxSearchAge: action.payload.maxSearchAge,
         searchGenders: action.payload.searchGenders,
-        languages: action.payload.languages,
       };
     case 'GET_SEARCH_SETTINGS_FAIL':
       return {
@@ -36,7 +34,6 @@ const searchSettings = (state = {}, action) => {
         minSearchAge: null,
         maxSearchAge: null,
         searchGenders: null,
-        languages: null,
       };
     case 'SET_SEARCH_SETTINGS_LOADING':
       return {

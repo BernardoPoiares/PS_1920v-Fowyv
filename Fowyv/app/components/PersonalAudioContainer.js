@@ -2,11 +2,7 @@ import React from 'react';
 
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import {
-  getAudioFilePath,
-  getLocalAudioFilePath,
-  requestAudioFile,
-} from './../utils/filesUtils';
+import {getAudioFilePath, getLocalAudioFilePath} from './../utils/filesUtils';
 
 import {getUserPersonalAudio} from '../redux/actions/user.actions';
 

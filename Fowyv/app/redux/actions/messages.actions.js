@@ -4,7 +4,6 @@ import {
   sendGetAudioMessageRequest,
   sendAudioMessage,
 } from '../../service/websocketsevents';
-import {writeFile} from '../../utils/filesUtils';
 import uuid from 'react-native-uuid';
 
 export const initialize = () => {

@@ -81,8 +81,7 @@ const userMessages = (state = {}, action) => {
         isSuccess: false,
         errors: action.payload,
       };
-    case 'USER_MESSAGES_SENDAUDIO_SUCCESS': {
-      const fileid = action.payload;
+    case 'USER_MESSAGES_SENDAUDIO_SUCCESS':
       return {
         ...state,
         isLoading: false,
@@ -90,9 +89,7 @@ const userMessages = (state = {}, action) => {
         isSuccess: true,
         errors: null,
       };
-    }
-    case 'USER_MESSAGES_SENDAUDIO_FAIL': {
-      const fileid = action.payload;
+    case 'USER_MESSAGES_SENDAUDIO_FAIL':
       return {
         ...state,
         isLoading: false,
@@ -100,7 +97,6 @@ const userMessages = (state = {}, action) => {
         isSuccess: false,
         errors: action.payload,
       };
-    }
     default:
       return state;
   }

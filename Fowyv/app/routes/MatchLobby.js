@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, FlatList, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Dimensions} from 'react-native';
 import {connect} from 'react-redux';
 
 import {Match} from '../components/Match.js';

@@ -52,7 +52,6 @@ const AppSettings = ({
   minSearchAge,
   maxSearchAge,
   genders,
-  languages,
   onLogoutPressed,
   onAgeRangeChanged,
   onGendersChanged,
@@ -188,7 +187,6 @@ class SettingsComponent extends React.Component {
               minSearchAge={this.props.searchSettings.minSearchAge}
               maxSearchAge={this.props.searchSettings.maxSearchAge}
               genders={this.props.searchSettings.searchGenders}
-              languages={this.props.searchSettings.languages}
               onAgeRangeChanged={this.onAgeRangeChanged}
               onLogoutPressed={this.onLogoutPressed}
               onGendersChanged={this.onGendersChanged}

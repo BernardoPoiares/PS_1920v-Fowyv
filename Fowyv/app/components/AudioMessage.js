@@ -1,5 +1,5 @@
 import React from 'react';
-import {TouchableOpacity, StyleSheet} from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {getAudioFilePath, requestAudioFile} from './../utils/filesUtils';

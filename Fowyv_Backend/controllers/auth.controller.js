@@ -15,26 +15,25 @@ exports.signup = async (req, res) => {
 
     await runTransaction(async (db,opts) => {
 
-      const data = await db.collection(Collections.Users).insertOne(
+      await db.collection(Collections.Users).insertOne(
       {
         email: req.body.email,
         password: bcrypt.hashSync(req.body.password, 8)
       }, {}, opts);
 
-      const data1 = await db.collection(Collections.UsersChoices).insertOne(
+      await db.collection(Collections.UsersChoices).insertOne(
       {
         email: req.body.email,
         likedUsers:[],
         dislikedUsers:[]
       }, {}, opts);
 
-      const data2 = await db.collection(Collections.UsersSearchSettings).insertOne(
+      await db.collection(Collections.UsersSearchSettings).insertOne(
         {
           email: req.body.email,
           minSearchAge:appSettings.minSearchAge,
           maxSearchAge:appSettings.maxSearchAge,
-          searchGenders:appSettings.genders,
-          languages:appSettings.languages
+          searchGenders:appSettings.genders
         }, {}, opts);
 
     });
@@ -66,7 +65,7 @@ exports.signin = async (req, res) => {
     });
 
     if (!user) {
-      return res.status(401).json({ message: "User or password incorrect" });
+      return res.status(401).json({ message: "Email or password incorrect" });
     }
 
     var passwordIsValid = bcrypt.compareSync(
@@ -76,7 +75,7 @@ exports.signin = async (req, res) => {
 
     if (!passwordIsValid) {
       return res.status(401).json({
-        message: "User or password incorrect"
+        message: "Email or password incorrect"
       });
     }
 

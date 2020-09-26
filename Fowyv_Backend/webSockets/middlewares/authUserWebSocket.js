@@ -1,7 +1,6 @@
 import jwt from "jsonwebtoken";
 import config from "../../config/auth.config.js";
 
-
 export const authUserWebSocket = function socketAuth(socket, next){
   let token = socket.handshake.query.token;
   if (token) {

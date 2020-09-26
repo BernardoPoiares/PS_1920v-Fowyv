@@ -9,11 +9,7 @@ import {
 import Icon from 'react-native-vector-icons/Ionicons';
 import {connect} from 'react-redux';
 import {getUserPersonalAudio} from '../redux/actions/user.actions';
-import {
-  getAudioFilePath,
-  getLocalAudioFilePath,
-  requestAudioFile,
-} from './../utils/filesUtils';
+import {getAudioFilePath, getLocalAudioFilePath} from './../utils/filesUtils';
 import {AudioPlayer} from '../utils/AudioPlayer.js';
 
 export class ListenUserComponent extends React.Component {

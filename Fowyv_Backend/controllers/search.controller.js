@@ -167,20 +167,6 @@ const getSearchSettingsFromReq= (req) =>{
 
         ret.searchGenders=req.searchGenders;
     }
-    if(req.languages){ 
-        
-        if(!Array.isArray(req.languages)){
-            ret.validationErrorMessage = "Languages must be an array."
-            return ret;
-        }
-        if(!req.languages.every(language=>appSettings.languages.includes(language))){
-            ret.validationErrorMessage = "Languages passed not valid."
-            return ret;
-        }
-
-        ret.languages=req.languages;
     
-    }
-
     return ret;
 }

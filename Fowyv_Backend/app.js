@@ -58,6 +58,5 @@ io.use(authUserWebSocket);
 
 io.on("connection", (socket) => {
   initializeSocketConnection(socket);
-  console.log("a user connected :D");
 });
 

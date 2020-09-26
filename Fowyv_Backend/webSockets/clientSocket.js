@@ -7,8 +7,6 @@ const { v4: uuidv4 } = require('uuid');
 let connectionsOpened=[];
 let userMatchesCollectionWatch= null;
 
-
-
 const createUserMatchesCollectionWatch = async () =>{
   if(userMatchesCollectionWatch == null ){
 

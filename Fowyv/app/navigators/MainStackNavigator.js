@@ -1,5 +1,4 @@
 import React from 'react';
-import {Alert} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import {ListenLobby} from '../routes/ListenLobby.js';

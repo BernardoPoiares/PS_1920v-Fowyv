@@ -1,8 +1,4 @@
-import fs from 'fs';
 import AWS from 'aws-sdk';
-
-//const fs = require( 'fs');
-//const AWS =require( 'aws-sdk');
 
 
 const s3 = new AWS.S3({
@@ -11,13 +7,11 @@ const s3 = new AWS.S3({
 });
 
 const uploadFile = (filename, fileContent, cb ) => {
-    // Read content from the file
-    //const fileContent = fs.readFileSync(filepath);
 
     // Setting up S3 upload parameters
     const params = {
         Bucket: process.env.AWS_BUCKET,
-        Key: filename, // File name you want to save as in S3
+        Key: filename,
         Body: fileContent
     };
 
@@ -43,22 +37,6 @@ const downloadFile = async (filename,cb)=>{
             return cb(error.message);
         cb(null,data.Body);
     })
-    
-    /*return await new Promise( (resolve)=>{
-
-        var options = {
-            Bucket    : process.env.AWS_BUCKET,
-            Key    : filename,
-        };
-
-        s3.getObject(options,(error,data)=>{
-            if(error)
-                return resolve({error:'Error getting the file'});
-            resolve({fileData:data.Body});
-        })
-        }
-    )*/
-
 };
 
 export {

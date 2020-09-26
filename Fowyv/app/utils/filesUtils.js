@@ -12,25 +12,10 @@ export const writeFile = async (filename, content) => {
 
   const base64 = Buffer.from(content).toString('base64');
 
-  return await RNFS.writeFile(
-    path,
-    base64,
-    'base64',
-  ); /*
-    .then(success => {
-      console.log(success);
-      console.log('FILE WRITTEN!');
-    })
-    .catch(err => {
-      console.log(err);
-    });*/
+  return await RNFS.writeFile(path, base64, 'base64');
 };
 
 export const readAudioFile = async filepath => {
-  // create a path you want to write to
-  // :warning: on iOS, you cannot write into `RNFS.MainBundlePath`,
-  // but `RNFS.DocumentDirectoryPath` exists on both platforms and is writable
-
   return RNFS.readFile(getAudioFilePath(filepath), 'base64');
 };
 
@@ -42,7 +27,7 @@ export const getLocalAudioFilePath = async (filename, promiseRequest) => {
   const audioPath = getAudioFilePath(filename);
   if (!(await RNFS.exists(audioPath))) {
     return await promiseRequest().then(success => (success ? audioPath : null));
-  }else{
+  } else {
     return audioPath;
   }
 };

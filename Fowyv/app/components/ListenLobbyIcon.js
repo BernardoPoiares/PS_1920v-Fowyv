@@ -20,12 +20,3 @@ export class ListenLobbyIcon extends React.Component {
     );
   }
 }
-
-const loaderStyle = StyleSheet.create({
-  icon: {
-    borderWidth: 1,
-    backgroundColor: 'white',
-    color: 'white',
-    padding: 10,
-  },
-});

@@ -20,7 +20,6 @@ export const getSearchSettings = payload => {
             searchGenders: response.responseBody.searchGenders,
             maxSearchAge: response.responseBody.maxSearchAge,
             minSearchAge: response.responseBody.minSearchAge,
-            languages: response.responseBody.languages,
           },
         });
       } else {
