@@ -36,6 +36,7 @@ class SetProfileComponent extends React.Component {
       date: minimumAge,
       gender: null,
       audioFile: null,
+      minimumAge: minimumAge,
     };
   }
 
@@ -91,7 +92,7 @@ class SetProfileComponent extends React.Component {
               placeholder="select date"
               format="YYYY-MM-DD"
               minDate="1900-01-01"
-              maxDate="2002-06-22"
+              maxDate={this.state.minimumAge}
               confirmBtnText="Confirm"
               cancelBtnText="Cancel"
               customStyles={{

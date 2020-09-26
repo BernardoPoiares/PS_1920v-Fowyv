@@ -91,15 +91,13 @@ export const getUserDetails = payload => {
           dispatch(logoutUser());
         } else {
           dispatch({
-            type: 'GLOBAL_STATE_ERROR',
-            payload: response.responseBody,
+            type: 'GLOBAL_STATE_CLEAR_LOADING',
           });
         }
       }
     } catch (ex) {
       dispatch({
-        type: 'GLOBAL_STATE_ERROR',
-        payload: ex,
+        type: 'GLOBAL_STATE_CLEAR_LOADING',
       });
     }
   };

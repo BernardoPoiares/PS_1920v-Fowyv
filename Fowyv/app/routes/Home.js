@@ -1,11 +1,12 @@
 import React from 'react';
+import {StatusBar} from 'react-native';
 import {Image, Text, View, StyleSheet} from 'react-native';
 
 export class Home extends React.Component {
   componentDidMount() {
     this.timeoutHandle = setTimeout(() => {
       this.props.navigation.navigate('Login');
-    }, 2500);
+    }, 1500);
   }
 
   componentWillUnmount() {
@@ -15,11 +16,12 @@ export class Home extends React.Component {
   render() {
     return (
       <View style={homeStyle.View}>
+        <StatusBar backgroundColor={'#ff8c00'} />
         <Image
           style={homeStyle.Logo}
           source={require('../assets/images/logo.png')}
         />
-        <Text style={homeStyle.Name}>FOWYV{' '}</Text>
+        <Text style={homeStyle.Name}>FOWYV </Text>
         <Text style={homeStyle.Description}>find others with your voice</Text>
       </View>
     );

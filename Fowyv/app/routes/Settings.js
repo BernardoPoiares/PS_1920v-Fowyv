@@ -174,7 +174,11 @@ class SettingsComponent extends React.Component {
           <ScrollView style={settingsStyle.scrollView}>
             <AccountSettings
               name={this.props.getUser.userDetails.name}
-              age={GetAge(this.props.getUser.userDetails.age)}
+              age={GetAge(
+                this.props.getUser.userDetails.age
+                  ? this.props.getUser.userDetails.age
+                  : this.props.getUser.userDetails.date,
+              )}
             />
             <PersonalAudio
               audioFile={this.state.audioFilename}

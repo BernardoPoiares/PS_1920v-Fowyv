@@ -81,7 +81,7 @@ exports.signin = async (req, res) => {
     }
 
     var token = jwt.sign({ email: user.email }, authConfig.secret, {
-      expiresIn: 86400 // 24 hours
+      expiresIn: authConfig.tokenExpirationTime
     });
 
     res.status(200).json({
