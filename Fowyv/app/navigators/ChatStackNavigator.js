@@ -60,7 +60,7 @@ class ChatStackNav extends React.Component {
             headerTitle: () => {
               return (
                 <Text style={chatStackStyle.userName}>
-                  {this.props.route.params.userName + ' '}
+                  {this.props.route.params.userName}{'  '}
                 </Text>
               );
             },

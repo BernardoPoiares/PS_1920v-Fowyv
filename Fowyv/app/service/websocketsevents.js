@@ -1,4 +1,4 @@
-const BASE_URL = 'http://192.168.1.173:4000';
+const BASE_URL = 'http://192.168.1.97:4000';
 //const BASE_URL = 'https://fowyv-backend.azurewebsites.net';
 
 import io from 'socket.io-client';
@@ -51,7 +51,10 @@ const subscribeEvents = (socket, dispatcher) => {
       const fileResponse = JSON.parse(resp);
       writeFile(fileResponse.filename, fileResponse.content);
     } catch (error) {
-      console.log(error);
+      dispatcher({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: error,
+      });
     }
   });
 
@@ -82,16 +85,21 @@ const subscribeEvents = (socket, dispatcher) => {
         dispatcher(receiveMessage(message));
       }
     } catch (error) {
-      console.log(error);
+      dispatcher({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: error,
+      });
     }
   });
 
   socket.on('newMatch', match => {
     try {
-      const matchObj = JSON.parse(match);
-      dispatcher(newMatch(matchObj));
+      dispatcher(newMatch(match));
     } catch (error) {
-      console.log(error);
+      dispatcher({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: error,
+      });
     }
   });
 

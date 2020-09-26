@@ -110,8 +110,8 @@ export class ListenUserComponent extends React.Component {
         <TouchableOpacity onPress={this.onAudioIconPressed}>
           <Icon name="md-play-circle" size={150} color="white" />
         </TouchableOpacity>
-        <Text style={listenUserStyle.Name}>{this.props.name}</Text>
-        <Text style={listenUserStyle.Age}>{this.props.age}</Text>
+        <Text style={listenUserStyle.Name}>{this.props.name} </Text>
+        <Text style={listenUserStyle.Age}>{this.props.age} </Text>
       </View>
     );
   }

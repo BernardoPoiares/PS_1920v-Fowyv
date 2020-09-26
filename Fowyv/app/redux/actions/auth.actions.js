@@ -36,12 +36,15 @@ export const logoutUser = payload => {
     const state = getState();
     try {
       const {
-        authReducer: {
-          authenticateUser: {token},
+        messagesReducer: {
+          userMessages: {connection},
         },
       } = state;
       dispatch({type: 'LOGOUT_USER_LOADING'});
       dispatch({type: 'LOGOUT_USER_SUCCESS'});
+      if (connection != null && connection !== undefined) {
+        connection.close();
+      }
     } catch (ex) {
       dispatch({type: 'LOGOUT_USER_FAIL', payload: ex.responseBody});
     }

@@ -72,7 +72,7 @@ const AppSettings = ({
           step={1}
           allowOverlap={false}
           enableLabel={true}
-          minMarkerOverlapDistance={40}
+          minMarkerOverlapDistance={1}
         />
         <Text style={appSettingsStyle.Header}>Search Genders</Text>
         <FlatList

@@ -80,9 +80,9 @@ class ChatComponent extends React.Component {
     return (
       audioMessages.length > 0 &&
       audioMessages.filter(message => message.user === this.state.userEmail)
-        .length > 3 &&
+        .length >= 3 &&
       audioMessages.filter(message => message.user !== this.state.userEmail)
-        .length > 3
+        .length >= 3
     );
   };
 
@@ -113,7 +113,7 @@ class ChatComponent extends React.Component {
         </View>
         <View style={chatStyle.interactionContainer}>
           {this.showTextInput() ? (
-            <View>
+            <View style={chatStyle.textInteractionContainer}>
               <TouchableOpacity
                 style={chatStyle.sendContainer}
                 onPress={this.onSendPressed}>
@@ -187,6 +187,13 @@ const chatStyle = StyleSheet.create({
     height: 60,
     flexDirection: 'row',
     width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'darkorange',
+  },
+  textInteractionContainer: {
+    height: 60,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: 'darkorange',
