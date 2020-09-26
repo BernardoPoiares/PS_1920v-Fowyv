@@ -16,10 +16,10 @@ exports.signup = async (req, res) => {
     await runTransaction(async (db,opts) => {
 
       await db.collection(Collections.Users).insertOne(
-      {
-        email: req.body.email,
-        password: bcrypt.hashSync(req.body.password, 8)
-      }, {}, opts);
+        {
+          email: req.body.email,
+          password: bcrypt.hashSync(req.body.password, 8)
+        }, {}, opts);
 
       await db.collection(Collections.UsersChoices).insertOne(
       {
@@ -95,8 +95,34 @@ exports.signin = async (req, res) => {
 
 };
 
+exports.deleteUser = async (req, res) => {
+
+  try{
+
+    await runTransaction(async (db,opts) => {
+
+        await db.collection(Collections.UsersMatches).deleteMany({ emails: req.email}, opts);      
+
+        await db.collection(Collections.UsersChoices).deleteOne( { email: req.email }, opts); 
+
+        await db.collection(Collections.UsersSearchSettings).deleteOne( { email: req.email }, opts);
+
+        await db.collection(Collections.UsersDetails).deleteOne( { email: req.email }, opts);
+
+        await db.collection(Collections.Users).deleteOne( { email: req.email }, opts);
+
+    });
+
+    res.status(200).send();
+
+  }catch(error){
+    res.status(500).json({ message: error });
+    return;
+  }
+
+};
+
 exports.signout = (req, res) => {
       res.status(200).send();
   };
 
-  

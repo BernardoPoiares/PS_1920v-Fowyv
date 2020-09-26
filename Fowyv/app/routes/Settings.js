@@ -11,7 +11,7 @@ import CheckBox from '@react-native-community/checkbox';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
 import {PersonalAudioContainer} from '../components/PersonalAudioContainer';
 import {connect} from 'react-redux';
-import {logoutUser} from '../redux/actions/auth.actions';
+import {logoutUser, deleteUser} from '../redux/actions/auth.actions';
 import {
   getSearchSettings,
   setSearchSettings,
@@ -55,6 +55,7 @@ const AppSettings = ({
   onLogoutPressed,
   onAgeRangeChanged,
   onGendersChanged,
+  onDeleteAccountPressed,
 }) => {
   return (
     <View style={settingsStyle.container}>
@@ -97,6 +98,11 @@ const AppSettings = ({
           onPress={onLogoutPressed}>
           <Text>Logout</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={appSettingsStyle.DeleteAccount}
+          onPress={onDeleteAccountPressed}>
+          <Text>Delete Account</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -129,6 +135,10 @@ class SettingsComponent extends React.Component {
 
   onLogoutPressed = () => {
     this.props.dispatch(logoutUser());
+  };
+
+  onDeleteAccountPressed = () => {
+    this.props.dispatch(deleteUser());
   };
 
   onGendersChanged = gender => {
@@ -190,6 +200,7 @@ class SettingsComponent extends React.Component {
               onAgeRangeChanged={this.onAgeRangeChanged}
               onLogoutPressed={this.onLogoutPressed}
               onGendersChanged={this.onGendersChanged}
+              onDeleteAccountPressed={this.onDeleteAccountPressed}
             />
           </ScrollView>
         ) : null}
@@ -256,6 +267,13 @@ const appSettingsStyle = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   Logout: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderWidth: 1,
+    padding: 5,
+    margin: 5,
+  },
+  DeleteAccount: {
     alignSelf: 'center',
     backgroundColor: 'white',
     borderWidth: 1,

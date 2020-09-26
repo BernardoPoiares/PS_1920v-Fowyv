@@ -4,7 +4,6 @@ module.exports = {
         UsersDetails:'UsersDetails',
         UsersChoices:'UsersChoices',
         UsersSearchSettings:'UsersSearchSettings',
-        UsersMatches:'UsersMatches',
-        AudioFiles:'AudioFiles'
+        UsersMatches:'UsersMatches'
     }
 };

@@ -15,8 +15,13 @@ module.exports = function(app) {
   );
 
   app.post("/api/auth/signin", controller.signin);
-
   
+  app.delete("/api/auth/user", 
+  [
+    authMiddleware.verifyToken
+  ],
+  controller.deleteUser);
+
   app.post("/api/auth/signout",
   [
     authMiddleware.verifyToken

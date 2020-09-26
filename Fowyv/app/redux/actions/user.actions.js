@@ -150,8 +150,8 @@ export const getUserPersonalAudio = payload => {
 
 export const savePersonalAudio = payload => {
   return async (dispatch, getState) => {
-    const state = getState();
     try {
+      const state = getState();
       const {
         authReducer: {
           authenticateUser: {token},

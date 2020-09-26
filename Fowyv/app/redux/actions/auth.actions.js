@@ -51,7 +51,42 @@ export const logoutUser = payload => {
   };
 };
 
-export const createUser = payload => {
+export const deleteUser = () => {
+  return async (dispatch, getState) => {
+    try {
+      const state = getState();
+      const {
+        authReducer: {
+          authenticateUser: {token},
+        },
+      } = state;
+      dispatch({type: 'GLOBAL_STATE_LOADING'});
+      const response = await fetchApi(
+        '/api/auth/user',
+        'DELETE',
+        null,
+        200,
+        token,
+      );
+      if (response.success) {
+        dispatch({type: 'GLOBAL_STATE_CLEAR_LOADING'});
+        dispatch(logoutUser());
+      } else {
+        dispatch({
+          type: 'GLOBAL_STATE_ERROR',
+          payload: response.responseBody,
+        });
+      }
+    } catch (ex) {
+      dispatch({
+        type: 'GLOBAL_STATE_ERROR',
+        payload: ex,
+      });
+    }
+  };
+};
+
+export const createAccount = payload => {
   return async dispatch => {
     try {
       dispatch({type: 'GLOBAL_STATE_LOADING'});
