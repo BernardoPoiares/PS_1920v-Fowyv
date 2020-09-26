@@ -26,10 +26,6 @@ class LoginComponent extends React.Component {
     if (error) {
       return this.props.dispatch(setError(new Error(error)));
     }
-    error = FieldValidator.PasswordValidator(this.state.password);
-    if (error) {
-      return this.props.dispatch(setError(new Error(error)));
-    }
     this.props.dispatch(
       loginUser({email: this.state.email, password: this.state.password}),
     );
@@ -48,13 +44,6 @@ class LoginComponent extends React.Component {
 
   getEmailError() {
     const msg = FieldValidator.EmailValidator(this.state.email);
-    if (msg != null) {
-      return this.buildErrorMsg(msg);
-    }
-  }
-
-  getPasswordError() {
-    const msg = FieldValidator.PasswordValidator(this.state.password);
     if (msg != null) {
       return this.buildErrorMsg(msg);
     }
@@ -85,14 +74,12 @@ class LoginComponent extends React.Component {
               secureTextEntry={true}
               style={loginStyle.textInput}
             />
-            {this.state.password !== '' ? this.getPasswordError() : null}
           </View>
           <TouchableOpacity
             style={loginStyle.formButton}
             onPress={this.onLoginPressed}>
             <Text>Login</Text>
           </TouchableOpacity>
-          <Text style={loginStyle.forgotPassword}>Forgot your password?</Text>
         </View>
         <TouchableOpacity onPress={this.onNewAccountPressed}>
           <Text style={loginStyle.newAccount}>Create an account</Text>
@@ -155,10 +142,6 @@ const loginStyle = StyleSheet.create({
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  forgotPassword: {
-    textDecorationLine: 'underline',
-    margin: 10,
   },
   newAccount: {
     color: 'white',

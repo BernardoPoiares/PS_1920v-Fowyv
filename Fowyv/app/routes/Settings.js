@@ -98,9 +98,6 @@ const AppSettings = ({
           onPress={onLogoutPressed}>
           <Text>Logout</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={appSettingsStyle.DeleteAccount}>
-          <Text>Delete Account</Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -257,13 +254,6 @@ const appSettingsStyle = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   Logout: {
-    alignSelf: 'center',
-    backgroundColor: 'white',
-    borderWidth: 1,
-    padding: 5,
-    margin: 5,
-  },
-  DeleteAccount: {
     alignSelf: 'center',
     backgroundColor: 'white',
     borderWidth: 1,
