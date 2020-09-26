@@ -62,12 +62,13 @@ exports.setSearchSettings = async (req, res) => {
 
         }); 
 
-        if(transactionReturn.errorCode)
+        if(transactionReturn && transactionReturn.errorCode)
             return res.status(transactionReturn.errorCode).json({ message:transactionReturn.errorMessage});
 
         res.status(200).send();
 
     }catch(error){
+        console.log(error);
         res.status(500).json({ message: error });
         return;
     }
