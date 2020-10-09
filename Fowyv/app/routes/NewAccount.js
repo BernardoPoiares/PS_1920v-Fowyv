@@ -3,7 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {FieldValidator} from '../utils/FieldValidator';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {createUser} from '../redux/actions/auth.actions';
+import {createAccount} from '../redux/actions/auth.actions';
 import {setError} from '../redux/actions/global.actions';
 import {connect} from 'react-redux';
 
@@ -35,7 +35,7 @@ class NewAccountComponent extends React.Component {
 
     if (this.state.password === this.state.confirmPassword) {
       this.props.dispatch(
-        createUser({
+        createAccount({
           email: this.state.email,
           password: this.state.password,
         }),
